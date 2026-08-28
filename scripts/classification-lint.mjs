@@ -32,9 +32,10 @@ const RULES = [
   { re: /\bpayroll\b/i, why: "payroll implies employment", fix: '"payouts via Stripe Connect"' },
 ];
 
-// Scan targets: user-facing code + docs. Exclusions: rule definitions & legal-analysis docs
-// that must name the banned terms in order to ban them.
+// Scan targets: user-facing code + docs, plus root-level md (PRODUCT.md, DESIGN.md, README, etc).
+// Exclusions: rule definitions & legal-analysis docs that must name the banned terms to ban them.
 const INCLUDE_DIRS = ["apps", "packages", "docs", "scripts"];
+const INCLUDE_ROOT_GLOB = /\.(md|mdx)$/;
 const INCLUDE_EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".md", ".mdx", ".json", ".css", ".html"]);
 const EXCLUDE_PATHS = new Set([
   "docs/COMPLIANCE.md",            // defines the banned terms
@@ -55,9 +56,16 @@ function* walk(dir) {
 }
 
 const violations = [];
+const targets = [];
 for (const top of INCLUDE_DIRS) {
-  let entries;
-  try { entries = [...walk(join(ROOT, top))]; } catch { continue; }
+  try { targets.push(...walk(join(ROOT, top))); } catch { /* dir absent */ }
+}
+for (const name of readdirSync(ROOT)) {
+  const p = join(ROOT, name);
+  if (statSync(p).isFile() && INCLUDE_ROOT_GLOB.test(name)) targets.push(p);
+}
+{
+  const entries = targets;
   for (const file of entries) {
     const rel = relative(ROOT, file).split(sep).join("/");
     if (EXCLUDE_PATHS.has(rel)) continue;

@@ -14,4 +14,4 @@ Quickstart: `pnpm install && cp .env.example .env.local && pnpm dev`
 
 **Design system:** see `docs/DESIGN.md` (PFD-derived; navy/white/brass registry aesthetic).
 **Contract tracking:** see `docs/SOW-AUDIT.md` (SOW v1 scope → repo status).
-**Compliance gate:** `pnpm compliance:check` (M-1 employer-language lint — implemented, green).
+**Compliance gate:** `pnpm compliance:check` (M-1 employment-language lint — implemented, green).

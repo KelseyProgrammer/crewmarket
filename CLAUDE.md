@@ -7,7 +7,7 @@ crewing agency, or vessel operator**. Contractor-classification discipline is th
 concern: see docs/COMPLIANCE.md and cite rule IDs (M-*, V-*, P-*, D-*, G-*) in commits.
 
 ## Hard constraints
-1. Never generate employer language (M-1): no "employee", "wages", "we hire", "our crew",
+1. Never generate employer language (M-1): no "employee", "wages", "we hire", "our crew", <!-- cl-allow: rule definition quotes banned terms -->
    no features that assign, supervise, or penalize declining work (M-2, M-3).
 2. Crew set their own rates; platform never mandates pricing (M-2).
 3. Stripe Connect Express owns KYC/bank/tax data — never model SSN or bank fields (P-1).
@@ -41,6 +41,6 @@ file (audience, palette, type, signature element). Tooling that produced/maintai
    `npx impeccable install` from repo root (adds the design hook; needs per-machine approval),
    then `/impeccable init` in-agent. Update: `npx impeccable update`.
    CI idea: `npx impeccable detect apps/web/` alongside `pnpm compliance:check`.
-Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics.
+Root `PRODUCT.md` (impeccable product-schema) and root `DESIGN.md` (DESIGN.md format spec, tokens + eight sections) are pre-written from the signed SOW and repo docs — `/impeccable init` should be a confirmation pass, not a fresh interview; `/impeccable document` should treat root DESIGN.md as the incumbent record. Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics; the lint now also scans root-level md.
 
 pnpm dev / build / lint; pnpm compliance:check (M-1 gate — implemented, keep green)
