@@ -1,0 +1,2437 @@
+{
+  "generatedBy": "scripts/generate-seed.mjs",
+  "synthetic": true,
+  "profiles": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "displayName": "Mack Whitcombe",
+      "roles": [
+        "CAPTAIN"
+      ],
+      "homePort": "Key West, FL",
+      "regions": [
+        "Miami–Dade",
+        "Lower Keys"
+      ],
+      "yearsExperience": 23,
+      "fisheries": [
+        "live bait",
+        "sailfish",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "express",
+        "seakeeper-equipped",
+        "sportfisher 60ft+"
+      ],
+      "dayRateUsd": 550,
+      "halfDayRateUsd": 358,
+      "bio": "Deep-drop specialist — electric reels, tile and swords, own tackle available.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_MASTER_25_50_100",
+          "licenseClass": "Master 50T",
+          "expiresAt": "2027-03-15",
+          "verified": true
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        },
+        {
+          "kind": "STCW_BASIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 76,
+        "avgRating": 4.7
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "displayName": "Rey Alvarado",
+      "roles": [
+        "CAPTAIN"
+      ],
+      "homePort": "Islamorada, FL",
+      "regions": [
+        "Miami–Dade"
+      ],
+      "yearsExperience": 15,
+      "fisheries": [
+        "tournament",
+        "kite fishing",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "sportfisher 40–60ft",
+        "sportfisher 60ft+",
+        "outriggers/kites rigging"
+      ],
+      "dayRateUsd": 850,
+      "bio": "Grew up pin-rigging the reef edge. Calm hands on a hot bite.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_MASTER_25_50_100",
+          "licenseClass": "Master 100T",
+          "expiresAt": "2028-01-15",
+          "verified": true
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        },
+        {
+          "kind": "STCW_BASIC",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 35
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "displayName": "Tavo Kessler",
+      "roles": [
+        "CAPTAIN",
+        "SECOND_CAPTAIN"
+      ],
+      "homePort": "Marathon, FL",
+      "regions": [
+        "Miami–Dade",
+        "Lower Keys",
+        "Palm Beach"
+      ],
+      "yearsExperience": 22,
+      "fisheries": [
+        "live bait",
+        "offshore troll"
+      ],
+      "vesselExperience": [
+        "cat hulls",
+        "outriggers/kites rigging",
+        "sportfisher 40–60ft"
+      ],
+      "dayRateUsd": 750,
+      "halfDayRateUsd": 488,
+      "tournamentRateUsd": 1200,
+      "bio": "Deep-drop specialist — electric reels, tile and swords, own tackle available.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_MASTER_25_50_100",
+          "licenseClass": "Master 100T",
+          "expiresAt": "2028-07-15",
+          "verified": false
+        },
+        {
+          "kind": "TWIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 48,
+        "avgRating": 5
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000004",
+      "displayName": "June Duarte",
+      "roles": [
+        "CAPTAIN"
+      ],
+      "homePort": "Pompano Beach, FL",
+      "regions": [
+        "Palm Beach"
+      ],
+      "yearsExperience": 4,
+      "fisheries": [
+        "tournament",
+        "daytime swordfish",
+        "sailfish"
+      ],
+      "vesselExperience": [
+        "outriggers/kites rigging"
+      ],
+      "dayRateUsd": 850,
+      "halfDayRateUsd": 553,
+      "bio": "Season after season on the same docks. Rig clean, bait ready before lines-in.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_MASTER_25_50_100",
+          "licenseClass": "Master 50T",
+          "expiresAt": "2029-07-15",
+          "verified": false
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 6,
+        "avgRating": 4.4
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000005",
+      "displayName": "Del Pinder",
+      "roles": [
+        "CAPTAIN",
+        "MATE"
+      ],
+      "homePort": "Marathon, FL",
+      "regions": [
+        "Bahamas runs"
+      ],
+      "yearsExperience": 3,
+      "fisheries": [
+        "daytime swordfish",
+        "wreck & reef"
+      ],
+      "vesselExperience": [
+        "cat hulls",
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 600,
+      "halfDayRateUsd": 390,
+      "tournamentRateUsd": 960,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_OUPV",
+          "licenseClass": "OUPV 6-pack",
+          "expiresAt": "2027-07-15",
+          "verified": false
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 99,
+        "avgRating": 4.5
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000006",
+      "displayName": "Coral Halvorsen",
+      "roles": [
+        "CAPTAIN",
+        "DECKHAND"
+      ],
+      "homePort": "Fort Lauderdale, FL",
+      "regions": [
+        "Lower Keys",
+        "Treasure Coast"
+      ],
+      "yearsExperience": 21,
+      "fisheries": [
+        "tournament",
+        "mahi run",
+        "live bait",
+        "kite fishing"
+      ],
+      "vesselExperience": [
+        "center console",
+        "express",
+        "outriggers/kites rigging"
+      ],
+      "dayRateUsd": 650,
+      "halfDayRateUsd": 423,
+      "tournamentRateUsd": 1040,
+      "bio": "Grew up pin-rigging the reef edge. Calm hands on a hot bite.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_MASTER_25_50_100",
+          "licenseClass": "Master 100T",
+          "expiresAt": "2029-09-15",
+          "verified": true
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        },
+        {
+          "kind": "TWIC",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 110,
+        "avgRating": 4,
+        "responseRate": 0.87
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000007",
+      "displayName": "Bo Ostrander",
+      "roles": [
+        "CAPTAIN"
+      ],
+      "homePort": "Palm Beach, FL",
+      "regions": [
+        "Miami–Dade",
+        "Broward",
+        "Palm Beach"
+      ],
+      "yearsExperience": 16,
+      "fisheries": [
+        "sailfish",
+        "daytime swordfish",
+        "live bait"
+      ],
+      "vesselExperience": [
+        "express",
+        "outriggers/kites rigging"
+      ],
+      "dayRateUsd": 550,
+      "halfDayRateUsd": 358,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_OUPV",
+          "licenseClass": "OUPV 6-pack",
+          "expiresAt": "2029-02-15",
+          "verified": true
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 10,
+        "avgRating": 4.9
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000008",
+      "displayName": "Marlin Quintana",
+      "roles": [
+        "SECOND_CAPTAIN"
+      ],
+      "homePort": "Pompano Beach, FL",
+      "regions": [
+        "Upper Keys",
+        "Treasure Coast"
+      ],
+      "yearsExperience": 8,
+      "fisheries": [
+        "bottom / deep drop",
+        "daytime swordfish"
+      ],
+      "vesselExperience": [
+        "express",
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 650,
+      "bio": "Ten seasons of charter turnarounds. Fast washdowns, careful with the boat.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_OUPV",
+          "licenseClass": "OUPV 6-pack",
+          "expiresAt": "2027-01-15",
+          "verified": true
+        },
+        {
+          "kind": "TWIC",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 85,
+        "avgRating": 4.2,
+        "responseRate": 0.85
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000009",
+      "displayName": "Skip Barlowe",
+      "roles": [
+        "SECOND_CAPTAIN",
+        "MATE"
+      ],
+      "homePort": "Jupiter, FL",
+      "regions": [
+        "Bahamas runs",
+        "Treasure Coast"
+      ],
+      "yearsExperience": 21,
+      "fisheries": [
+        "daytime swordfish",
+        "offshore troll"
+      ],
+      "vesselExperience": [
+        "sportfisher 40–60ft"
+      ],
+      "dayRateUsd": 750,
+      "halfDayRateUsd": 488,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "USCG_OUPV",
+          "licenseClass": "OUPV 6-pack",
+          "expiresAt": "2028-01-15",
+          "verified": false
+        },
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 40,
+        "avgRating": 4.5,
+        "responseRate": 0.93
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000010",
+      "displayName": "Wren Steadman",
+      "roles": [
+        "MATE"
+      ],
+      "homePort": "Miami, FL",
+      "regions": [
+        "Bahamas runs"
+      ],
+      "yearsExperience": 25,
+      "fisheries": [
+        "live bait",
+        "offshore troll"
+      ],
+      "vesselExperience": [
+        "sportfisher 40–60ft"
+      ],
+      "dayRateUsd": 375,
+      "halfDayRateUsd": 244,
+      "bio": "Tournament-tested. Leader wind-ons, kite spreads, no drama in the cockpit.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 100,
+        "avgRating": 4.6,
+        "responseRate": 0.89
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000011",
+      "displayName": "Cass Ferrell",
+      "roles": [
+        "MATE",
+        "ENGINEER"
+      ],
+      "homePort": "Lighthouse Point, FL",
+      "regions": [
+        "Upper Keys",
+        "Lower Keys",
+        "Treasure Coast"
+      ],
+      "yearsExperience": 3,
+      "fisheries": [
+        "live bait",
+        "sailfish"
+      ],
+      "vesselExperience": [
+        "express"
+      ],
+      "dayRateUsd": 375,
+      "bio": "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        },
+        {
+          "kind": "TWIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 11,
+        "avgRating": 4.3,
+        "responseRate": 0.72
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000012",
+      "displayName": "Río Mancuso",
+      "roles": [
+        "MATE",
+        "DECKHAND"
+      ],
+      "homePort": "Pompano Beach, FL",
+      "regions": [
+        "Upper Keys",
+        "Broward"
+      ],
+      "yearsExperience": 8,
+      "fisheries": [
+        "kite fishing",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "outriggers/kites rigging"
+      ],
+      "dayRateUsd": 275,
+      "tournamentRateUsd": 440,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "BOOKED"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 28,
+        "avgRating": 3.9,
+        "responseRate": 0.72
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000013",
+      "displayName": "Teal Yates",
+      "roles": [
+        "MATE",
+        "COOK"
+      ],
+      "homePort": "Marathon, FL",
+      "regions": [
+        "Treasure Coast",
+        "Broward",
+        "Miami–Dade"
+      ],
+      "yearsExperience": 8,
+      "fisheries": [
+        "kite fishing",
+        "daytime swordfish"
+      ],
+      "vesselExperience": [
+        "outriggers/kites rigging",
+        "cat hulls",
+        "center console"
+      ],
+      "dayRateUsd": 250,
+      "tournamentRateUsd": 400,
+      "bio": "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
+      "photoRefs": [],
+      "credentials": [],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 77,
+        "responseRate": 0.98
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000014",
+      "displayName": "Harbor Delacroix",
+      "roles": [
+        "MATE",
+        "COOK"
+      ],
+      "homePort": "Fort Lauderdale, FL",
+      "regions": [
+        "Broward",
+        "Lower Keys"
+      ],
+      "yearsExperience": 9,
+      "fisheries": [
+        "tournament",
+        "offshore troll",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "center console",
+        "sportfisher 40–60ft"
+      ],
+      "dayRateUsd": 325,
+      "bio": "Tournament-tested. Leader wind-ons, kite spreads, no drama in the cockpit.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 107,
+        "avgRating": 4.6,
+        "responseRate": 0.8
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000015",
+      "displayName": "Nash Hobbs",
+      "roles": [
+        "MATE",
+        "ENGINEER"
+      ],
+      "homePort": "Stuart, FL",
+      "regions": [
+        "Palm Beach",
+        "Upper Keys"
+      ],
+      "yearsExperience": 20,
+      "fisheries": [
+        "mahi run",
+        "live bait"
+      ],
+      "vesselExperience": [
+        "express"
+      ],
+      "dayRateUsd": 300,
+      "halfDayRateUsd": 195,
+      "bio": "Grew up pin-rigging the reef edge. Calm hands on a hot bite.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "STCW_BASIC",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "UNAVAILABLE"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 48,
+        "avgRating": 4.3
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000016",
+      "displayName": "Sunny Vickery",
+      "roles": [
+        "MATE",
+        "COOK"
+      ],
+      "homePort": "Marathon, FL",
+      "regions": [
+        "Broward",
+        "Palm Beach"
+      ],
+      "yearsExperience": 19,
+      "fisheries": [
+        "live bait",
+        "daytime swordfish",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "cat hulls"
+      ],
+      "dayRateUsd": 450,
+      "bio": "Bilingual (EN/ES). Good with owners, better with fish.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "STCW_BASIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 43,
+        "avgRating": 4.4
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000017",
+      "displayName": "Drift Santana",
+      "roles": [
+        "MATE"
+      ],
+      "homePort": "Pompano Beach, FL",
+      "regions": [
+        "Upper Keys",
+        "Palm Beach"
+      ],
+      "yearsExperience": 15,
+      "fisheries": [
+        "live bait",
+        "wreck & reef",
+        "kite fishing"
+      ],
+      "vesselExperience": [
+        "express",
+        "center console"
+      ],
+      "dayRateUsd": 375,
+      "halfDayRateUsd": 244,
+      "tournamentRateUsd": 600,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "BOOKED"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 77,
+        "avgRating": 4.7
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000018",
+      "displayName": "Keys Croft",
+      "roles": [
+        "MATE"
+      ],
+      "homePort": "Boca Raton, FL",
+      "regions": [
+        "Miami–Dade"
+      ],
+      "yearsExperience": 7,
+      "fisheries": [
+        "tournament",
+        "kite fishing",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 250,
+      "tournamentRateUsd": 400,
+      "bio": "Grew up pin-rigging the reef edge. Calm hands on a hot bite.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 77,
+        "avgRating": 4.2,
+        "responseRate": 0.84
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000019",
+      "displayName": "Ledge Ibarra",
+      "roles": [
+        "DECKHAND"
+      ],
+      "homePort": "Boca Raton, FL",
+      "regions": [
+        "Lower Keys",
+        "Broward"
+      ],
+      "yearsExperience": 14,
+      "fisheries": [
+        "sailfish",
+        "live bait",
+        "bottom / deep drop",
+        "mahi run"
+      ],
+      "vesselExperience": [
+        "express",
+        "cat hulls"
+      ],
+      "dayRateUsd": 325,
+      "tournamentRateUsd": 520,
+      "bio": "Quiet, early, thorough. The spread is set before the sun is.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        },
+        {
+          "kind": "STCW_BASIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 82,
+        "avgRating": 4.8,
+        "responseRate": 0.81
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000020",
+      "displayName": "Gaff Palmer",
+      "roles": [
+        "DECKHAND",
+        "COOK"
+      ],
+      "homePort": "Boca Raton, FL",
+      "regions": [
+        "Upper Keys"
+      ],
+      "yearsExperience": 24,
+      "fisheries": [
+        "sailfish",
+        "mahi run",
+        "kite fishing",
+        "tournament"
+      ],
+      "vesselExperience": [
+        "cat hulls",
+        "center console",
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 425,
+      "bio": "Season after season on the same docks. Rig clean, bait ready before lines-in.",
+      "photoRefs": [],
+      "credentials": [],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 50
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000021",
+      "displayName": "Perla Rousseau",
+      "roles": [
+        "DECKHAND",
+        "COOK"
+      ],
+      "homePort": "Lighthouse Point, FL",
+      "regions": [
+        "Palm Beach",
+        "Upper Keys"
+      ],
+      "yearsExperience": 22,
+      "fisheries": [
+        "mahi run",
+        "live bait",
+        "kite fishing",
+        "tournament"
+      ],
+      "vesselExperience": [
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 375,
+      "halfDayRateUsd": 244,
+      "tournamentRateUsd": 600,
+      "bio": "Season after season on the same docks. Rig clean, bait ready before lines-in.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 7,
+        "avgRating": 4.9,
+        "responseRate": 0.76
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000022",
+      "displayName": "Cove Wexford",
+      "roles": [
+        "DECKHAND",
+        "SECOND_CAPTAIN"
+      ],
+      "homePort": "Fort Lauderdale, FL",
+      "regions": [
+        "Treasure Coast"
+      ],
+      "yearsExperience": 12,
+      "fisheries": [
+        "live bait",
+        "bottom / deep drop",
+        "tournament"
+      ],
+      "vesselExperience": [
+        "center console"
+      ],
+      "dayRateUsd": 350,
+      "halfDayRateUsd": 228,
+      "tournamentRateUsd": 560,
+      "bio": "Season after season on the same docks. Rig clean, bait ready before lines-in.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        },
+        {
+          "kind": "TWIC",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 8,
+        "avgRating": 4.9,
+        "responseRate": 0.91
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000023",
+      "displayName": "Reef Nakata",
+      "roles": [
+        "DECKHAND",
+        "CAPTAIN"
+      ],
+      "homePort": "Islamorada, FL",
+      "regions": [
+        "Miami–Dade",
+        "Palm Beach"
+      ],
+      "yearsExperience": 17,
+      "fisheries": [
+        "offshore troll",
+        "bottom / deep drop",
+        "wreck & reef"
+      ],
+      "vesselExperience": [
+        "seakeeper-equipped"
+      ],
+      "dayRateUsd": 450,
+      "halfDayRateUsd": 293,
+      "bio": "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": true
+        },
+        {
+          "kind": "STCW_BASIC",
+          "verified": true
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "BOOKED"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 74,
+        "avgRating": 4.7,
+        "responseRate": 0.92
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000024",
+      "displayName": "Banks Griggs",
+      "roles": [
+        "COOK"
+      ],
+      "homePort": "Pompano Beach, FL",
+      "regions": [
+        "Palm Beach"
+      ],
+      "yearsExperience": 20,
+      "fisheries": [
+        "tournament",
+        "mahi run",
+        "daytime swordfish",
+        "kite fishing"
+      ],
+      "vesselExperience": [
+        "express",
+        "sportfisher 60ft+",
+        "center console"
+      ],
+      "dayRateUsd": 300,
+      "halfDayRateUsd": 195,
+      "bio": "Deep-drop specialist — electric reels, tile and swords, own tackle available.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 30,
+        "avgRating": 4,
+        "responseRate": 0.86
+      }
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000025",
+      "displayName": "Tide Boudreau",
+      "roles": [
+        "ENGINEER"
+      ],
+      "homePort": "Key West, FL",
+      "regions": [
+        "Lower Keys",
+        "Treasure Coast",
+        "Miami–Dade"
+      ],
+      "yearsExperience": 19,
+      "fisheries": [
+        "tournament",
+        "bottom / deep drop",
+        "wreck & reef"
+      ],
+      "vesselExperience": [
+        "sportfisher 40–60ft",
+        "center console"
+      ],
+      "dayRateUsd": 325,
+      "bio": "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
+      "photoRefs": [],
+      "credentials": [
+        {
+          "kind": "CPR_FIRST_AID",
+          "verified": false
+        }
+      ],
+      "availability": [
+        {
+          "date": "2026-08-28",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-08-29",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-08-30",
+          "status": "UNAVAILABLE"
+        },
+        {
+          "date": "2026-08-31",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-01",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-02",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-03",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-05",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-06",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-07",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-08",
+          "status": "OPEN"
+        },
+        {
+          "date": "2026-09-09",
+          "status": "BOOKED"
+        },
+        {
+          "date": "2026-09-10",
+          "status": "OPEN"
+        }
+      ],
+      "stats": {
+        "tripsCompleted": 103,
+        "avgRating": 4.5,
+        "responseRate": 0.96
+      }
+    }
+  ]
+}

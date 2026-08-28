@@ -1,0 +1,48 @@
+/* tokens.css — Crew Market visual system (docs/DESIGN.md).
+   Regal seafaring / structured utility. Navy field, crisp white paper, brass hardware.
+   Brass carries exactly two meanings: verification and the primary action. */
+
+:root {
+  /* palette */
+  --navy-deep: #0a1d30;
+  --navy-panel: #12314e;
+  --white-crisp: #f8fafb;
+  --brass: #a9822f;
+  --brass-bright: #d7b36a;
+  --mist: #8fa6ba;
+
+  /* derived */
+  --ink: #10222f;               /* body text on white */
+  --ink-soft: #4a5c6b;          /* secondary text on white */
+  --line-on-white: rgba(16, 34, 47, 0.14);
+  --line-on-navy: rgba(143, 166, 186, 0.28);
+  --brass-engrave: rgba(169, 130, 47, 0.45);
+
+  /* type */
+  --font-display: var(--next-font-display, "Libre Caslon Display", serif);
+  --font-body: var(--next-font-body, "Archivo", system-ui, sans-serif);
+  --font-mono: var(--next-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+
+  /* scale (4px grid) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  --radius: 2px;                /* plate, not pill */
+  --measure: 62ch;
+}
+
+/* chart furniture: mono eyebrows used as coordinates/registry numbers */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+.eyebrow--on-navy { color: var(--brass-bright); }
+
+.rule-brass {
+  border: 0;
+  border-top: 1px solid var(--brass-engrave);
+  margin: 0;
+}

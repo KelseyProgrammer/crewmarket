@@ -1,3 +1,4 @@
-// Shared components: CrewCard (role badges, verified-credential badge per V-1 visual distinction,
-// day rate, home port), AvailabilityCalendar, DisclaimerD2, BookingStateBadge.
-export {};
+// @crewmarket/ui — shared components + tokens.
+// Import "@crewmarket/ui/src/tokens.css" once in the web root layout.
+export { VerifiedSeal, DisclaimerD2, BookingStateBadge, CrewCard, Container } from "./components";
+export type { CrewCardData } from "./components";

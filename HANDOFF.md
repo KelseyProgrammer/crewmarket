@@ -14,10 +14,14 @@
 4. **Compliance spine: contractor classification** (docs/COMPLIANCE.md, rule IDs M/V/P/D/G). Marketplace, NOT employer/crewing agency/vessel operator. Structural crew autonomy (own rates, free decline, no supervision features), employer-language CI lint (stub at scripts/classification-lint.mjs), credential verification (USCG/STCW/TWIC, admin-only `verified` flag, presigned doc storage), insurance attestation, Jones Act flagged as attorney territory. Booking state machine includes CANCELLED_WEATHER as first-class.
 5. **Conventions:** CLAUDE.md at repo root (auto-read by Claude Code); commits tagged `[ai-assisted]` + rule IDs; synthetic seed data only; work on feature branches, main protected.
 
-## Current state
-- Repo scaffolded with one commit on `main`; NOT yet pushed to GitHub or run locally.
-- Next steps queued: `gh repo create crew-market --private --source=. --push`; `pnpm install && cp .env.example .env.local && pnpm dev` (use `-p 3001` if fertility app holds :3000).
-- First Claude Code session plan: seed ~25 synthetic FL crew profiles, build directory page with filters (role, port, date, verified-only) → demo for the client to force business-model decisions.
+## Current state (post design-refinement session, 8/28/2026)
+- **SOW v1 signed 8/27/2026** ($4,000 fixed fee, cash-only; see `docs/SOW-AUDIT.md` for the live scope→repo gap map).
+- **Design system built** per `docs/DESIGN.md`: PFD-derived (perception-first-design skill) + Intent-audited. Regal seafaring / structured utility; navy `#0A1D30`, crisp white `#F8FAFB`, brass `#A9822F`. Fonts: Libre Caslon Display / Archivo / IBM Plex Mono. Signature: brass verification seal on "registry plate" crew cards.
+- **Working & verified (`next build` green):** landing page (chart-field hero, booking trail), directory with all four SOW filters (role, port, availability date, verified-only) server-rendered from seed data, D-2 disclaimer in persistent footer, `packages/ui` components (CrewCard, VerifiedSeal, DisclaimerD2, BookingStateBadge).
+- **Seed data:** 25 synthetic South FL crew profiles (SOW 2.i) — deterministic generator `scripts/generate-seed.mjs` → `apps/web/data/seed-crew.json`.
+- **Booking state machine implemented:** `packages/types/src/booking-machine.ts` — typed transitions, CANCELLED_WEATHER first-class, 48h `DISPUTE_WINDOW` → `PAID_OUT`.
+- **classification-lint implemented** (was stub — exceeds SOW): `pnpm compliance:check` scans copy for M-1 employment-implying language, understands the negated D-2 disclaimer, `cl-allow` escape marker. Currently green.
+- Next steps: push to GitHub; then auth + role shells → Stripe Connect Express (largest phase) → booking UI on the state machine → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.

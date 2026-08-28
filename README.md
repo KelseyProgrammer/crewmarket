@@ -11,3 +11,7 @@ mobile-first); packages/types, payments (Stripe Connect Express), ui. Docs: COMP
 DATA_SCOPE in types, BUSINESS_MODEL.md (decision record incl. leakage strategy).
 
 Quickstart: `pnpm install && cp .env.example .env.local && pnpm dev`
+
+**Design system:** see `docs/DESIGN.md` (PFD-derived; navy/white/brass registry aesthetic).
+**Contract tracking:** see `docs/SOW-AUDIT.md` (SOW v1 scope → repo status).
+**Compliance gate:** `pnpm compliance:check` (M-1 employer-language lint — implemented, green).

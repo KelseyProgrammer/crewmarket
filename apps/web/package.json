@@ -1,9 +1,20 @@
 {
   "name": "web",
   "private": true,
-  "scripts": { "dev": "next dev", "build": "next build", "lint": "next lint" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "next lint"
+  },
   "dependencies": {
-    "next": "^15.1.0", "react": "^19.0.0", "react-dom": "^19.0.0",
-    "@crewmarket/types": "workspace:*", "@crewmarket/payments": "workspace:*", "@crewmarket/ui": "workspace:*"
+    "@crewmarket/payments": "workspace:*",
+    "@crewmarket/types": "workspace:*",
+    "@crewmarket/ui": "workspace:*",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18"
   }
 }

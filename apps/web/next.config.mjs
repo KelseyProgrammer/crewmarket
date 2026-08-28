@@ -4,4 +4,7 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 ];
-export default { async headers() { return [{ source: "/(.*)", headers: securityHeaders }]; } };
+export default {
+  transpilePackages: ["@crewmarket/ui", "@crewmarket/types", "@crewmarket/payments"],
+  async headers() { return [{ source: "/(.*)", headers: securityHeaders }]; },
+};

@@ -86,3 +86,6 @@ export const Review = z.object({
   rating: z.number().min(1).max(5),
   text: z.string(),
 });
+
+// ---------- BOOKING STATE MACHINE (SOW 2.i Booking Flow) ----------
+export * from "./booking-machine";
