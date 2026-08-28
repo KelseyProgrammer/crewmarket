@@ -77,18 +77,18 @@ function nextOpenDate(av: CrewCardData["availability"]): string | null {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function CrewCard({ crew, index }: { crew: CrewCardData; index: number }) {
+export function CrewCard({ crew, index, href }: { crew: CrewCardData; index: number; href?: string }) {
   const verified = crew.credentials.some((c) => c.verified);
   // Rule V-4: captains' license class + expiry legible at a glance
   const license = crew.credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
   const open = nextOpenDate(crew.availability);
   return (
-    <article className={`plate${verified ? " plate--verified" : ""}`}>
+    <article className={`plate${verified ? " plate--verified" : ""}${href ? " plate--linked" : ""}`}>
       <div className="plate__head">
         <span className="eyebrow">REG {String(index + 1).padStart(3, "0")} · {crew.homePort.replace(", FL", "").toUpperCase()}</span>
         {verified && <VerifiedSeal small />}
       </div>
-      <h3 className="plate__name">{crew.displayName}</h3>
+      <h3 className="plate__name">{href ? <a href={href}>{crew.displayName}</a> : crew.displayName}</h3>
       <p className="plate__role">
         {crew.roles.map((r) => ROLE_LABELS[r] ?? r).join(" · ")}
         {license && (

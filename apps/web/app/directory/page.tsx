@@ -36,7 +36,7 @@ export default async function Directory({ searchParams }: { searchParams: Promis
     <main className="directory">
       <Container wide>
         <span className="eyebrow">CREW REGISTRY · {String(all.length).padStart(3, "0")} LISTED</span>
-        <h2>Find crew for your next trip</h2>
+        <h1>Find crew for your next trip</h1>
         <p className="directory__meta">
           Independent crew list their own services and set their own rates. A brass seal means
           credentials passed admin review; everything else is self-reported.
@@ -79,7 +79,7 @@ export default async function Directory({ searchParams }: { searchParams: Promis
         ) : (
           <div className="grid">
             {results.map((c, i) => (
-              <CrewCard key={c.id} crew={c} index={all.indexOf(c)} />
+              <CrewCard key={c.id} crew={c} index={all.indexOf(c)} href={`/crew/${c.id}`} />
             ))}
           </div>
         )}

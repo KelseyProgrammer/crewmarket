@@ -21,6 +21,9 @@ export default function Home() {
             <a className="btn btn--brass" href="/directory">Browse the directory</a>
             <a className="btn btn--ghost-navy" href="/sign-up?role=CREW">List my services</a>
           </div>
+          {/* Sincerity note (docs/DESIGN.md R5): the escrow trail below describes the launch
+              product; until payments are wired, say so — remove at launch. */}
+          <p className="hero__note">PRE-LAUNCH BUILD · BOOKING OPENS WITH THE PAYMENTS PHASE · ALL LISTINGS SYNTHETIC</p>
         </Container>
       </section>
 

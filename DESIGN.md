@@ -6,7 +6,10 @@ colors:
   navy-panel: "#12314e"
   white-crisp: "#f8fafb"
   brass: "#a9822f"
+  brass-text: "#8a6a1e"
+  brass-text-hover: "#7d5f1b"
   brass-bright: "#d7b36a"
+  card-face: "#ffffff"
   mist: "#8fa6ba"
   ink: "#10222f"
   ink-soft: "#4a5c6b"
@@ -20,18 +23,70 @@ typography:
     fontWeight: 400
     lineHeight: 1.08
     letterSpacing: "normal"
+  title-page:
+    fontFamily: "Libre Caslon Display, Iowan Old Style, Georgia, serif"
+    fontSize: "32px"
+    fontWeight: 400
+    lineHeight: 1.2
+  headline:
+    fontFamily: "Libre Caslon Display, Iowan Old Style, Georgia, serif"
+    fontSize: "28px"
+    fontWeight: 400
+    lineHeight: 1.2
+  title:
+    fontFamily: "Libre Caslon Display, Iowan Old Style, Georgia, serif"
+    fontSize: "22px"
+    fontWeight: 400
+    lineHeight: 1.25
+  title-minor:
+    fontFamily: "Libre Caslon Display, Iowan Old Style, Georgia, serif"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: 1.3
+  body-hero:
+    fontFamily: "Archivo, system-ui, sans-serif"
+    fontSize: "17px"
+    fontWeight: 400
+    lineHeight: 1.55
   body:
     fontFamily: "Archivo, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "normal"
+  body-ui:
+    fontFamily: "Archivo, system-ui, sans-serif"
+    fontSize: "15px"
+    fontWeight: 400
+    lineHeight: 1.5
+  body-small:
+    fontFamily: "Archivo, system-ui, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.5
+  body-meta:
+    fontFamily: "Archivo, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: 1.6
+  label-nav:
+    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
+    fontSize: "12px"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0.14em"
   label:
     fontFamily: "IBM Plex Mono, ui-monospace, monospace"
     fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.4
     letterSpacing: "0.18em"
+  label-micro:
+    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
+    fontSize: "10px"
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: "0.14em"
 rounded:
   plate: "2px"
 spacing:
@@ -46,12 +101,12 @@ spacing:
   s9: "96px"
 components:
   button-primary:
-    backgroundColor: "{colors.brass}"
+    backgroundColor: "{colors.brass-text}"
     textColor: "#ffffff"
     rounded: "{rounded.plate}"
     padding: "14px 22px"
   button-primary-hover:
-    backgroundColor: "#96721f"
+    backgroundColor: "#7d5f1b"
   button-ghost-navy:
     backgroundColor: "transparent"
     textColor: "{colors.white-crisp}"
@@ -101,8 +156,12 @@ Three hues plus disciplined neutrals; the palette *is* the coastal brief — nav
 ### Primary
 - **Navy Deep** (#0a1d30): The institutional field — hero, masthead, footer. Latitude hairlines
   (`line-on-navy` at reduced alpha ~0.1) texture it without registering consciously.
-- **Brass** (#a9822f): The meaning-carrying metal. Appears in exactly two roles: verification
-  (seal, verified-plate edging via `brass-engrave`) and the primary action. Hover deepens to #96721f.
+- **Brass** (#a9822f): The meaning-carrying metal, in exactly two roles: verification
+  (seal, verified-plate edging via `brass-engrave`) and the primary action. It splits by duty:
+  **graphic brass** (#a9822f) for the seal ring, borders, edging, and focus rings (non-text, ≥3:1),
+  and **Brass Text** (#8a6a1e, 5.05:1 on white) for every text-sized use on white fields — eyebrows,
+  seal label, brass links, badge text — and the primary-button fill (hover deepens to #7d5f1b).
+  Same metal, two finishes; never use graphic brass for small text on white (it fails WCAG AA).
 
 ### Secondary
 - **Brass Bright** (#d7b36a): Brass highlight on navy — wordmark accent, eyebrows on navy, focus
@@ -117,7 +176,8 @@ Three hues plus disciplined neutrals; the palette *is* the coastal brief — nav
 ### Named Rules
 **The Brass Rule.** Brass carries exactly two meanings — verification and the primary action. If
 brass appears anywhere else, it dilutes both. Never use brass as a fill for large areas, decorative
-icons, or mood.
+icons, or mood. Pick the finish by duty: graphic brass for drawn things, Brass Text for read things
+(small text on white must always be the text-grade #8a6a1e).
 
 **The Two-Field Rule.** Every screen is either navy field or white paper per section; the two never
 blend, gradient, or overlap mid-section. Transitions happen at hard section boundaries.
@@ -171,7 +231,8 @@ seal. No skews, blobs, or organic shapes; the geometry is drafted, like chart li
 
 - **Masthead**: Navy bar, Caslon wordmark ("Crew" white, "Market" brass-bright), mono uppercase nav
   links in Mist → brass-bright on hover; hairline brass-engrave bottom border.
-- **Buttons**: `button-primary` (brass, white text) for the one primary action per screen;
+- **Buttons**: `button-primary` (brass-text fill #8a6a1e, white text — AA) for the one primary
+  action per screen;
   `button-ghost-navy` / `button-ghost-ink` hairline-bordered ghosts elsewhere; borders warm to
   brass on hover; 2px radius, 14×22px padding, 600-weight Archivo at 15px.
 - **Registry Plate (CrewCard)**: White card, hairline border; verified plates upgrade the border to

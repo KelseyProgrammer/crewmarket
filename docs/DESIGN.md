@@ -63,7 +63,8 @@ decoration).
 | `--navy-deep` | `#0A1D30` | Field: hero, footer, headers |
 | `--navy-panel` | `#12314E` | Raised navy panels, hover states |
 | `--white-crisp` | `#F8FAFB` | Paper field: directory, cards |
-| `--brass` | `#A9822F` | Verification seal, primary action, rules |
+| `--brass` | `#A9822F` | Graphic brass: seal ring, borders, focus rings on white (non-text ≥3:1) |
+| `--brass-text` | `#8A6A1E` | Text-grade brass on white (5.05:1, AA): eyebrows, brass links, button fill |
 | `--brass-bright` | `#D7B36A` | Brass highlight/engrave edge, focus rings on navy |
 | `--mist` | `#8FA6BA` | Secondary text on navy, hairlines |
 

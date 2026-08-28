@@ -7,7 +7,8 @@
   --navy-deep: #0a1d30;
   --navy-panel: #12314e;
   --white-crisp: #f8fafb;
-  --brass: #a9822f;
+  --brass: #a9822f;          /* graphic/large-accent brass: seal ring, borders, focus, ≥3:1 */
+  --brass-text: #8a6a1e;     /* text-grade brass on white fields: 5.05:1, AA for small text */
   --brass-bright: #d7b36a;
   --mist: #8fa6ba;
 
@@ -37,7 +38,7 @@
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--brass-text);
 }
 .eyebrow--on-navy { color: var(--brass-bright); }
 

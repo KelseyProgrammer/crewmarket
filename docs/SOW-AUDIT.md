@@ -26,7 +26,7 @@
 
 ## Contract obligations embedded in the build (not just features)
 
-- **D-2 disclaimer placement** (COMPLIANCE.md, mirrors SOW 6.i client representation): verbatim disclaimer renders in the persistent footer of every page, on the directory, and as a required signup checkbox (acceptance timestamped server-side on the user record). Remaining required placement when built: booking flow, crew profile pages.
+- **D-2 disclaimer placement** (COMPLIANCE.md, mirrors SOW 6.i client representation): verbatim disclaimer renders in the persistent footer of every page, on the directory, and as a required signup checkbox (acceptance timestamped server-side on the user record), and on every crew profile page (`apps/web/app/crew/[id]`). Remaining required placement when built: booking flow.
 - **Synthetic data only** (SOW 6.i): seed generator produces fictional names/stats; no real crew data anywhere in repo.
 - **Secrets discipline** (SOW 8.iii): `.env.example` only; nothing committed.
 - **Admin dashboard = SOW v2 bonus metric source** (SOW 7.iii): keep net-revenue figures Stripe-derived, never hand-entered, when built.
