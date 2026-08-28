@@ -1,0 +1,638 @@
+[
+  {
+    "id": "l009",
+    "title": "Temporal/Session Continuity — PFD's Missing Dimension",
+    "layer": "cross",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "temporal-continuity",
+      "session-recovery",
+      "missing-dimension",
+      "L6-candidate"
+    ],
+    "path": "cross/l009-temporal-session-continuity.md"
+  },
+  {
+    "id": "l012",
+    "title": "Route vs Survey Knowledge in Spatial Tools",
+    "layer": "cross",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "spatial-cognition",
+      "route-knowledge",
+      "survey-knowledge",
+      "canvas-tools",
+      "siegel-white"
+    ],
+    "path": "cross/l012-route-vs-survey-knowledge.md"
+  },
+  {
+    "id": "l015",
+    "title": "Experiential Self-Contradiction — Heroes That Disprove Their Own Thesis",
+    "layer": "cross",
+    "secondary_layers": [
+      "L2",
+      "L3"
+    ],
+    "date": "2026-02-26",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "experiential-self-contradiction",
+      "hero-sections",
+      "cross-layer",
+      "claim-vs-experience",
+      "aurochs"
+    ],
+    "path": "cross/l015-experiential-self-contradiction.md"
+  },
+  {
+    "id": "l019",
+    "title": "Multi-Artifact Engagement Field and Relay-User Mode",
+    "layer": "cross",
+    "secondary_layers": [],
+    "date": "2026-04-16",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l003",
+      "l004",
+      "l009",
+      "l015"
+    ],
+    "tags": [
+      "multi-artifact",
+      "engagement-field",
+      "relay-user",
+      "B2B",
+      "L5-candidate",
+      "composite-perception"
+    ],
+    "path": "cross/l019-multi-artifact-engagement-field.md"
+  },
+  {
+    "id": "l021",
+    "title": "L4-Ethics Fusion",
+    "layer": "cross",
+    "secondary_layers": [
+      "L4",
+      "meta"
+    ],
+    "date": "2026-04-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l014",
+      "l015",
+      "l022",
+      "l025"
+    ],
+    "tags": [
+      "l4-ethics-fusion",
+      "decision-architecture",
+      "operational-ethics",
+      "cancel-flow",
+      "regulatory-convergence",
+      "layer-pin"
+    ],
+    "path": "cross/l021-l4-ethics-fusion.md"
+  },
+  {
+    "id": "l025",
+    "title": "Cascade-Credit",
+    "layer": "cross",
+    "secondary_layers": [
+      "L1",
+      "L2",
+      "L3",
+      "meta"
+    ],
+    "date": "2026-04-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l015",
+      "l016",
+      "l021"
+    ],
+    "tags": [
+      "cascade-credit",
+      "layer-dependency",
+      "predictive-trust-prior",
+      "inverse-cascade",
+      "polish-as-extraction-fuel",
+      "validation-needed"
+    ],
+    "path": "cross/l025-cascade-credit.md"
+  },
+  {
+    "id": "l026",
+    "title": "Aesthetic Stability as Trust Producer",
+    "layer": "cross",
+    "secondary_layers": [
+      "L1",
+      "L3",
+      "meta"
+    ],
+    "date": "2026-04-25",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l011",
+      "l015",
+      "l025"
+    ],
+    "tags": [
+      "aesthetic-stability",
+      "trust-producer",
+      "long-tenured-references",
+      "predictive-prior",
+      "floor-case",
+      "validation-needed"
+    ],
+    "path": "cross/l026-aesthetic-stability-as-trust-producer.md"
+  },
+  {
+    "id": "l028",
+    "title": "Held-Decision Compounding",
+    "layer": "cross",
+    "secondary_layers": [
+      "L3",
+      "L1",
+      "meta"
+    ],
+    "date": "2026-04-25",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l015",
+      "l025",
+      "l026"
+    ],
+    "tags": [
+      "held-decision-compounding",
+      "temporal-axis",
+      "longitudinal-trust",
+      "minimalism",
+      "duration-encodes-meaning"
+    ],
+    "path": "cross/l028-held-decision-compounding.md"
+  },
+  {
+    "id": "l018",
+    "title": "Backend Mechanics Surfaced as Frontend Complexity Invert Their Intent",
+    "layer": "L0",
+    "secondary_layers": [
+      "L1",
+      "L2",
+      "L3",
+      "L4"
+    ],
+    "date": "2026-03-13",
+    "updated": "2026-04-20",
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l004"
+    ],
+    "tags": [
+      "backend-mechanics",
+      "cognitive-load",
+      "cartesian-product",
+      "pricing",
+      "information-architecture",
+      "4-layer-violation"
+    ],
+    "path": "L0/l018-backend-mechanics-as-frontend-complexity.md"
+  },
+  {
+    "id": "l011",
+    "title": "Visual Channel Utilization Audit",
+    "layer": "L1",
+    "secondary_layers": [
+      "L2"
+    ],
+    "date": "2026-02-19",
+    "updated": "2026-04-25",
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "visual-channels",
+      "bertin",
+      "pre-attentive",
+      "audit",
+      "diagnostic-tool",
+      "density-instrumentation"
+    ],
+    "path": "L1/l011-visual-channel-audit.md"
+  },
+  {
+    "id": "l013",
+    "title": "Keyboard Density in Expert Workspaces Is L2, Not L4",
+    "layer": "L2",
+    "secondary_layers": [],
+    "date": "2026-02-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l004"
+    ],
+    "tags": [
+      "keyboard-shortcuts",
+      "expert-workspaces",
+      "processing-fluency",
+      "choice-overload",
+      "scheibehenne"
+    ],
+    "path": "L2/l013-keyboard-density-is-l2.md"
+  },
+  {
+    "id": "l016",
+    "title": "Near-Miss Color Asymmetry — Small Deviations Cost More Than Large Departures",
+    "layer": "L2",
+    "secondary_layers": [],
+    "date": "2026-02-26",
+    "updated": "2026-04-25",
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "color-perception",
+      "near-miss-asymmetry",
+      "non-riemannian",
+      "OKLCH",
+      "design-tokens",
+      "bujack-2022",
+      "brainard-2022",
+      "tri-axis-expansion",
+      "pre-attentive-priority",
+      "brand-prior-reassignment",
+      "iso-styling"
+    ],
+    "path": "L2/l016-near-miss-color-asymmetry.md"
+  },
+  {
+    "id": "l024",
+    "title": "AA-Constrained Token Ladder",
+    "layer": "L2",
+    "secondary_layers": [
+      "meta"
+    ],
+    "date": "2026-04-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l011",
+      "l013",
+      "l016"
+    ],
+    "tags": [
+      "aa-constrained-token-ladder",
+      "wcag-aa",
+      "design-system-tokens",
+      "contrast-discipline",
+      "by-construction",
+      "brand-color-variants"
+    ],
+    "path": "L2/l024-aa-constrained-token-ladder.md"
+  },
+  {
+    "id": "l023",
+    "title": "Falsifiability Triad",
+    "layer": "L3",
+    "secondary_layers": [
+      "L2",
+      "L4"
+    ],
+    "date": "2026-04-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l015",
+      "l016",
+      "l021",
+      "l022"
+    ],
+    "tags": [
+      "falsifiability-triad",
+      "honest-claim",
+      "l3-positive-shape",
+      "perception-bias-replacement",
+      "sincerity-test",
+      "verifiable-copy"
+    ],
+    "path": "L3/l023-falsifiability-triad.md"
+  },
+  {
+    "id": "l003",
+    "title": "Pre-Send vs Post-Response",
+    "layer": "L4",
+    "secondary_layers": [
+      "L1"
+    ],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "intervention-timing",
+      "pre-send",
+      "schema",
+      "trust",
+      "ai-context"
+    ],
+    "path": "L4/l003-pre-send-vs-post-response.md"
+  },
+  {
+    "id": "l006",
+    "title": "Infrastructure ≠ Activation",
+    "layer": "L4",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "infrastructure",
+      "activation",
+      "perception-infrastructure",
+      "cognograph"
+    ],
+    "path": "L4/l006-infrastructure-vs-activation.md"
+  },
+  {
+    "id": "l008",
+    "title": "Epistemic Asymmetry as L4 Problem",
+    "layer": "L4",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "epistemic-asymmetry",
+      "ai-systems",
+      "transparency",
+      "pre-send",
+      "expert-client-gap"
+    ],
+    "path": "L4/l008-epistemic-asymmetry.md"
+  },
+  {
+    "id": "l022",
+    "title": "L4 Symmetry Threshold",
+    "layer": "L4",
+    "secondary_layers": [
+      "meta"
+    ],
+    "date": "2026-04-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l021",
+      "l014",
+      "l016"
+    ],
+    "tags": [
+      "l4-symmetry-threshold",
+      "cancel-clicks-ratio",
+      "path-symmetry",
+      "numeric-hard-fail",
+      "regulator-validated",
+      "cancel-flow"
+    ],
+    "path": "L4/l022-l4-symmetry-threshold.md"
+  },
+  {
+    "id": "l001",
+    "title": "Generative vs Evaluative",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "methodology",
+      "derivation-protocol",
+      "persona-driven",
+      "mode-2"
+    ],
+    "path": "meta/l001-generative-vs-evaluative.md"
+  },
+  {
+    "id": "l002",
+    "title": "Access vs Signal Mechanisms",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "layer-taxonomy",
+      "access-vs-signal",
+      "methodology",
+      "marketing"
+    ],
+    "path": "meta/l002-access-vs-signal.md"
+  },
+  {
+    "id": "l004",
+    "title": "Workspace vs Product Separation",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "methodology",
+      "workspace-vs-product",
+      "intervention-target",
+      "system-vs-execution"
+    ],
+    "path": "meta/l004-workspace-vs-product-separation.md"
+  },
+  {
+    "id": "l005",
+    "title": "Recursive Validation",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "methodology",
+      "recursive",
+      "self-reference",
+      "case-study"
+    ],
+    "path": "meta/l005-recursive-validation.md"
+  },
+  {
+    "id": "l007",
+    "title": "Consistent Gap Identification Across Rounds",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "methodology",
+      "convergent-validation",
+      "persona-panels",
+      "load-bearing-requirements"
+    ],
+    "path": "meta/l007-convergent-gap-identification.md"
+  },
+  {
+    "id": "l010",
+    "title": "Constraints Are Distributions, Not Constants",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-19",
+    "updated": "2026-04-25",
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "constraints-as-distributions",
+      "neurodivergence",
+      "calibration",
+      "population-science",
+      "score-band-tri-cluster"
+    ],
+    "path": "meta/l010-constraints-are-distributions.md"
+  },
+  {
+    "id": "l014",
+    "title": "PFD Ethics Are Operational, Not Structural",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-02-24",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [],
+    "tags": [
+      "ethics",
+      "operational-ethics",
+      "structural-ethics",
+      "VSD",
+      "business-model",
+      "friedman-kahn-borning"
+    ],
+    "path": "meta/l014-operational-vs-structural-ethics.md"
+  },
+  {
+    "id": "l017",
+    "title": "Iterative Analysis Regression Is Deeper Visibility, Not Failure",
+    "layer": "meta",
+    "secondary_layers": [],
+    "date": "2026-03-10",
+    "updated": "2026-04-25",
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l006"
+    ],
+    "tags": [
+      "iterative-analysis",
+      "regression",
+      "impasse",
+      "forge",
+      "ralph-loop",
+      "measurement-artifact-taxonomy"
+    ],
+    "path": "meta/l017-iterative-regression-is-visibility.md"
+  },
+  {
+    "id": "l020",
+    "title": "International Citation Expansion Surfaced Pre-Verbal Arousal Backbone and Cultural Calibration Meta-Rule",
+    "layer": "meta",
+    "secondary_layers": [
+      "L0",
+      "L1",
+      "L2",
+      "L3",
+      "L4"
+    ],
+    "date": "2026-04-20",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l007",
+      "l014",
+      "l019"
+    ],
+    "tags": [
+      "citations",
+      "cultural-calibration",
+      "pre-verbal-arousal",
+      "international-research",
+      "methodology",
+      "weird-bias"
+    ],
+    "path": "meta/l020-international-citation-expansion.md"
+  },
+  {
+    "id": "l027",
+    "title": "Internal-Acknowledgment Signals",
+    "layer": "meta",
+    "secondary_layers": [
+      "L3",
+      "L4"
+    ],
+    "date": "2026-04-25",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l014",
+      "l015",
+      "l017"
+    ],
+    "tags": [
+      "internal-acknowledgment",
+      "forensic-evidence",
+      "engineering-as-diagnosis",
+      "escape-hatch",
+      "telemetry-as-ia",
+      "audit-methodology"
+    ],
+    "path": "meta/l027-internal-acknowledgment-signals.md"
+  },
+  {
+    "id": "l029",
+    "title": "Port-Don't-Install Motion Audit",
+    "layer": "meta",
+    "secondary_layers": [
+      "L2",
+      "L4"
+    ],
+    "date": "2026-04-25",
+    "updated": null,
+    "contributor": "Stefan Kovalik",
+    "related": [
+      "l011",
+      "l013",
+      "l014",
+      "l024"
+    ],
+    "tags": [
+      "port-dont-install",
+      "motion-audit",
+      "library-adoption",
+      "prefers-reduced-motion",
+      "engineering-discipline",
+      "hidden-defaults"
+    ],
+    "path": "meta/l029-port-dont-install-motion-audit.md"
+  }
+]

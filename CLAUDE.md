@@ -25,5 +25,22 @@ Postgres + Prisma (encrypted at rest); AWS S3 presigned for credential docs.
 ToS/booking-agreement wording, classification questions, insurance requirements, Jones Act anything,
 cancellation-tier policy, fee structure changes.
 
-## Commands
+## Design tooling (vendored + install commands)
+The visual system is derived and documented in `docs/DESIGN.md` — treat it as the design context
+file (audience, palette, type, signature element). Tooling that produced/maintains it:
+1. **Perception-First Design (PFD)** — vendored at `.claude/skills/pfd/` (SKILL.md + framework +
+   corpus; CC BY-SA 4.0, Stefan Kovalik). Canonical install if re-adding:
+   `/plugin marketplace add skovalik/perception-first-design` then
+   `/plugin install perception-first-design@perception-first-design`.
+   Use Mode 2 (derivation) for new surfaces; Mode 1 (evaluate) to audit built pages.
+2. **Intent (UX strategy system)** — not vendored (17 skills, large). Install:
+   `/plugin marketplace add ghaida/intent` (Claude Code) or `npx skills add ghaida/intent --all`.
+   Used for: anti-pattern catalog (no dark patterns — pairs with rule P-4), UX copy discipline.
+3. **Impeccable (design craft + anti-slop detector)** — vendored at `.claude/skills/impeccable/`
+   (Apache 2.0, Paul Bakaus; compiled plugin build @ ea36002, 2026-08-28). Canonical install:
+   `npx impeccable install` from repo root (adds the design hook; needs per-machine approval),
+   then `/impeccable init` in-agent. Update: `npx impeccable update`.
+   CI idea: `npx impeccable detect apps/web/` alongside `pnpm compliance:check`.
+Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics.
+
 pnpm dev / build / lint; pnpm compliance:check (M-1 gate — currently stub, implement early)
