@@ -1,0 +1,83 @@
+// Auth + account schema (Phase 1: Accounts & Roles, SOW 2.i).
+// Tables follow Better Auth's core model shape; app-specific columns are marked.
+// Deliberately absent, by rule: SSN/bank/tax fields (P-1 — Stripe Connect Express owns KYC),
+// medical/health fields (D-1), live location (D-3 — home port lives on profile models, coarse only).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // CREW offers services; BOAT books them (M-1 vocabulary). Admin flag is deliberately
+  // not a signup option — operator accounts are promoted manually in the database.
+  accountType String
+
+  // Rule D-2: signup requires attesting the marketplace disclaimer; server stamps when.
+  disclaimerAccepted   Boolean   @default(false)
+  disclaimerAcceptedAt DateTime?
+
+  sessions Session[]
+  accounts Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  issuer                String?
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}

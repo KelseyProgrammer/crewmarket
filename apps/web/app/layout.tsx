@@ -30,6 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <a href="/directory">Directory</a>
                 <a href="/sign-up?role=CREW">List services</a>
                 <a href="/sign-up?role=BOAT">Book crew</a>
+                <a href="/account">Account</a>
               </nav>
             </div>
           </Container>

@@ -1,0 +1,22 @@
+# Local dev services. Postgres only — Stripe owns KYC/bank/tax data (P-1),
+# credential docs live in S3 (V-2); neither ever lands in this database.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: crewmarket-postgres
+    environment:
+      POSTGRES_USER: crewmarket
+      POSTGRES_PASSWORD: crewmarket # local dev only; hosted DB credentials come from the host provider
+      POSTGRES_DB: crewmarket_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crewmarket -d crewmarket_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

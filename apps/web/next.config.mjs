@@ -5,6 +5,6 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 ];
 export default {
-  transpilePackages: ["@crewmarket/ui", "@crewmarket/types", "@crewmarket/payments"],
+  transpilePackages: ["@crewmarket/ui", "@crewmarket/types", "@crewmarket/payments", "@crewmarket/db"],
   async headers() { return [{ source: "/(.*)", headers: securityHeaders }]; },
 };
