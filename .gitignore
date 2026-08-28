@@ -5,5 +5,7 @@ dist/
 .env
 .env.*
 !.env.example
+.claude/settings.local.json
+.impeccable/config.local.json
 *.pem
 .DS_Store

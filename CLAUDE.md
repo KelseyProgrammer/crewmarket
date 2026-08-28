@@ -38,8 +38,11 @@ file (audience, palette, type, signature element). Tooling that produced/maintai
    Used for: anti-pattern catalog (no dark patterns — pairs with rule P-4), UX copy discipline.
 3. **Impeccable (design craft + anti-slop detector)** — vendored at `.claude/skills/impeccable/`
    (Apache 2.0, Paul Bakaus; compiled plugin build @ ea36002, 2026-08-28). Canonical install:
-   `npx impeccable install` from repo root (adds the design hook; needs per-machine approval),
-   then `/impeccable init` in-agent. Update: `npx impeccable update`.
+   `npx impeccable skills install` from repo root (CLI ≥2.3 renamed `install`/`update` to
+   `skills install`/`skills update`), then `/impeccable init` in-agent. The design detector hook
+   is toggled in-agent via `/impeccable hooks on|off|status` — enabled for this project 8/28/2026
+   (shared `.impeccable/config.json`; per-machine consent + Claude Code manifest are gitignored,
+   so each new machine re-runs `/impeccable hooks on` once).
    CI idea: `npx impeccable detect apps/web/` alongside `pnpm compliance:check`.
 Root `PRODUCT.md` (impeccable product-schema) and root `DESIGN.md` (DESIGN.md format spec, tokens + eight sections) are pre-written from the signed SOW and repo docs — `/impeccable init` should be a confirmation pass, not a fresh interview; `/impeccable document` should treat root DESIGN.md as the incumbent record. Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics; the lint now also scans root-level md.
 
