@@ -43,4 +43,4 @@ file (audience, palette, type, signature element). Tooling that produced/maintai
    CI idea: `npx impeccable detect apps/web/` alongside `pnpm compliance:check`.
 Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics.
 
-pnpm dev / build / lint; pnpm compliance:check (M-1 gate — currently stub, implement early)
+pnpm dev / build / lint; pnpm compliance:check (M-1 gate — implemented, keep green)
