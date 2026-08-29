@@ -31,9 +31,54 @@ model User {
 
   sessions Session[]
   accounts Account[]
+  bookings Booking[] @relation("BoatBookings")
 
   @@unique([email])
   @@map("user")
+}
+
+// ---------- Booking Flow (SOW 2.i, docs/BOOKING_BRIEF.md) ----------
+// State lives in packages/types booking-machine; every write goes through
+// canTransition/transition. Money in integer cents (Stripe-ready). Deliberately
+// absent, by rule: rating/penalty fields on decline (M-2), any clock-in or
+// supervision fields (M-3) — TRIP_START/COMPLETE are attestation timestamps only.
+
+model Booking {
+  id            String @id @default(cuid())
+  crewProfileId String // seed registry profile (crew accounts drive it via CrewProfileClaim)
+  boatUserId    String
+  boatUser      User   @relation("BoatBookings", fields: [boatUserId], references: [id], onDelete: Cascade)
+
+  tripType  String
+  dates     Json // ISO "YYYY-MM-DD" strings, coarse dates only (D-3)
+  rateCents Int // crew-set rate basis × trip type × days — mechanical, never platform-set (M-2)
+  feeCents  Int // itemized platform fee (P-3); side + % from one config constant, client decision open
+
+  state String @default("REQUESTED")
+
+  piAttestedAt  DateTime // D-4: boat attested P&I coverage on the request form
+  requestedAt   DateTime  @default(now())
+  acceptedAt    DateTime?
+  fundsHeldAt   DateTime? // simulated until the Stripe Connect phase (client keys, SOW 6.i)
+  tripStartedAt DateTime?
+  completedAt   DateTime? // anchors the 48h delayed-payout window (P-2)
+  closedAt      DateTime? // any terminal state
+  updatedAt     DateTime  @updatedAt
+
+  @@index([boatUserId])
+  @@index([crewProfileId])
+  @@map("booking")
+}
+
+// Demo bridge for the crew-identity gap (BOOKING_BRIEF): seed profiles are JSON,
+// not user-owned; a claim lets one CREW account drive one registry profile.
+// Replaced by real crew onboarding in a later phase.
+model CrewProfileClaim {
+  profileId String   @id
+  userId    String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("crew_profile_claim")
 }
 
 model Session {

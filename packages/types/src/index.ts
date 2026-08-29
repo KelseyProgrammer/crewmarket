@@ -89,3 +89,4 @@ export const Review = z.object({
 
 // ---------- BOOKING STATE MACHINE (SOW 2.i Booking Flow) ----------
 export * from "./booking-machine";
+export * from "./booking-pricing";

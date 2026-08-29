@@ -8,4 +8,4 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-export type { User, Session, Account, Verification } from "@prisma/client";
+export type { User, Session, Account, Verification, Booking, CrewProfileClaim } from "@prisma/client";
