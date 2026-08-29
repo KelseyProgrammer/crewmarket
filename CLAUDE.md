@@ -46,4 +46,11 @@ file (audience, palette, type, signature element). Tooling that produced/maintai
    CI idea: `npx impeccable detect apps/web/` alongside `pnpm compliance:check`.
 Root `PRODUCT.md` (impeccable product-schema) and root `DESIGN.md` (DESIGN.md format spec, tokens + eight sections) are pre-written from the signed SOW and repo docs — `/impeccable init` should be a confirmation pass, not a fresh interview; `/impeccable document` should treat root DESIGN.md as the incumbent record. Design changes must still pass `pnpm compliance:check` (M-1) — copy rules outrank aesthetics; the lint now also scans root-level md.
 
+## Dev methodology tooling
+**Superpowers** (TDD, systematic debugging, brainstorming, plan writing/execution, git worktrees;
+MIT, Jesse Vincent) — enabled project-wide as a plugin via `.claude/settings.json`
+(`enabledPlugins`), not vendored (large, plugin-shaped: skills + commands + session hook).
+Canonical install if re-adding: `/plugin install superpowers@claude-plugins-official`.
+New machines get an install prompt on first trusted session in this repo.
+
 pnpm dev / build / lint; pnpm compliance:check (M-1 gate — implemented, keep green)

@@ -34,3 +34,11 @@ the rest stay as searchable history.
 **Layer(s):** L2 (primary), L4 (dead-end registry plates pre-booking-phase), L3 (pre-launch social-proof absence as intentional deviation)
 **Promote?:** maybe
 **Notes:** Pattern: single-token accent systems should carry a paired *text-grade* variant from day one (--accent vs --accent-text); the evaluation could not have caught this from taste alone — only computed ratios surfaced it. Also: phase-honest scoring — L4 dead ends that are known unbuilt phases still cost the visitor, score them but classify the intent.
+
+### 2026-08-29 — Directory re-execution probes (three directions, navy/white/brass pinned)
+**Type:** html
+**Domain:** Marketplace directory (sportfishing crew)
+**Key finding:** The incumbent "Engraved Registry" is itself the rut's opposite pole — the governing metaphor's literal reading (registry → antique document). User-reported "stuffy/flat/generic" traces to L1: the world was derived from the product's metaphor, not the audience's lived visual world (helm electronics, dock tags, tournament boards).
+**Layer(s):** L1, L2
+**Promote?:** maybe
+**Notes:** Probes at artifact caf986f4; seed key cc54bbda (impeccable concept-seed). Labanotation challenger donated duration-as-length availability encoding — a decorative-free way to add expression on an information channel (satisfies L0 constraint R1).
