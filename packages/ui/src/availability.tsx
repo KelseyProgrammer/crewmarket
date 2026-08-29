@@ -4,6 +4,34 @@
 
 export type DayCell = { date: string; open: boolean };
 
+export function AvailabilityStrip({
+  av,
+  start,
+  days = 14,
+}: {
+  av: { date: string; status: string }[];
+  start: string;
+  days?: number;
+}) {
+  const window = availabilityWindow(av, start, days);
+  const openCount = window.filter((c) => c.open).length;
+  return (
+    <div
+      className="avail-strip"
+      role="img"
+      aria-label={`${openCount} of next ${days} days open`}
+    >
+      {window.map((c) => (
+        <i
+          key={c.date}
+          className={`avail-strip__day${c.open ? " avail-strip__day--open" : ""}`}
+          data-date={c.date}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function availabilityWindow(
   av: { date: string; status: string }[],
   start: string,
