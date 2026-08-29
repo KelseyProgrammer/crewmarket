@@ -32,6 +32,17 @@ listed as scope, not tasks; its full-granularity plan is written the day the dir
 
 ## Phase 0 — direction-agnostic mechanics (executable now)
 
+> **EXECUTED 2026-08-29** — commits `969e750` (0.1), `61c235e` (0.2), `d97dc0a` (0.3),
+> `d81404f` (0.4). Exit criteria met: 7 tests green, `compliance:check` green, web build
+> green, no visible site change. Deviations from the written tasks, discovered red-green:
+> 1. vitest pinned to `^3` (v4's rolldown native binding fails to install on this machine)
+>    and the config is `vitest.config.mts` — vite 7 is ESM-only, a `.ts` config loads as
+>    CJS and crashes.
+> 2. `esbuild: { jsx: "automatic" }` added to the vitest config — without it JSX compiles
+>    to the classic runtime and throws `React is not defined`.
+> 3. The 0.3 cell-count assertion uses `/avail-strip__day(?!-)/g` — the modifier class
+>    contains the base class as a substring, so the plan's original regex double-counts.
+
 ### Task 0.1 — Test infrastructure for `@crewmarket/ui`
 
 **Files:**
