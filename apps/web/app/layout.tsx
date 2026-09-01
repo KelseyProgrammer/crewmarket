@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
+import { Oswald, Archivo, Martian_Mono } from "next/font/google";
 import { DisclaimerD2, Container } from "@crewmarket/ui";
 import "./globals.css";
 
-// Fonts load via <link> below. If you later want self-hosted fonts (better L2 fluency:
-// no FOUT), switch to next/font/google — requires network access at build time.
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Archivo:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap";
+// Self-hosted at build via next/font (no FOUT). tokens.css resolves the --next-font-* vars.
+const display = Oswald({ subsets: ["latin"], weight: ["500", "700"], variable: "--next-font-display" });
+const body = Archivo({ subsets: ["latin"], weight: ["400", "600"], variable: "--next-font-body" });
+const mono = Martian_Mono({ subsets: ["latin"], weight: "400", variable: "--next-font-mono" });
 
 export const metadata = {
   title: "Crew Market — Sportfishing Crew Directory & Booking",
@@ -15,12 +16,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href={FONTS_HREF} />
-      </head>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
         <header className="masthead on-navy">
           <Container wide>
