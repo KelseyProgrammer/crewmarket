@@ -1,11 +1,6 @@
 @import "@crewmarket/ui/src/tokens.css";
 
-/* font stacks (loaded via <link> in layout.tsx) */
-:root {
-  --font-display: "Libre Caslon Display", "Iowan Old Style", Georgia, serif;
-  --font-body: "Archivo", system-ui, -apple-system, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
-}
+/* fonts: next/font in layout.tsx sets --next-font-*, resolved by tokens.css */
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }

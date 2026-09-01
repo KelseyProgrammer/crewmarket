@@ -1,28 +1,33 @@
 /* tokens.css — Crew Market visual system (docs/DESIGN.md).
-   Regal seafaring / structured utility. Navy field, crisp white paper, brass hardware.
-   Brass carries exactly two meanings: verification and the primary action. */
+   The weigh-in board: tournament board rows, monumental condensed caps, navy/white/brass.
+   Brass carries exactly two meanings: verification and the primary action
+   (plus the availability strip's bookable-state fill, recorded in DESIGN.md).
+   The board lists; it never ranks — no ordinals anywhere (M-2/P-4). */
 
 :root {
   /* palette */
   --navy-deep: #0a1d30;
   --navy-panel: #12314e;
   --white-crisp: #f8fafb;
+  --board-bg: #f6f7f8;       /* page ground; rows sit white on this */
   --brass: #a9822f;          /* graphic/large-accent brass: seal ring, borders, focus, ≥3:1 */
   --brass-text: #8a6a1e;     /* text-grade brass on white fields: 5.05:1, AA for small text */
   --brass-bright: #d7b36a;
   --mist: #8fa6ba;
+  --navy-muted: #b7c6d4;     /* long-form text on navy */
 
   /* derived */
   --ink: #10222f;               /* body text on white */
   --ink-soft: #4a5c6b;          /* secondary text on white */
   --line-on-white: rgba(16, 34, 47, 0.14);
+  --line-strong: rgba(16, 34, 47, 0.3);
   --line-on-navy: rgba(143, 166, 186, 0.28);
   --brass-engrave: rgba(169, 130, 47, 0.45);
 
   /* type */
-  --font-display: var(--next-font-display, "Libre Caslon Display", serif);
+  --font-display: var(--next-font-display, "Oswald", "Archivo", sans-serif);
   --font-body: var(--next-font-body, "Archivo", system-ui, sans-serif);
-  --font-mono: var(--next-font-mono, "IBM Plex Mono", ui-monospace, monospace);
+  --font-mono: var(--next-font-mono, "Martian Mono", ui-monospace, monospace);
 
   /* scale (4px grid) */
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
