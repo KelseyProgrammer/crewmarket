@@ -1,0 +1,456 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-01T00:00:00Z",
+  "title": "Design System: Crew Market",
+  "extensions": {
+    "colorMeta": {
+      "navy-deep": {
+        "role": "primary",
+        "displayName": "Navy Deep",
+        "canonical": "#0a1d30",
+        "tonalRamp": [
+          "#040d17",
+          "#0a1d30",
+          "#12314e",
+          "#1c4568",
+          "#2f5c83",
+          "#54799c",
+          "#8fa6ba",
+          "#d3dee7"
+        ]
+      },
+      "navy-panel": {
+        "role": "primary",
+        "displayName": "Navy Panel",
+        "canonical": "#12314e",
+        "tonalRamp": [
+          "#081724",
+          "#0d2238",
+          "#12314e",
+          "#1d446a",
+          "#2f5c83",
+          "#54799c",
+          "#8fa6ba",
+          "#d3dee7"
+        ]
+      },
+      "brass": {
+        "role": "primary",
+        "displayName": "Graphic Brass",
+        "canonical": "#a9822f",
+        "tonalRamp": [
+          "#2f240c",
+          "#4d3a14",
+          "#6c521a",
+          "#8a6a1e",
+          "#a9822f",
+          "#c09a4a",
+          "#d7b36a",
+          "#efe0bc"
+        ]
+      },
+      "brass-text": {
+        "role": "primary",
+        "displayName": "Brass Text",
+        "canonical": "#8a6a1e",
+        "tonalRamp": [
+          "#241a08",
+          "#3f2e0e",
+          "#5c4415",
+          "#7d5f1b",
+          "#8a6a1e",
+          "#a9822f",
+          "#cfa855",
+          "#ecdcb4"
+        ]
+      },
+      "brass-text-hover": {
+        "role": "primary",
+        "displayName": "Brass Text Hover",
+        "canonical": "#7d5f1b",
+        "tonalRamp": [
+          "#241a08",
+          "#3f2e0e",
+          "#5c4415",
+          "#7d5f1b",
+          "#8a6a1e",
+          "#a9822f",
+          "#cfa855",
+          "#ecdcb4"
+        ]
+      },
+      "brass-bright": {
+        "role": "secondary",
+        "displayName": "Brass Bright",
+        "canonical": "#d7b36a",
+        "tonalRamp": [
+          "#3a2c0e",
+          "#66501d",
+          "#8a6a1e",
+          "#a9822f",
+          "#c09a4a",
+          "#d7b36a",
+          "#e4cb96",
+          "#f4e9cf"
+        ]
+      },
+      "board-bg": {
+        "role": "neutral",
+        "displayName": "Board Ground",
+        "canonical": "#f6f7f8",
+        "tonalRamp": [
+          "#20262b",
+          "#3c454d",
+          "#5d6870",
+          "#848e96",
+          "#adb5bb",
+          "#d0d5d9",
+          "#f6f7f8",
+          "#fbfcfc"
+        ]
+      },
+      "row-face": {
+        "role": "neutral",
+        "displayName": "Row Face",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#23292e",
+          "#40484f",
+          "#616b73",
+          "#878f97",
+          "#aeb4ba",
+          "#d2d6da",
+          "#f1f2f3",
+          "#ffffff"
+        ]
+      },
+      "white-crisp": {
+        "role": "neutral",
+        "displayName": "White Crisp",
+        "canonical": "#f8fafb",
+        "tonalRamp": [
+          "#1d2a33",
+          "#3a4d5c",
+          "#5d7383",
+          "#8598a5",
+          "#aebbc4",
+          "#d3dbe0",
+          "#f8fafb",
+          "#fcfdfe"
+        ]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "#8fa6ba",
+        "tonalRamp": [
+          "#141d24",
+          "#2b3c49",
+          "#475d6f",
+          "#657f94",
+          "#8fa6ba",
+          "#aebfce",
+          "#cdd8e1",
+          "#ebf0f4"
+        ]
+      },
+      "navy-muted": {
+        "role": "neutral",
+        "displayName": "Navy Muted",
+        "canonical": "#b7c6d4",
+        "tonalRamp": [
+          "#1a242d",
+          "#33454f",
+          "#526876",
+          "#74899a",
+          "#98abbb",
+          "#b7c6d4",
+          "#d4dde6",
+          "#f0f4f7"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#10222f",
+        "tonalRamp": [
+          "#080f15",
+          "#10222f",
+          "#1d3547",
+          "#2f4c61",
+          "#4a5c6b",
+          "#71828f",
+          "#a2aeb8",
+          "#d8dee2"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#4a5c6b",
+        "tonalRamp": [
+          "#131920",
+          "#232f39",
+          "#374753",
+          "#4a5c6b",
+          "#667887",
+          "#8b99a5",
+          "#b3bcc5",
+          "#e0e4e8"
+        ]
+      },
+      "line-on-white": {
+        "role": "neutral",
+        "displayName": "Line on White",
+        "canonical": "rgba(16, 34, 47, 0.14)"
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Line Strong",
+        "canonical": "rgba(16, 34, 47, 0.3)"
+      },
+      "line-on-navy": {
+        "role": "neutral",
+        "displayName": "Line on Navy",
+        "canonical": "rgba(143, 166, 186, 0.28)"
+      },
+      "brass-engrave": {
+        "role": "primary",
+        "displayName": "Brass Engrave",
+        "canonical": "rgba(169, 130, 47, 0.45)"
+      }
+    },
+    "typographyMeta": {
+      "display-banner": {
+        "displayName": "Display Banner",
+        "purpose": "Directory banner (THE CREW BOARD) only; client-locked clamp, one brass em word max."
+      },
+      "display-hero": {
+        "displayName": "Display Hero",
+        "purpose": "Landing hero headline; max 16ch, balanced wrap."
+      },
+      "title-row": {
+        "displayName": "Row Title",
+        "purpose": "Crew names on board rows, beside the 26px seal coin."
+      },
+      "title-page": {
+        "displayName": "Page Title",
+        "purpose": "Profile and account page names."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings and auth panel title."
+      },
+      "title-minor": {
+        "displayName": "Minor Title",
+        "purpose": "Account status, role-fork plate names, 22px wordmark."
+      },
+      "title-plate": {
+        "displayName": "Plate Title",
+        "purpose": "Role-fork radio plate names on sign-up (Oswald 18px)."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Prose at 16px; 17px hero sub, 15px UI, 13-14px meta; measure 62ch."
+      },
+      "label-nav": {
+        "displayName": "Nav Label",
+        "purpose": "Masthead nav links, mono uppercase."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Badges, form labels, legal lines; tracking 0.08-0.14em by context."
+      },
+      "label-micro": {
+        "displayName": "Micro Label",
+        "purpose": "Fact labels, license lines, seal label, board count."
+      },
+      "label-boardhead": {
+        "displayName": "Boardhead Label",
+        "purpose": "Board column labels; client-locked 8.5px, detector-sanctioned."
+      },
+      "label-cell": {
+        "displayName": "Cell Microlabel",
+        "purpose": "Per-cell units under data values; client-locked 8px, detector-sanctioned."
+      }
+    },
+    "shadows": [
+      {
+        "name": "filters-console",
+        "value": "0 10px 20px -14px rgba(16, 34, 47, 0.35)",
+        "purpose": "Seats the filters bar on the board ground; one of only two shadows in the system."
+      },
+      {
+        "name": "seal-coin-relief",
+        "value": "inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(16, 34, 47, 0.35)",
+        "purpose": "Coined-metal relief on the board seal coin; the second and last shadow."
+      },
+      {
+        "name": "verified-edging",
+        "value": "inset 0 0 0 1px rgba(169, 130, 47, 0.45)",
+        "purpose": "Brass-engrave inset line on verified profile heads and active role-fork plates (drawn edge, not elevation)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-board",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Easing for the availability-strip day fill (0.22s background/border transition)."
+      },
+      {
+        "name": "stagger-day",
+        "value": "18ms",
+        "purpose": "Per-cell transition-delay step; open days paint left-to-right on row hover \u2014 the system's ONLY authored motion. Killed under prefers-reduced-motion."
+      },
+      {
+        "name": "row-invert",
+        "value": "150ms ease",
+        "purpose": "Board row background/color inversion to navy on hover."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "board-collapse",
+        "value": "880px"
+      },
+      {
+        "name": "trail-2col",
+        "value": "760px"
+      },
+      {
+        "name": "masthead-wrap",
+        "value": "560px"
+      },
+      {
+        "name": "single-col",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per screen; Brass Text fill for AA on white text.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Browse the directory</a>",
+      "css": ".ds-btn-primary { display: inline-block; font-family: Archivo, system-ui, sans-serif; font-weight: 600; font-size: 15px; padding: 14px 22px; border-radius: 2px; text-decoration: none; background: #8a6a1e; color: #ffffff; border: 1px solid transparent; transition: background 0.15s; } .ds-btn-primary:hover { background: #7d5f1b; } .ds-btn-primary:focus-visible { outline: 2px solid #a9822f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button (navy field)",
+      "kind": "button",
+      "refersTo": "button-ghost-navy",
+      "description": "Hairline ghost on navy; border and text warm to Brass Bright on hover.",
+      "html": "<div class=\"ds-navy-field\"><a class=\"ds-btn-ghost-navy\" href=\"#\">List my services</a></div>",
+      "css": ".ds-navy-field { background: #0a1d30; padding: 24px; } .ds-btn-ghost-navy { display: inline-block; font-family: Archivo, system-ui, sans-serif; font-weight: 600; font-size: 15px; padding: 14px 22px; border-radius: 2px; text-decoration: none; color: #f8fafb; border: 1px solid rgba(143, 166, 186, 0.28); transition: border-color 0.15s, color 0.15s; } .ds-btn-ghost-navy:hover { border-color: #d7b36a; color: #d7b36a; } .ds-btn-ghost-navy:focus-visible { outline: 2px solid #d7b36a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Board Row",
+      "kind": "custom",
+      "refersTo": "board-row",
+      "description": "The signature component: one crew listing as a full-width six-column board row; hover inverts to navy and paints the availability strip left-to-right.",
+      "html": "<article class=\"ds-row\"><h3 class=\"ds-row-name\"><span class=\"ds-coin\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 28 28\" aria-hidden=\"true\"><path d=\"M9.4 14.2l3 3 6-6.4\" fill=\"none\" stroke=\"#0a1d30\" stroke-width=\"3\" stroke-linecap=\"square\"/></svg></span><a href=\"#\">Marisol Vega</a></h3><p class=\"ds-row-meta\">Islamorada<br>Mate &middot; Deckhand</p><p class=\"ds-row-lic\">OUPV &middot; exp 2027-03<i>passed admin review</i></p><p class=\"ds-row-num\">9<small>seasons</small></p><p class=\"ds-row-rate\">$450<small>sets own rate</small></p><div class=\"ds-row-avail\"><div class=\"ds-strip\"><i class=\"open\"></i><i></i><i class=\"open\"></i><i class=\"open\"></i><i></i><i class=\"open\"></i><i></i></div><small>next open Sep 4</small></div></article>",
+      "css": ".ds-row { display: grid; grid-template-columns: minmax(180px, 2.2fr) 1fr 1fr 0.7fr 0.9fr 1.1fr; gap: 16px; align-items: center; padding: 12px 16px; background: #ffffff; border-bottom: 1px solid rgba(16, 34, 47, 0.14); color: #10222f; font-family: Archivo, system-ui, sans-serif; position: relative; transition: background 0.15s, color 0.15s; } .ds-row-name { font-family: Oswald, Archivo, sans-serif; font-weight: 500; font-size: clamp(22px, 2.6vw, 32px); line-height: 1; text-transform: uppercase; letter-spacing: 0.01em; margin: 0; display: flex; align-items: center; gap: 12px; } .ds-row-name a { color: inherit; text-decoration: none; } .ds-row-name a::after { content: \"\"; position: absolute; inset: 0; } .ds-coin { flex: none; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #d7b36a, #a9822f 70%); box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), 0 1px 2px rgba(16,34,47,0.35); } .ds-row-meta { margin: 0; font-size: 13px; color: #4a5c6b; transition: color 0.15s; } .ds-row-lic { margin: 0; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; } .ds-row-lic i { display: block; font-family: Archivo, system-ui, sans-serif; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 11.5px; color: #4a5c6b; margin-top: 2px; transition: color 0.15s; } .ds-row-num, .ds-row-rate { margin: 0; font-family: 'Martian Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; font-size: 14px; } .ds-row-rate { font-size: 17px; } .ds-row-num small, .ds-row-rate small, .ds-row-avail small { display: block; font-family: 'Martian Mono', ui-monospace, monospace; font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.6; margin-top: 2px; } .ds-strip { display: flex; height: 16px; } .ds-strip i { flex: 1; border: 1px solid rgba(16, 34, 47, 0.14); border-right-width: 0; background: transparent; transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1); } .ds-strip i:last-child { border-right-width: 1px; } .ds-strip i.open { background: #a9822f; border-color: #a9822f; } .ds-strip i:nth-child(2) { transition-delay: 18ms; } .ds-strip i:nth-child(3) { transition-delay: 36ms; } .ds-strip i:nth-child(4) { transition-delay: 54ms; } .ds-strip i:nth-child(5) { transition-delay: 72ms; } .ds-strip i:nth-child(6) { transition-delay: 90ms; } .ds-strip i:nth-child(7) { transition-delay: 108ms; } .ds-row:hover { background: #0a1d30; color: #f8fafb; } .ds-row:hover .ds-row-meta, .ds-row:hover .ds-row-lic i { color: #8fa6ba; } .ds-row:hover .ds-row-rate { color: #d7b36a; } .ds-row:hover .ds-strip i { border-color: rgba(143, 166, 186, 0.28); } .ds-row:hover .ds-strip i.open { background: #d7b36a; border-color: #d7b36a; } .ds-row:focus-within { outline: 3px solid #a9822f; outline-offset: -3px; } @media (prefers-reduced-motion: reduce) { .ds-row, .ds-row *, .ds-strip i { transition: none !important; } }"
+    },
+    {
+      "name": "Verified Seal (profile ring)",
+      "kind": "custom",
+      "refersTo": "seal",
+      "description": "Engraved ring seal in graphic brass with mono Brass Text label; rendered only when admin-set verified is true (V-1).",
+      "html": "<span class=\"ds-seal\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 28 28\" aria-hidden=\"true\"><circle cx=\"14\" cy=\"14\" r=\"12.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"14\" cy=\"14\" r=\"9.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"0.8\" stroke-dasharray=\"1.6 2.2\"/><path d=\"M9.4 14.2l3 3 6-6.4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"square\"/></svg><span class=\"ds-seal-label\">Verified</span></span>",
+      "css": ".ds-seal { display: inline-flex; align-items: center; gap: 6px; color: #a9822f; } .ds-seal-label { font-family: 'Martian Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8a6a1e; }"
+    },
+    {
+      "name": "Filter Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Filters-bar field: Oswald label (the one display-face label) over a Board Ground select with strong hairline.",
+      "html": "<label class=\"ds-filter\">Home port<select class=\"ds-filter-select\"><option>Any port</option><option>Islamorada</option></select></label>",
+      "css": ".ds-filter { display: flex; flex-direction: column; gap: 4px; font-family: Oswald, Archivo, sans-serif; font-weight: 500; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #4a5c6b; } .ds-filter-select { font-family: Archivo, system-ui, sans-serif; font-size: 15px; color: #10222f; padding: 9px 10px; border: 1px solid rgba(16, 34, 47, 0.3); border-radius: 2px; background: #f6f7f8; min-width: 160px; } .ds-filter-select:focus-visible { outline: 2px solid #a9822f; outline-offset: 2px; }"
+    },
+    {
+      "name": "Booking State Badge",
+      "kind": "chip",
+      "refersTo": "state-badge",
+      "description": "Mono hairline badge; funds-held/paid states edge in brass; weather cancellation is Navy Panel information, never error red. User copy says Funds held, never escrow.",
+      "html": "<span class=\"ds-badge ds-badge-brass\">Funds held</span> <span class=\"ds-badge ds-badge-weather\">Weather cancellation</span>",
+      "css": ".ds-badge { font-family: 'Martian Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(16, 34, 47, 0.14); border-radius: 2px; padding: 3px 8px; color: #10222f; } .ds-badge-brass { border-color: rgba(169, 130, 47, 0.45); color: #8a6a1e; } .ds-badge-weather { color: #12314e; }"
+    },
+    {
+      "name": "Masthead",
+      "kind": "nav",
+      "refersTo": "masthead",
+      "description": "Navy bar with brass-engrave seam; wordmark Market in Brass Bright; mono nav in Mist warming to Brass Bright.",
+      "html": "<header class=\"ds-masthead\"><a class=\"ds-wordmark\" href=\"#\">Crew <b>Market</b></a><nav class=\"ds-mast-nav\"><a href=\"#\">Directory</a><a href=\"#\">List services</a><a href=\"#\">Book crew</a><a href=\"#\">Account</a></nav></header>",
+      "css": ".ds-masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 16px 24px; background: #0a1d30; border-bottom: 1px solid rgba(169, 130, 47, 0.45); } .ds-wordmark { font-family: Oswald, Archivo, sans-serif; font-weight: 500; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; color: #f8fafb; text-decoration: none; } .ds-wordmark b { color: #d7b36a; font-weight: inherit; } .ds-mast-nav { display: flex; gap: 24px; } .ds-mast-nav a { font-family: 'Martian Mono', ui-monospace, monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; color: #8fa6ba; } .ds-mast-nav a:hover { color: #d7b36a; } .ds-mast-nav a:focus-visible { outline: 2px solid #d7b36a; outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Weigh-In Board",
+    "overview": "Crew Market's interface is a tournament weigh-in board: the kind of official results board posted at a South Florida dock, read natively by the audience as the institution speaking. The directory is one monumental board of full-width rows \u2014 never a card grid. A deep navy field carries the banner, masthead, and footer; white rows sit on a cool grey board ground; monumental condensed caps (Oswald) are the matter of the page, not decoration on it; and brass appears only where it has a defined meaning, like metal hardware on a boat. Hovering a row inverts it to navy \u2014 the board lights the lane you're on. This world replaced the retired \"Engraved Registry\" system wholesale (direction locked by the client 2026-09-01: probe C, concept-seed cc54bbda index 6, artifact caf986f4). Crucially, the board lists \u2014 it never ranks. A board of rows wants to read as a leaderboard; the system refuses that structurally, because implied ranking is a compliance hazard (M-2/P-4), not just a taste call.",
+    "keyCharacteristics": [
+      "One monumental board: full-width white rows on a grey ground under a navy banner \u2014 no cards",
+      "Brass as a closed ledger of meanings: verification, primary action, open-day fill, display accent",
+      "Oswald condensed caps as matter, Archivo body, Martian Mono data \u2014 self-hosted via next/font",
+      "Flat, edge-drawn surfaces; 2px \"plate\" radius; row hover inverts to navy",
+      "Exactly one authored motion moment (the availability strip painting in on row hover)",
+      "Compliance-bound copy: marketplace vocabulary only (M-1), D-2 disclaimer persistent, no ranks"
+    ],
+    "rules": [
+      {
+        "name": "The Brass Ledger Rule",
+        "body": "Brass carries exactly four meanings and no others: verification (the seal coin and brass-engrave edging), the primary action, the availability strip's open-day fill (bookable-state data, not mood), and the display accent (the wordmark's \"Market\"; at most one em word per display headline). Any fifth meaning dilutes all four. Small text on white always uses the text-grade #8a6a1e.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Field Rule",
+        "body": "Every section is either navy field or white-on-board-ground; the two never blend, gradient, or overlap mid-section. Transitions happen at hard section boundaries. Emphasis inside running text on navy is by weight (white, 600), never by brass \u2014 brass in running text would dilute the seal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Locked Ramp Rule",
+        "body": "The ramp's extremes \u2014 clamp(40px, 7vw, 84px) banner display, 8.5px boardhead labels, 8px cell microlabels \u2014 are client-locked values from the direction lock (artifact caf986f4) and are suppressed as sanctioned in the design detector config (.impeccable/config.json \u2192 detector.ignoreValues). Do not \"normalize\" them; do not extend the ramp past them either.",
+        "section": "typography"
+      },
+      {
+        "name": "The Data-Is-Mono Rule",
+        "body": "Every numeric or registry-flavored string \u2014 column labels, license class + expiry, tabular values (with font-variant-numeric: tabular-nums), state badges, counts, legal lines \u2014 is Martian Mono uppercase. Archivo never carries data furniture; Oswald never drops below title size.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Rank Rule",
+        "body": "No ordinals, rank numbers, position badges, or sequential registry furniture anywhere on the board or any listing surface \u2014 order is the visitor's filter, never a score (compliance M-2/P-4). CrewCard has no ordinal prop by design and a unit test asserts none renders. Counts are census, never position: \"25 of 25 listed\", never \"#1\".",
+        "section": "layout"
+      },
+      {
+        "name": "The Drawn-Edge Rule",
+        "body": "New surfaces earn separation with a border or a 2px navy rule, not a shadow. The filters-bar grounding shadow and the seal coin's coined relief are the closed set of shadows.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Motion Rule",
+        "body": "The availability strip's left-to-right 18ms stagger on row hover is the system's only authored motion. Everything else is instant or a plain \u22640.22s property transition. No entrance animations, no scroll effects, no parallax \u2014 do not add any.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do run `pnpm compliance:check` after any copy change; M-1 marketplace vocabulary (crew \"offer services\" / boats \"book\") is binding and CI-enforced.",
+      "Do keep the D-2 disclaimer verbatim at all four placements: persistent footer, signup, every profile, booking flow.",
+      "Do hold brass to the four ledger meanings (verification, primary action, open-day fill, display accent) and always use text-grade #8a6a1e for small text on white.",
+      "Do keep counts as census (\"25 of 25 listed\") and order as the visitor's filter \u2014 never a score, position, or rank (M-2/P-4).",
+      "Do keep the whole board row as one hit area with the navy inversion hover and the \u22123px brass focus-within outline; keep focus-visible rings everywhere (brass on white, Brass Bright on navy).",
+      "Do keep the availability-strip stagger as the only motion and keep it dead under prefers-reduced-motion.",
+      "Do label all demo data as synthetic."
+    ],
+    "donts": [
+      "Don't use employment-implying language; the M-1 lint enumerates the banned vocabulary and fails the build.",
+      "Don't add ordinals, rank numbers, medals, \"top\" badges, or any sequential registry furniture \u2014 the board lists, it never ranks.",
+      "Don't introduce new eyebrows or kickers. The old world's Eyebrow Rule is retired and the directory/trail eyebrows were deleted; the hero coordinates line is the single sanctioned survivor until that surface is redesigned.",
+      "Don't add entrance, scroll, or hover motion beyond the availability-strip stagger.",
+      "Don't introduce new hues, gradients, pill radii, or shadows beyond the two sanctioned ones.",
+      "Don't write \"escrow\" in user-facing text \u2014 it is \"funds held\" / \"payment held\".",
+      "Don't exceed five chunks on a board row or four filters on the directory.",
+      "Don't render a verification seal from self-reported data (V-1 admin-set only), and don't let any surface imply the platform guarantees competence \u2014 it verifies documents."
+    ]
+  }
+}

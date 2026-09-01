@@ -1,7 +1,7 @@
 /* tokens.css — Crew Market visual system (docs/DESIGN.md).
    The weigh-in board: tournament board rows, monumental condensed caps, navy/white/brass.
-   Brass carries exactly two meanings: verification and the primary action
-   (plus the availability strip's bookable-state fill, recorded in DESIGN.md).
+   Brass is a closed four-entry ledger (root DESIGN.md "Brass Ledger"): verification,
+   the primary action, the availability strip's open-day fill, and the display accent.
    The board lists; it never ranks — no ordinals anywhere (M-2/P-4). */
 
 :root {

@@ -24,8 +24,15 @@
 - **Pushed to GitHub** (8/28/2026): https://github.com/KelseyProgrammer/crewmarket — origin over HTTPS via `gh` (SSH key is passphrase-locked; `gh auth setup-git` configured as credential helper).
 - **Phase 1 Accounts & Roles built** (8/28/2026): Better Auth 1.7 (email/password) + `packages/db` (Prisma 6 / Postgres, Better Auth core tables + `accountType` CREW|BOAT + `disclaimerAccepted(At)` for D-2). Sign-up (role fork, required verbatim D-2 checkbox, server-side hook rejects without it and stamps time), sign-in, middleware cookie gate, `/account` role-branched shell with honest "next on the build" copy. Local DB: colima + docker compose (`docker-compose.yml`, postgres:17-alpine, db `crewmarket_dev`, user/pass `crewmarket`). Docker Desktop is NOT installed — use `colima start` first. `.env.local` (root + apps/web, gitignored) carries DATABASE_URL/BETTER_AUTH_SECRET; `packages/db/.env` symlinks root `.env.local` for the Prisma CLI.
 - **Booking flow designed & confirmed (8/28/2026):** PFD-derived "Voyage Ledger" concept — one shared booking document, both roles, all states. Confirmed brief at `docs/BOOKING_BRIEF.md` (scope: direct bookings only; simulated funds-held step until client's Stripe keys arrive; full breadth). **Build starts 8/29/2026.** Critical copy law from the signed SOW: user-facing text says "funds held"/"delayed payout", NEVER "escrow" (escrow characterization is attorney territory, SOW 2.ii/6.i). Also this session: PFD audit 76→81 (brass-text AA token split, crew profile pages w/ D-2, pre-launch hero note); impeccable design hook enabled project-wide.
-- **Directory direction LOCKED (9/1/2026): Probe C "The Weigh-In Board"** (tournament board rows, Oswald/Archivo/Martian Mono, no cards, no rank numbers — M-2/P-4 guard). Phase 0 mechanics landed 8/29 (AvailabilityStrip + tests). Full execution plan: `docs/superpowers/plans/2026-09-01-directory-weigh-in-board.md`; probe source: artifact `caf986f4` (tab C).
-- Next steps: **execute weigh-in board plan** → booking UI per docs/BOOKING_BRIEF.md → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
+- **Weigh-in board world SHIPPED (9/1/2026):** client locked Probe C and the full plan
+  (`docs/superpowers/plans/2026-09-01-directory-weigh-in-board.md`) executed same day. Directory is
+  now full-width board rows (no cards, no ordinals — M-2/P-4 guard is structural + tested), Oswald/
+  Archivo/Martian Mono via next/font, AvailabilityStrip wired (brass fill = open day), 26px brass
+  seal coin, row hover inverts navy with staggered strip motion. 12 ui tests, compliance lint, and
+  build all green. Impeccable finish review ran (fix round → all 7 resolved → ship); root DESIGN.md
+  rewritten from the built world; PFD Mode-2 addendum in docs/DESIGN.md §4. Probe source survives
+  only in artifact `caf986f4` (tab C). Watch item: 10px masthead nav links at 390px.
+- Next steps: booking UI per docs/BOOKING_BRIEF.md → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
