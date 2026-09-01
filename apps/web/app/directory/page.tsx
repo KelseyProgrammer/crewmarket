@@ -23,6 +23,9 @@ export default async function Directory({ searchParams }: { searchParams: Promis
   const { role = "", port = "", date = "", verified = "" } = await searchParams;
   const all = seed.profiles as unknown as CrewCardData[];
   const ports = [...new Set(all.map((c) => c.homePort))].sort();
+  // Strip window start: earliest seeded availability date — deterministic, no new Date().
+  // Profiles whose window opens later render leading days closed (M-2: absence is closed).
+  const windowStart = all.flatMap((c) => c.availability.map((a) => a.date)).sort()[0];
 
   const results = all.filter((c) => {
     if (role && !c.roles.includes(role)) return false;
@@ -79,7 +82,7 @@ export default async function Directory({ searchParams }: { searchParams: Promis
         ) : (
           <div className="grid">
             {results.map((c, i) => (
-              <CrewCard key={c.id} crew={c} index={all.indexOf(c)} href={`/crew/${c.id}`} />
+              <CrewCard key={c.id} crew={c} windowStart={windowStart} href={`/crew/${c.id}`} />
             ))}
           </div>
         )}

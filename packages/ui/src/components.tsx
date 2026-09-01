@@ -1,6 +1,7 @@
 /* Shared components (SOW 2.i surfaces, compliance rules noted inline).
    Styling contract: class names resolved by apps/web/app/globals.css using tokens.css vars. */
 import type { ReactNode } from "react";
+import { AvailabilityStrip } from "./availability";
 
 /* ---------- VerifiedSeal — the signature element (rule V-1: visually distinct;
    only rendered when an admin-set credential.verified === true) ---------- */
@@ -47,7 +48,9 @@ export function BookingStateBadge({ state }: { state: string }) {
   return <span className={`state-badge state-badge--${state.toLowerCase()}`}>{STATE_LABELS[state] ?? state}</span>;
 }
 
-/* ---------- CrewCard — registry plate (see docs/DESIGN.md R1: ≤5 chunks) ---------- */
+/* ---------- CrewCard — weigh-in board row (see docs/DESIGN.md R1: ≤5 chunks).
+   Probe C guard (M-2/P-4): no rank numbers anywhere — order is the visitor's
+   filter, never a score. No ordinal props exist on purpose. ---------- */
 export type CrewCardData = {
   id: string;
   displayName: string;
@@ -77,34 +80,57 @@ function nextOpenDate(av: CrewCardData["availability"]): string | null {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function CrewCard({ crew, index, href }: { crew: CrewCardData; index: number; href?: string }) {
+export function CrewCard({
+  crew,
+  href,
+  windowStart,
+}: {
+  crew: CrewCardData;
+  href?: string;
+  windowStart: string; // "YYYY-MM-DD" — deterministic, derived from seed, never new Date()
+}) {
   const verified = crew.credentials.some((c) => c.verified);
   // Rule V-4: captains' license class + expiry legible at a glance
   const license = crew.credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
   const open = nextOpenDate(crew.availability);
   return (
-    <article className={`plate${verified ? " plate--verified" : ""}${href ? " plate--linked" : ""}`}>
-      <div className="plate__head">
-        <span className="eyebrow">REG {String(index + 1).padStart(3, "0")} · {crew.homePort.replace(", FL", "").toUpperCase()}</span>
+    <article className={`row${verified ? " row--verified" : ""}${href ? " row--linked" : ""}`}>
+      <h3 className="row__name">
         {verified && <VerifiedSeal small />}
-      </div>
-      <h3 className="plate__name">{href ? <a href={href}>{crew.displayName}</a> : crew.displayName}</h3>
-      <p className="plate__role">
+        {href ? <a href={href}>{crew.displayName}</a> : crew.displayName}
+      </h3>
+      <p className="row__meta">
+        {crew.homePort.replace(", FL", "")}
+        <br />
         {crew.roles.map((r) => ROLE_LABELS[r] ?? r).join(" · ")}
-        {license && (
-          <span className="plate__license">
-            {" "}— {license.licenseClass}
-            {license.expiresAt ? `, exp. ${license.expiresAt.slice(0, 7)}` : ""}
-            {!license.verified && <em className="plate__selfreported"> (self-reported)</em>}
-          </span>
+      </p>
+      <p className="row__lic">
+        {license ? (
+          <>
+            {license.licenseClass}
+            {license.expiresAt ? ` · exp ${license.expiresAt.slice(0, 7)}` : ""}
+            {/* Rule V-1: admin review is the only path to "verified" */}
+            <i>{license.verified ? "passed admin review" : "self-reported"}</i>
+          </>
+        ) : (
+          <>
+            —<i>no license listed</i>
+          </>
         )}
       </p>
-      <dl className="plate__facts">
-        <div><dt>Day rate</dt><dd className="mono">${crew.dayRateUsd}</dd></div>
-        <div><dt>Experience</dt><dd className="mono">{crew.yearsExperience} yrs</dd></div>
-        <div><dt>Next open</dt><dd className="mono">{open ?? "Booked out"}</dd></div>
-      </dl>
-      <p className="plate__fisheries">{crew.fisheries.join(" · ")}</p>
+      <p className="row__yrs mono">
+        {crew.yearsExperience}
+        <small>seasons</small>
+      </p>
+      {/* Rule M-2: crew set their own rates; the platform never mandates pricing */}
+      <p className="row__rate mono">
+        ${crew.dayRateUsd}
+        <small>sets own rate</small>
+      </p>
+      <div className="row__avail">
+        <AvailabilityStrip av={crew.availability} start={windowStart} />
+        <small className="mono">{open ? `next open ${open}` : "Booked out"}</small>
+      </div>
     </article>
   );
 }
