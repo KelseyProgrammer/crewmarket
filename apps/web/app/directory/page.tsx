@@ -37,14 +37,21 @@ export default async function Directory({ searchParams }: { searchParams: Promis
 
   return (
     <main className="directory">
+      {/* Banner: the board's masthead. No counts-as-ranks, no ordinals (M-2/P-4). */}
+      <section className="banner">
+        <Container wide>
+          <div className="banner__inner">
+            <h1 className="banner__title">
+              The crew <em>board</em>
+            </h1>
+            <p className="banner__meta">
+              Independent crew list their own services and <b>set their own rates</b>. A brass seal
+              means credentials passed admin review; everything else is self-reported.
+            </p>
+          </div>
+        </Container>
+      </section>
       <Container wide>
-        <span className="eyebrow">CREW REGISTRY · {String(all.length).padStart(3, "0")} LISTED</span>
-        <h1>Find crew for your next trip</h1>
-        <p className="directory__meta">
-          Independent crew list their own services and set their own rates. A brass seal means
-          credentials passed admin review; everything else is self-reported.
-        </p>
-
         <form className="filters" method="get" action="/directory">
           <label>
             Role
@@ -77,14 +84,27 @@ export default async function Directory({ searchParams }: { searchParams: Promis
         {results.length === 0 ? (
           <div className="empty">
             <p>No crew match these filters yet — the fishery is deep, the filters are narrow.</p>
-            <p><a href="/directory">Clear all filters</a> to see the full registry.</p>
+            <p><a href="/directory">Clear all filters</a> to see the full board.</p>
           </div>
         ) : (
-          <div className="grid">
-            {results.map((c, i) => (
-              <CrewCard key={c.id} crew={c} windowStart={windowStart} href={`/crew/${c.id}`} />
-            ))}
-          </div>
+          <>
+            <div className="boardhead" aria-hidden="true">
+              <span>Crew</span>
+              <span>Home port · role</span>
+              <span>License</span>
+              <span>Seasons</span>
+              <span>Day rate</span>
+              <span>Next 14 days</span>
+            </div>
+            <div className="board">
+              {results.map((c) => (
+                <CrewCard key={c.id} crew={c} windowStart={windowStart} href={`/crew/${c.id}`} />
+              ))}
+            </div>
+            <p className="board__count mono">
+              {results.length} of {all.length} listed
+            </p>
+          </>
         )}
       </Container>
     </main>

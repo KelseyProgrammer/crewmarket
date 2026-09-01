@@ -5,5 +5,29 @@
       "maxFindings": 5,
       "maxChars": 8000
     }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font-size",
+        "value": "40px",
+        "createdAt": "2026-09-01T16:58:30.750Z",
+        "reason": "client-locked Probe C weigh-in board type ramp (artifact caf986f4); root DESIGN.md rewrite lands in plan Task 1.6"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "8.5px",
+        "createdAt": "2026-09-01T16:58:30.952Z",
+        "reason": "client-locked Probe C weigh-in board type ramp (artifact caf986f4); root DESIGN.md rewrite lands in plan Task 1.6"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "8px",
+        "createdAt": "2026-09-01T16:58:31.167Z",
+        "reason": "client-locked Probe C weigh-in board type ramp (artifact caf986f4); root DESIGN.md rewrite lands in plan Task 1.6"
+      }
+    ]
   }
 }
