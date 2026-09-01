@@ -14,6 +14,8 @@ body {
 }
 .mono { font-family: var(--font-mono); }
 a { color: inherit; }
+::selection { background: var(--brass-bright); color: var(--navy-deep); }
+.on-navy ::selection { background: var(--brass-bright); color: var(--navy-deep); }
 :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 .on-navy :focus-visible { outline-color: var(--brass-bright); }
 @media (prefers-reduced-motion: reduce) {
@@ -110,8 +112,7 @@ a { color: inherit; }
 }
 .trail__steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-5); }
 .trail__step { border-top: 2px solid var(--navy-deep); padding-top: var(--s-3); }
-.trail__step .eyebrow { color: var(--ink-soft); }
-.trail__step h3 { font-size: 16px; margin: var(--s-2) 0 var(--s-1); }
+.trail__step h3 { font-size: 16px; font-weight: 600; margin: 0 0 var(--s-1); }
 .trail__step p { margin: 0; color: var(--ink-soft); font-size: 14px; }
 .trail__step--seal { border-top-color: var(--brass); }
 
@@ -131,7 +132,8 @@ a { color: inherit; }
 }
 .banner__title em { font-style: normal; color: var(--brass-bright); }
 .banner__meta { max-width: 44ch; font-size: 15px; line-height: 1.55; color: var(--navy-muted); margin: 0; }
-.banner__meta b { color: var(--brass-bright); font-weight: 600; }
+/* emphasis by weight only — brass in running text would dilute the seal (reviewer fix 3) */
+.banner__meta b { color: var(--white-crisp); font-weight: 600; }
 
 .directory .filters { margin-top: var(--s-5); }
 .filters {
@@ -185,11 +187,20 @@ a { color: inherit; }
   text-transform: uppercase; letter-spacing: 0.01em; margin: 0;
   display: flex; align-items: center; gap: var(--s-3);
 }
-.row__name .seal { flex: none; }
+/* Board-scale seal: a filled brass coin so verification reads at scan distance
+   beside 32px names (probe C's dare). V-1 gating lives in the component, untouched. */
+.row__name .seal {
+  flex: none; width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 35% 30%, var(--brass-bright), var(--brass) 70%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(16, 34, 47, 0.35);
+  color: var(--navy-deep);
+}
+.row__name .seal svg { width: 16px; height: 16px; }
 .row__name .seal__label {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap;
-} /* seal ring stays visible; the license cell says "passed admin review" in words (V-1) */
+} /* coin stays visible; the license cell says "passed admin review" in words (V-1) */
 .row__meta { margin: 0; font-size: 13px; color: var(--ink-soft); transition: color 0.15s; }
 .row__lic {
   margin: 0; font-family: var(--font-mono); font-size: 10px;
@@ -212,9 +223,27 @@ a { color: inherit; }
 .avail-strip__day {
   flex: 1; border: 1px solid var(--line-on-white); border-right-width: 0;
   background: transparent;
+  transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .avail-strip__day:last-child { border-right-width: 1px; }
 .avail-strip__day--open { background: var(--brass); border-color: var(--brass); }
+
+/* the world's one motion moment: on row hover the open days paint in left-to-right,
+   brass brightening like results going up on the board. Killed by the global
+   prefers-reduced-motion rule. */
+.avail-strip__day:nth-child(2) { transition-delay: 18ms; }
+.avail-strip__day:nth-child(3) { transition-delay: 36ms; }
+.avail-strip__day:nth-child(4) { transition-delay: 54ms; }
+.avail-strip__day:nth-child(5) { transition-delay: 72ms; }
+.avail-strip__day:nth-child(6) { transition-delay: 90ms; }
+.avail-strip__day:nth-child(7) { transition-delay: 108ms; }
+.avail-strip__day:nth-child(8) { transition-delay: 126ms; }
+.avail-strip__day:nth-child(9) { transition-delay: 144ms; }
+.avail-strip__day:nth-child(10) { transition-delay: 162ms; }
+.avail-strip__day:nth-child(11) { transition-delay: 180ms; }
+.avail-strip__day:nth-child(12) { transition-delay: 198ms; }
+.avail-strip__day:nth-child(13) { transition-delay: 216ms; }
+.avail-strip__day:nth-child(14) { transition-delay: 234ms; }
 
 /* hover inverts the whole row to navy — the board lights the lane you're on */
 .row--linked { position: relative; }
@@ -224,7 +253,7 @@ a { color: inherit; }
 .row--linked:hover .row__meta, .row--linked:hover .row__lic i { color: var(--mist); }
 .row--linked:hover .row__rate { color: var(--brass-bright); }
 .row--linked:hover .avail-strip__day { border-color: var(--line-on-navy); }
-.row--linked:hover .avail-strip__day--open { border-color: var(--brass); }
+.row--linked:hover .avail-strip__day--open { background: var(--brass-bright); border-color: var(--brass-bright); }
 .row--linked:focus-within { outline: 3px solid var(--brass); outline-offset: -3px; }
 
 .board__count {
@@ -279,7 +308,13 @@ a { color: inherit; }
 .profile__dates { margin: var(--s-3) 0 0; font-size: 15px; }
 .profile__panel--booking { border-style: dashed; }
 .profile__panel--booking .btn { margin-top: var(--s-4); display: inline-block; }
-.profile__disclaimer { border-top: 1px solid var(--line-on-white); padding-top: var(--s-4); }
+/* page-content framing (board panel) so it reads as intentional beside the footer's
+   legal placement, not a double render (reviewer fix 6). Both D-2 placements stay. */
+.profile__disclaimer {
+  background: #ffffff; border: 1px solid var(--line-strong);
+  border-bottom: 2px solid var(--navy-deep); border-radius: var(--radius);
+  padding: var(--s-4);
+}
 .profile__disclaimer .disclaimer-d2 { color: var(--ink-soft); font-size: 13px; margin: 0; }
 
 .seal { display: inline-flex; align-items: center; gap: 6px; color: var(--brass); }
@@ -416,7 +451,17 @@ a { color: inherit; }
   .hero { padding: var(--s-7) 0; }
   .filters select, .filters input[type="date"] { min-width: 130px; }
 }
+@media (max-width: 560px) {
+  /* authored wrap: wordmark row, then all four links on one even row (reviewer fix 4) */
+  .masthead__row { flex-direction: column; align-items: flex-start; gap: var(--s-2); padding: var(--s-3) 0; }
+  .masthead__nav { width: 100%; justify-content: space-between; gap: var(--s-2); }
+  .masthead__nav a { font-size: 10px; letter-spacing: 0.08em; white-space: nowrap; }
+  .filters { align-items: stretch; }
+  .filters label { width: 100%; }
+  .filters select, .filters input[type="date"] { width: 100%; }
+  .filters button { align-self: stretch; }
+}
 @media (max-width: 480px) {
   .trail__steps { grid-template-columns: 1fr; }
-  .masthead__nav { gap: var(--s-3); }
+  .masthead__nav { gap: var(--s-2) var(--s-3); }
 }

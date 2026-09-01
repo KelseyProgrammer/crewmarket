@@ -80,8 +80,9 @@ export default async function CrewProfile({ params }: { params: Promise<{ id: st
 
         <header className={`profile__head${verified ? " profile__head--verified" : ""}`}>
           <div className="profile__head-row">
+            {/* No ordinals in the board world (M-2/P-4): port furniture only, never a number */}
             <span className="eyebrow">
-              REG {String(index + 1).padStart(3, "0")} · {crew.homePort.toUpperCase()} · SYNTHETIC DEMO PROFILE
+              {crew.homePort.toUpperCase()} · SYNTHETIC DEMO PROFILE
             </span>
             {verified && <VerifiedSeal />}
           </div>

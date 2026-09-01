@@ -86,3 +86,50 @@ else disciplined.
   present without shouting: legal presence, not anxiety furniture.
 - Anti-pattern audit (Intent catalog): no urgency timers, no confirm-shaming, no pre-checked boxes,
   no ranking-for-pay over safety credentials (BUSINESS_MODEL back-pocket note retained).
+
+---
+
+## 4. Addendum — The Weigh-In Board (Mode 2 re-derivation, direction locked 2026-09-01)
+
+The client locked Probe C, "The Weigh-In Board," from the three direction probes (artifact
+`caf986f4`, concept-seed `cc54bbda`): tournament weigh-in board world — monumental condensed caps,
+full-width rows, no cards. Sections 1–3 above record the Engraved Registry derivation and remain
+the audit trail; where this addendum re-states a requirement, this addendum governs. Root
+`DESIGN.md` records the built system (the *what*); this section is the *why*.
+
+**R1 — Cognitive load (L0), restated.** The five-chunk cap survives the form change: each board row
+is ① name+seal, ② port/role, ③ license line, ④ the seasons+rate tabular pair, ⑤ the 14-day
+availability strip with next-open date. The boardhead labels row carries the column names once for
+the whole board, so rows shed their per-card labels — a net L0 *reduction* over the plate design.
+Filters stay at the contracted four. Eyebrows are deleted on the directory: the board form makes
+them decoration, and decoration bills against working memory (Hassin 2009).
+
+**R2 — First impression (L1), restated.** The institutional register shifts dialects: from
+yacht-club registry to tournament weigh-in board — a form the audience (South FL sportfishing crew
+and owners) reads natively as *official results posted at the dock*. Monumental Oswald caps carry
+the authority; navy/white/brass carry over unchanged, so the 50ms read stays "institution that
+handles money," now in the audience's own vernacular rather than the club's.
+
+**R3 — Processing fluency (L2), restated.** Still 2 families + 1 utility face (Oswald display,
+Archivo body, Martian Mono data), 3 hues + neutrals, 4px grid, one voice. Brass discipline gains
+one sanctioned meaning: the availability strip's brass fill encodes *bookable state* — data, not
+mood — alongside verification and the primary action. Recorded in root DESIGN.md so the constraint
+stays auditable; any fourth brass meaning breaks the story.
+
+**R4 — Perception bias (L3), restated + the probe guard.** The seal remains the seen-not-read trust
+mark (V-1), now an inline brass chip on the row name; license class + expiry sit in their own
+column with `passed admin review` / `self-reported` stated in words (V-4). The board form imports a
+new bias risk the plate form never had: *a board of rows reads as a leaderboard*. The guard is
+structural — **no rank numbers anywhere; order is the visitor's filter, never a score (M-2/P-4)**.
+The `CrewCard` component has no ordinal prop, a unit test asserts no ordinal renders, and the count
+line ("25 of 25 listed") is a census, never a position.
+
+**R5 — Decision architecture (L4), restated.** Each row is one target: the whole row is the
+anchor's hit area, and hover inverts the row to navy — the board lights the lane you're on, an
+unambiguous "this is the one you're choosing" signal. Rate cells carry the M-2 microcopy "sets own
+rate" at the point of comparison, so crew pricing autonomy is *demonstrated* where a visitor would
+otherwise infer platform pricing (Hertwig & Erev 2009).
+
+**Solution shape:** one monumental board — navy banner (THE CREW BOARD), white filter bar with navy
+rule, mono boardhead, white rows on `#f6f7f8` ground, brass strictly for seal / primary action /
+open-day fill. Rows, not cards; listings, not rankings.

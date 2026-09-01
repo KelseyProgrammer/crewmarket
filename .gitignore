@@ -9,3 +9,6 @@ dist/
 .impeccable/config.local.json
 *.pem
 .DS_Store
+
+# finish-review evidence (regenerated per round, not source)
+.impeccable/review/

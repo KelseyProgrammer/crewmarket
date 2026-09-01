@@ -18,6 +18,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
+        {/* eslint-disable-next-line react/no-danger -- direction contract must survive the production build as a real HTML comment */}
+        <script
+          type="text/x-direction-contract"
+          dangerouslySetInnerHTML={{
+            __html: `
+THESIS: tournament weigh-in board — the directory is one monumental board of full-width rows, not a card grid; it refuses the marketplace card-shelf default.
+OWN-WORLD: navy #0a1d30 field / white rows on #f6f7f8 ground; brass only for verification + primary action; Oswald condensed caps as matter, Archivo body, Martian Mono data; 2px radius; row hover inverts to navy.
+STORY: a boat owner scans the board like a dockside leaderboard-that-isn't — no ranks anywhere (M-2/P-4); order is their filter, never a score. Brass seal = credentials passed admin review.
+FIRST VIEWPORT: navy banner with THE CREW BOARD at clamp(40-84px), filters bar, boardhead labels, first rows with 14-day brass availability strips.
+FORM: probe C (challenger), concept-seed cc54bbda index 6, artifact caf986f4.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
+`,
+          }}
+        />
         <header className="masthead on-navy">
           <Container wide>
             <div className="masthead__row">
