@@ -32,7 +32,19 @@
   build all green. Impeccable finish review ran (fix round → all 7 resolved → ship); root DESIGN.md
   rewritten from the built world; PFD Mode-2 addendum in docs/DESIGN.md §4. Probe source survives
   only in artifact `caf986f4` (tab C). Watch item: 10px masthead nav links at 390px.
-- Next steps: booking UI per docs/BOOKING_BRIEF.md → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
+- **Booking UI (Voyage Ledger) SHIPPED (9/2/2026)** per docs/BOOKING_BRIEF.md + plan
+  `docs/superpowers/plans/2026-09-02-booking-ui-voyage-ledger.md`: request form on crew profiles
+  (client quote preview, server-side recompute, P&I attestation D-4), shared ledger `/bookings/[id]`
+  (vertical trail, one lit step, brass-edged held-funds object w/ computed release, terminal panels,
+  role-gated action slot, dev-labeled simulated funds-held), bookings index, account shell wired.
+  "Funds held" vocabulary throughout — escrow never renders (verified in built HTML). Demo drive:
+  `node --env-file=.env.local scripts/demo-booking-drive.mjs` seeds 7 states + demo accounts
+  (boat@example.com / mate@example.com, passwords in script output; mate drives "Del Pinder").
+  NOTE: schema synced via `prisma db push` (dev DB had drift from 8/29) — consolidate a real
+  migration before any deploy. All states screenshot-verified except ESCROW_FUNDED/IN_PROGRESS/
+  PAID_OUT ledger details + wrong-role/empty-list guards (code-reviewed; full pass is e2e QA, G-3).
+- Next steps: Stripe Connect Express (request test keys from client) → credential upload/admin
+  verify → admin metrics dashboard → Expo parity → e2e QA (G-3) → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
