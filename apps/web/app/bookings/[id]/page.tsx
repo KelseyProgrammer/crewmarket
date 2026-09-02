@@ -187,7 +187,7 @@ export default async function VoyageLedger({ params }: { params: Promise<{ id: s
           )}
 
           {/* Action slot — one brass action per role per state (R5). */}
-          <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} dates={dates} />
+          <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} rateCents={booking.rateCents} dates={dates} />
         </article>
 
         {/* Rule D-2 — explicit placement in the booking flow */}
@@ -228,20 +228,23 @@ function ActionSlot({
   state,
   role,
   totalCents,
+  rateCents,
   dates,
 }: {
   bookingId: string;
   state: BookingState;
   role: PartyRole;
   totalCents: number;
+  rateCents: number;
   dates: string[];
 }) {
   const when = fmtTripDates(dates);
   const rows: React.ReactNode[] = [];
 
   if (state === "REQUESTED" && role === "CREW") {
+    // Outcome-labeled with the crew's own number — their payout, not the boat-side total (R5).
     rows.push(
-      <Event key="a" bookingId={bookingId} event="CREW_ACCEPT" label={`Accept — ${when} · ${fmtUsd(totalCents)} held for you`} brass />,
+      <Event key="a" bookingId={bookingId} event="CREW_ACCEPT" label={`Accept — ${when} · ${fmtUsd(rateCents)} payout to you`} brass />,
       <Event key="d" bookingId={bookingId} event="CREW_DECLINE" label="Decline" />
     );
   }
