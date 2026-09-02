@@ -14,11 +14,12 @@ export const metadata = { title: "Account — Crew Market" };
 const SHELLS = {
   CREW: {
     eyebrow: "ACCOUNT · CREW",
-    heading: "Your registry account is open.",
+    heading: "Your account is open — bookings are live.",
     lede:
-      "Your listing isn't on the public registry yet — profile setup is the next build phase. " +
-      "You set your own rates and accept or decline bookings at your sole discretion.",
-    liveAction: { href: "/directory", label: "See the public directory" },
+      "Booking requests land on your bookings page; you accept or decline each one at your " +
+      "sole discretion, and declining never costs you anything. Your own board listing is a " +
+      "later build phase.",
+    liveAction: { href: "/bookings", label: "See your bookings" },
     upcoming: [
       ["LISTING", "Profile & services listing — roles, rates you set, availability, home port"],
       ["PAYOUTS", "Payout onboarding via Stripe Connect — Stripe handles identity and bank details"],
@@ -27,15 +28,16 @@ const SHELLS = {
   },
   BOAT: {
     eyebrow: "ACCOUNT · BOAT",
-    heading: "Your account is open — the directory is live.",
+    heading: "Your account is open — booking is live.",
     lede:
-      "Browse independent crew now. Booking requests, held payment, and the 48-hour review " +
-      "window arrive with the booking phase.",
-    liveAction: { href: "/directory", label: "Browse the crew directory" },
+      "Find crew on the board and request them for specific dates. Payment is held at booking " +
+      "with the fee itemized; payout releases after the trip plus a 48-hour review window. " +
+      "(Demo build: the funds-held step is simulated until payments go live.)",
+    liveAction: { href: "/bookings", label: "See your bookings" },
     upcoming: [
-      ["BOOKING", "Request crew for specific dates — crew are free to accept or decline"],
-      ["FUNDS HELD", "Payment held at booking with the platform fee itemized"],
-      ["INSURANCE", "P&I coverage attestation, recorded at booking"],
+      ["PAYMENTS", "Real held payment via Stripe — the simulated step becomes a PaymentIntent"],
+      ["INSURANCE", "P&I attestation records move to your boat profile"],
+      ["REVIEWS", "Reviews accrue only from completed on-platform bookings"],
     ],
   },
 } as const;

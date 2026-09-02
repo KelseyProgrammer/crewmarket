@@ -147,15 +147,20 @@ export default async function CrewProfile({ params }: { params: Promise<{ id: st
           )}
         </section>
 
-        {/* Honest booking affordance — the request button lands here with the booking phase. */}
+        {/* Booking is live: request → crew decides → funds held (simulated until the
+            Stripe phase) → trip → 48h review → payout. */}
         <section className="profile__panel profile__panel--booking">
           <span className="eyebrow">BOOKING</span>
           <p className="profile__list">
-            Booking requests arrive with the payments phase: payment held at booking, itemized
-            platform fee, weather cancellation handled as its own state, payout after the trip
-            plus a 48-hour review window. Crew accept or decline every request at their sole discretion.
+            Payment is held at booking with the platform fee itemized up front; weather
+            cancellation is handled as its own state; payout releases after the trip plus a
+            48-hour review window. {crew.displayName.split(" ")[0]} accepts or declines every
+            request at their sole discretion. (Demo build: the funds-held step is simulated
+            until payments go live.)
           </p>
-          <a className="btn btn--ghost-ink" href="/sign-up?role=BOAT">Create a boat account to be ready</a>
+          <a className="btn btn--brass" href={`/bookings/new?crew=${crew.id}`}>
+            Request {crew.displayName.split(" ")[0]} for a trip
+          </a>
         </section>
 
         {/* Rule D-2 — explicit placement on every profile */}

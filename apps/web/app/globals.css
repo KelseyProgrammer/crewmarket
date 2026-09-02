@@ -437,6 +437,138 @@ a { color: inherit; }
   .account__upcoming li { flex-direction: column; gap: var(--s-1); }
 }
 
+/* ---------- the voyage ledger (booking flow, docs/BOOKING_BRIEF.md) ----------
+   One canonical document for both parties. Board grammar throughout: white faces,
+   drawn edges, navy rules; brass only where it already means something. */
+.ledger { padding: var(--s-7) 0 var(--s-8); }
+.ledger__doc {
+  background: #ffffff; border: 1px solid var(--line-strong); border-radius: var(--radius);
+  border-bottom: 2px solid var(--navy-deep);
+  padding: var(--s-5); margin-top: var(--s-4);
+}
+.ledger__head {
+  display: flex; justify-content: space-between; align-items: center; gap: var(--s-4);
+  flex-wrap: wrap; padding-bottom: var(--s-4); border-bottom: 2px solid var(--navy-deep);
+}
+.ledger__parties {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4);
+  padding: var(--s-4) 0 var(--s-2);
+}
+.ledger__party-name {
+  font-family: var(--font-display); font-weight: 500; font-size: 22px;
+  text-transform: uppercase; letter-spacing: 0.01em; margin: var(--s-1) 0 0;
+}
+.ledger__party-name a { text-decoration: none; }
+.ledger__party-name a:hover { color: var(--brass-text); }
+.ledger__keeper {
+  font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.16em;
+  color: var(--ink-soft); margin: 0 0 var(--s-4); padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line-on-white);
+}
+
+/* held-funds object — the visible money (R2/R4); brass-engrave edge = the meaningful metal */
+.heldfunds {
+  border: 1px solid var(--line-on-white); border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px var(--brass-engrave);
+  padding: var(--s-4); margin: 0 0 var(--s-5);
+}
+.heldfunds__lines { margin: var(--s-3) 0 0; }
+.heldfunds__lines > div {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4);
+  padding: var(--s-1) 0; font-size: 14px;
+}
+.heldfunds__lines dt { color: var(--ink-soft); margin: 0; }
+.heldfunds__lines dd { margin: 0; font-variant-numeric: tabular-nums; font-size: 15px; }
+.heldfunds__total { border-top: 1px solid var(--line-on-white); margin-top: var(--s-2); padding-top: var(--s-2) !important; }
+.heldfunds__total dt { color: var(--ink); }
+.heldfunds__total dd { font-size: 17px; font-weight: 600; }
+.heldfunds__release {
+  margin: var(--s-3) 0 0; font-size: 10px; letter-spacing: 0.14em; color: var(--brass-text);
+}
+
+/* the trail — vertical rail, exactly one lit step (R1) */
+.trail-rail { list-style: none; margin: 0 0 var(--s-5); padding: 0; }
+.trail-rail__step {
+  position: relative; padding: var(--s-2) 0 var(--s-2) var(--s-6);
+  border-left: 2px solid var(--line-on-white);
+  color: var(--ink-soft);
+}
+.trail-rail__step::before {
+  content: ""; position: absolute; left: -6px; top: 14px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--board-bg); border: 1px solid var(--line-strong);
+}
+.trail-rail__step--past { border-left-color: var(--navy-deep); color: var(--ink); }
+.trail-rail__step--past::before { background: var(--navy-deep); border-color: var(--navy-deep); }
+.trail-rail__step--lit {
+  border-left-color: var(--brass); color: var(--ink);
+}
+.trail-rail__step--lit::before {
+  background: radial-gradient(circle at 35% 30%, var(--brass-bright), var(--brass) 70%);
+  border-color: var(--brass);
+}
+.trail-rail__label { font-family: var(--font-display); font-weight: 500; font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em; }
+.trail-rail__step--lit .trail-rail__label { color: var(--ink); }
+.trail-rail__time { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+
+/* terminal panels — information, never alarm (R3): weather reads navy, not red */
+.ledger__closed {
+  border: 1px solid var(--line-strong); border-radius: var(--radius);
+  padding: var(--s-4); margin: 0 0 var(--s-5);
+}
+.ledger__closed--weather { background: var(--navy-deep); color: var(--white-crisp); border-color: var(--navy-deep); }
+.ledger__closed--weather p { color: var(--navy-muted); }
+.ledger__closed h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; text-transform: uppercase; letter-spacing: 0.02em; margin: 0 0 var(--s-2); }
+.ledger__closed p { margin: 0; font-size: 14px; color: var(--ink-soft); max-width: 62ch; }
+.ledger__closed-time { margin-top: var(--s-3) !important; font-size: 10px; letter-spacing: 0.14em; }
+.ledger__closed--weather .ledger__closed-time { color: var(--mist); }
+
+/* action slot — one brass action per role per state; decline is an equal ghost (R5/M-2) */
+.ledger__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: flex-end; }
+.ledger__action-form { display: flex; flex-direction: column; gap: var(--s-1); }
+.ledger__action-form .btn { border: 1px solid transparent; cursor: pointer; }
+.ledger__action-form .btn--ghost-ink { border-color: var(--line-on-white); }
+.ledger__demo-tag {
+  font-size: 8px; letter-spacing: 0.14em; color: var(--ink-soft);
+  border: 1px dashed var(--line-strong); border-radius: var(--radius);
+  padding: 2px 6px; align-self: flex-start;
+}
+.ledger__waiting { margin: 0; font-size: 14px; color: var(--ink-soft); max-width: 62ch; }
+.ledger__disclaimer {
+  margin-top: var(--s-5); background: #ffffff; border: 1px solid var(--line-strong);
+  border-bottom: 2px solid var(--navy-deep); border-radius: var(--radius); padding: var(--s-4);
+}
+.ledger__disclaimer .disclaimer-d2 { color: var(--ink-soft); font-size: 13px; margin: 0; }
+
+/* bookings index — board-row grammar */
+.ledger__list { margin-top: var(--s-5); border-top: 2px solid var(--navy-deep); }
+.ledger__row {
+  display: grid; grid-template-columns: 1.1fr 1.6fr 1fr 0.8fr auto;
+  gap: var(--s-4); align-items: center;
+  background: #ffffff; border-bottom: 1px solid var(--line-on-white);
+  padding: var(--s-3) var(--s-4); text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.ledger__row:hover { background: var(--navy-deep); color: var(--white-crisp); }
+.ledger__row:hover .ledger__row-voyage { color: var(--mist); }
+.ledger__row:hover .ledger__row-total { color: var(--brass-bright); }
+.ledger__row:focus-visible { outline: 3px solid var(--brass); outline-offset: -3px; }
+.ledger__row-voyage { font-size: 10px; letter-spacing: 0.1em; color: var(--ink-soft); transition: color 0.15s; }
+.ledger__row-name { font-family: var(--font-display); font-weight: 500; font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em; }
+.ledger__row-dates { font-size: 13px; font-variant-numeric: tabular-nums; }
+.ledger__row-total { font-size: 15px; font-variant-numeric: tabular-nums; transition: color 0.15s; }
+
+/* request form extras */
+.auth__panel--wide { max-width: 640px; }
+.ledger__daterow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+
+@media (max-width: 560px) {
+  .ledger__parties { grid-template-columns: 1fr; }
+  .ledger__daterow { grid-template-columns: 1fr; }
+  .ledger__row { grid-template-columns: 1fr auto; gap: var(--s-1) var(--s-3); }
+  .ledger__row-name { grid-column: 1 / -1; }
+}
+
 /* ---------- footer ---------- */
 .footer {
   background: var(--navy-deep); color: var(--mist);
