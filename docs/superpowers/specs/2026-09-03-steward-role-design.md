@@ -31,6 +31,7 @@ role list appears:
 
 ## Compliance
 
-Day rates remain crew-set within the existing synthetic band (M-2). No employer
-language introduced (M-1); `pnpm compliance:check` must stay green. Verify with
+Day rates remain crew-set within the existing synthetic band (M-2). No
+M-1-banned classification language introduced; `pnpm compliance:check` must
+stay green. Verify with
 `pnpm compliance:check`, `pnpm lint`, `pnpm build`.

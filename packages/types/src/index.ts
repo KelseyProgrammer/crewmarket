@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // ---------- CREW ----------
 
-export const CrewRole = z.enum(["MATE", "DECKHAND", "CAPTAIN", "SECOND_CAPTAIN", "ENGINEER", "COOK"]);
+export const CrewRole = z.enum(["MATE", "DECKHAND", "CAPTAIN", "SECOND_CAPTAIN", "ENGINEER", "COOK", "STEWARD"]);
 
 export const Credential = z.object({
   kind: z.enum(["USCG_OUPV", "USCG_MASTER_25_50_100", "STCW_BASIC", "CPR_FIRST_AID", "TWIC", "STATE_CHARTER_LICENSE", "OTHER"]),

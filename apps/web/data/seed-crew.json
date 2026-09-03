@@ -515,7 +515,7 @@
       "displayName": "Coral Halvorsen",
       "roles": [
         "CAPTAIN",
-        "DECKHAND"
+        "SECOND_CAPTAIN"
       ],
       "homePort": "Fort Lauderdale, FL",
       "regions": [
@@ -1016,7 +1016,7 @@
       "displayName": "Cass Ferrell",
       "roles": [
         "MATE",
-        "ENGINEER"
+        "COOK"
       ],
       "homePort": "Lighthouse Point, FL",
       "regions": [
@@ -1208,7 +1208,7 @@
       "displayName": "Teal Yates",
       "roles": [
         "MATE",
-        "COOK"
+        "STEWARD"
       ],
       "homePort": "Marathon, FL",
       "regions": [
@@ -1299,7 +1299,7 @@
       "displayName": "Harbor Delacroix",
       "roles": [
         "MATE",
-        "COOK"
+        "STEWARD"
       ],
       "homePort": "Fort Lauderdale, FL",
       "regions": [
@@ -1394,7 +1394,7 @@
       "displayName": "Nash Hobbs",
       "roles": [
         "MATE",
-        "ENGINEER"
+        "COOK"
       ],
       "homePort": "Stuart, FL",
       "regions": [
@@ -1487,7 +1487,7 @@
       "displayName": "Sunny Vickery",
       "roles": [
         "MATE",
-        "COOK"
+        "STEWARD"
       ],
       "homePort": "Marathon, FL",
       "regions": [
@@ -1863,7 +1863,7 @@
       "displayName": "Gaff Palmer",
       "roles": [
         "DECKHAND",
-        "COOK"
+        "STEWARD"
       ],
       "homePort": "Boca Raton, FL",
       "regions": [
@@ -2049,7 +2049,7 @@
       "displayName": "Cove Wexford",
       "roles": [
         "DECKHAND",
-        "SECOND_CAPTAIN"
+        "ENGINEER"
       ],
       "homePort": "Fort Lauderdale, FL",
       "regions": [
@@ -2148,7 +2148,7 @@
       "displayName": "Reef Nakata",
       "roles": [
         "DECKHAND",
-        "CAPTAIN"
+        "SECOND_CAPTAIN"
       ],
       "homePort": "Islamorada, FL",
       "regions": [
@@ -2342,49 +2342,50 @@
       "id": "00000000-0000-4000-8000-000000000025",
       "displayName": "Tide Boudreau",
       "roles": [
-        "ENGINEER"
+        "STEWARD"
       ],
-      "homePort": "Key West, FL",
+      "homePort": "Miami, FL",
       "regions": [
-        "Lower Keys",
-        "Treasure Coast",
-        "Miami–Dade"
+        "Treasure Coast"
       ],
-      "yearsExperience": 19,
+      "yearsExperience": 8,
       "fisheries": [
+        "offshore troll",
         "tournament",
-        "bottom / deep drop",
+        "daytime swordfish",
         "wreck & reef"
       ],
       "vesselExperience": [
-        "sportfisher 40–60ft",
-        "center console"
+        "seakeeper-equipped",
+        "center console",
+        "sportfisher 40–60ft"
       ],
-      "dayRateUsd": 325,
-      "bio": "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
+      "dayRateUsd": 450,
+      "halfDayRateUsd": 293,
+      "bio": "Salon, cabins, galley support — owner's guests looked after from lines-out to washdown.",
       "photoRefs": [],
       "credentials": [
         {
-          "kind": "CPR_FIRST_AID",
+          "kind": "STCW_BASIC",
           "verified": false
         }
       ],
       "availability": [
         {
           "date": "2026-08-28",
-          "status": "OPEN"
+          "status": "BOOKED"
         },
         {
           "date": "2026-08-29",
-          "status": "BOOKED"
+          "status": "OPEN"
         },
         {
           "date": "2026-08-30",
-          "status": "UNAVAILABLE"
+          "status": "BOOKED"
         },
         {
           "date": "2026-08-31",
-          "status": "BOOKED"
+          "status": "UNAVAILABLE"
         },
         {
           "date": "2026-09-01",
@@ -2392,15 +2393,15 @@
         },
         {
           "date": "2026-09-02",
-          "status": "OPEN"
-        },
-        {
-          "date": "2026-09-03",
           "status": "BOOKED"
         },
         {
-          "date": "2026-09-04",
+          "date": "2026-09-03",
           "status": "OPEN"
+        },
+        {
+          "date": "2026-09-04",
+          "status": "BOOKED"
         },
         {
           "date": "2026-09-05",
@@ -2420,17 +2421,16 @@
         },
         {
           "date": "2026-09-09",
-          "status": "BOOKED"
+          "status": "OPEN"
         },
         {
           "date": "2026-09-10",
-          "status": "OPEN"
+          "status": "BOOKED"
         }
       ],
       "stats": {
-        "tripsCompleted": 103,
-        "avgRating": 4.5,
-        "responseRate": 0.96
+        "tripsCompleted": 3,
+        "responseRate": 0.85
       }
     }
   ]

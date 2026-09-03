@@ -71,6 +71,7 @@ const ROLE_LABELS: Record<string, string> = {
   SECOND_CAPTAIN: "Second Captain",
   ENGINEER: "Engineer",
   COOK: "Cook",
+  STEWARD: "Steward(ess)",
 };
 
 function nextOpenDate(av: CrewCardData["availability"]): string | null {
