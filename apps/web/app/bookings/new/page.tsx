@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { Container, DisclaimerD2 } from "@crewmarket/ui";
@@ -32,10 +33,10 @@ export default async function NewBooking({
             <span className="eyebrow">BOOKING · BOAT ACCOUNTS</span>
             <h1 className="auth__title">Booking is the boat side</h1>
             <p className="auth__lede">
-              You're signed in with a crew account. Boat owners and captains send booking
+              You&apos;re signed in with a crew account. Boat owners and captains send booking
               requests; crew accept or decline them from their own bookings page.
             </p>
-            <a className="btn btn--brass" href="/bookings">Go to your bookings</a>
+            <Link className="btn btn--brass" href="/bookings">Go to your bookings</Link>
           </div>
         </Container>
       </main>

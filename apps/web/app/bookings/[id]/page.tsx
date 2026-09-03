@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Container, DisclaimerD2, BookingStateBadge } from "@crewmarket/ui";
 import { prisma } from "@crewmarket/db";
@@ -88,7 +89,7 @@ export default async function VoyageLedger({ params }: { params: Promise<{ id: s
   return (
     <main className="ledger">
       <Container>
-        <p className="profile__back"><a href="/bookings">← All bookings</a></p>
+        <p className="profile__back"><Link href="/bookings">← All bookings</Link></p>
 
         <article className="ledger__doc">
           <header className="ledger__head">

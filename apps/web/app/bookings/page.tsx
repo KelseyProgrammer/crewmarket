@@ -60,7 +60,7 @@ export default async function Bookings() {
             ) : (
               <>
                 <p>
-                  Your account isn't linked to a board profile yet — in this demo build, an
+                  Your account isn&apos;t linked to a board profile yet — in this demo build, an
                   operator links crew accounts to registry profiles (full crew onboarding is a
                   later phase). Once linked, booking requests land here.
                 </p>

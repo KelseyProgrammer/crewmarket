@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@crewmarket/db": "workspace:*",
@@ -18,6 +18,9 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@types/react": "19.2.18"
+    "@eslint/eslintrc": "^3.3.7",
+    "@types/react": "19.2.18",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.25"
   }
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { Oswald, Archivo, Martian_Mono } from "next/font/google";
 import { DisclaimerD2, Container } from "@crewmarket/ui";
 import "./globals.css";
@@ -18,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
-        {/* eslint-disable-next-line react/no-danger -- direction contract must survive the production build as a real HTML comment */}
+        {/* direction contract must survive the production build as real markup */}
         <script
           type="text/x-direction-contract"
           dangerouslySetInnerHTML={{
@@ -35,7 +36,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <header className="masthead on-navy">
           <Container wide>
             <div className="masthead__row">
-              <a className="wordmark" href="/">Crew <b>Market</b></a>
+              <Link className="wordmark" href="/">Crew <b>Market</b></Link>
               <nav className="masthead__nav" aria-label="Primary">
                 <a href="/directory">Directory</a>
                 <a href="/sign-up?role=CREW">List services</a>
