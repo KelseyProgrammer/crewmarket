@@ -38,10 +38,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             <div className="masthead__row">
               <Link className="wordmark" href="/">Crew <b>Market</b></Link>
               <nav className="masthead__nav" aria-label="Primary">
-                <a href="/directory">Directory</a>
-                <a href="/sign-up?role=CREW">List services</a>
-                <a href="/sign-up?role=BOAT">Book crew</a>
-                <a href="/account">Account</a>
+                <Link href="/directory">Directory</Link>
+                <Link href="/sign-up?role=CREW">List services</Link>
+                <Link href="/sign-up?role=BOAT">Book crew</Link>
+                <Link href="/account">Account</Link>
               </nav>
             </div>
           </Container>
