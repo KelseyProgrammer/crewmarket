@@ -66,7 +66,10 @@ export async function confirmCredentialUpload(input: {
   const head = await headObject(input.s3Key);
   if (!head) return { error: "Upload didn't complete — try again." };
   const invalid = validateUpload(head.contentType, head.sizeBytes);
-  if (invalid) return { error: invalid };
+  if (invalid) {
+    await deleteObject(input.s3Key).catch(() => undefined); // don't leave a rejected upload in the bucket
+    return { error: invalid };
+  }
 
   const expiresAt =
     input.expiresAt && /^\d{4}-\d{2}-\d{2}$/.test(input.expiresAt)
@@ -96,8 +99,8 @@ export async function deleteCredentialDoc(formData: FormData): Promise<void> {
   if ("error" in ctx) return;
   const doc = await prisma.credentialDoc.findUnique({ where: { id: String(formData.get("docId")) } });
   if (!doc || doc.profileId !== ctx.profileId) return;
+  await deleteObject(doc.s3Key); // S3 first — if this throws, the row survives and Remove can be retried (V-2)
   await prisma.credentialDoc.delete({ where: { id: doc.id } });
-  await deleteObject(doc.s3Key);
   revalidatePath("/account");
 }
 
