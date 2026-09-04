@@ -22,6 +22,10 @@ describe("validateUpload", () => {
     expect(validateUpload("application/pdf", MAX_UPLOAD_BYTES + 1)).toMatch(/10 MB/);
     expect(validateUpload("application/pdf", 0)).toMatch(/empty/i);
   });
+  it("rejects non-finite sizes", () => {
+    expect(validateUpload("application/pdf", Number.NaN)).toMatch(/empty/i);
+    expect(validateUpload("application/pdf", Infinity)).toMatch(/empty/i);
+  });
 });
 
 describe("s3KeyFor", () => {
@@ -29,6 +33,13 @@ describe("s3KeyFor", () => {
     expect(s3KeyFor("p-1", "abc", "application/pdf")).toBe("credentials/p-1/abc.pdf");
     expect(extensionFor("image/jpeg")).toBe("jpg");
     expect(extensionFor("image/png")).toBe("png");
+  });
+  it("s3KeyFor throws on unsupported content types instead of emitting '.null' keys", () => {
+    expect(() => s3KeyFor("p-1", "abc", "image/gif")).toThrow(/unsupported content type/);
+  });
+  it("s3KeyFor rejects ids that could carry path segments", () => {
+    expect(() => s3KeyFor("../p-1", "abc", "application/pdf")).toThrow(/invalid id/);
+    expect(() => s3KeyFor("p-1", "a/b", "application/pdf")).toThrow(/invalid id/);
   });
 });
 
@@ -43,6 +54,10 @@ describe("isAdminEmail", () => {
     expect(isAdminEmail("admin@example.com", undefined)).toBe(false);
     expect(isAdminEmail("admin@example.com", "")).toBe(false);
     expect(isAdminEmail("", "a@b.c")).toBe(false);
+  });
+  it("trims the candidate email; whitespace-only admits nobody", () => {
+    expect(isAdminEmail("  admin@example.com ", "admin@example.com")).toBe(true);
+    expect(isAdminEmail("   ", "admin@example.com")).toBe(false);
   });
 });
 
