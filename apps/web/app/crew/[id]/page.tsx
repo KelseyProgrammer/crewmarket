@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Container, DisclaimerD2, VerifiedSeal } from "@crewmarket/ui";
 import seed from "../../../data/seed-crew.json";
+import { credentialsForProfile } from "../../../lib/credential-overrides";
 
 /* Crew profile — the registry plate, unfolded (SOW 2.i Directory & Search).
    Rule D-2: disclaimer renders on every profile (explicit placement, not just footer).
@@ -70,8 +71,10 @@ export default async function CrewProfile({ params }: { params: Promise<{ id: st
   if (index === -1) notFound();
   const crew = profiles[index];
 
-  const verified = crew.credentials.some((c) => c.verified);
-  const license = crew.credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
+  const dbCredentials = await credentialsForProfile(crew.id);
+  const credentials = dbCredentials ?? crew.credentials;
+  const verified = credentials.some((c) => c.verified);
+  const license = credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
   const openDates = crew.availability.filter((a) => a.status === "OPEN").slice(0, 6);
 
   return (
@@ -115,7 +118,7 @@ export default async function CrewProfile({ params }: { params: Promise<{ id: st
         <section className="profile__panel">
           <span className="eyebrow">CREDENTIALS · VERIFIED MEANS ADMIN-REVIEWED DOCUMENTS</span>
           <ul className="profile__credentials">
-            {crew.credentials.map((c, i) => (
+            {credentials.map((c, i) => (
               <li key={i}>
                 <span className="profile__credential-name">
                   {CREDENTIAL_LABELS[c.kind] ?? c.kind}
