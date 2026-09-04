@@ -55,9 +55,9 @@ function fmtDate(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function generateStaticParams() {
-  return profiles.map((p) => ({ id: p.id }));
-}
+// No generateStaticParams: credentials render from the DB for claimed profiles,
+// so this route must server-render per request — static HTML would freeze
+// verification state at build time (V-1).
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
