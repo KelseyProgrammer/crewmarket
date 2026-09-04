@@ -85,14 +85,15 @@ model CrewProfileClaim {
 // ---------- Credential Verification (SOW 2.i, V-1/V-2) ----------
 // The document itself lives in private S3/MinIO, presigned-only (V-2); this row
 // is the structured record. Verification state is verifiedAt — a timestamp only
-// the admin action writes. There is deliberately no client-writable boolean, so
-// self-set verification is structurally impossible (V-1). Nothing medical (D-1).
+// the admin action writes. There is deliberately no client-writable boolean; only the
+// admin action writes verifiedAt — enforced by that action, not by this schema (V-1).
+// Nothing medical (D-1).
 
 model CredentialDoc {
   id               String    @id @default(cuid())
   profileId        String // seed registry profile; uploader must hold its CrewProfileClaim
   uploadedByUserId String
-  uploadedBy       User      @relation("UserCredentialDocs", fields: [uploadedByUserId], references: [id], onDelete: Cascade)
+  uploadedBy       User      @relation("UserCredentialDocs", fields: [uploadedByUserId], references: [id], onDelete: Cascade) // TODO(account-deletion): delete the S3 object BEFORE this cascade fires — the DB cascade alone orphans the doc (V-2)
   kind             String // Credential.kind values from packages/types only
   licenseClass     String?
   expiresAt        DateTime?
@@ -103,6 +104,7 @@ model CredentialDoc {
   verifiedAt       DateTime? // null = self-reported (V-1)
   verifiedByEmail  String?
 
+  @@index([uploadedByUserId])
   @@index([profileId])
   @@map("credential_doc")
 }
