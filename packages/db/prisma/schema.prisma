@@ -32,6 +32,7 @@ model User {
   sessions Session[]
   accounts Account[]
   bookings Booking[] @relation("BoatBookings")
+  credentialDocs CredentialDoc[] @relation("UserCredentialDocs")
 
   @@unique([email])
   @@map("user")
@@ -79,6 +80,31 @@ model CrewProfileClaim {
   createdAt DateTime @default(now())
 
   @@map("crew_profile_claim")
+}
+
+// ---------- Credential Verification (SOW 2.i, V-1/V-2) ----------
+// The document itself lives in private S3/MinIO, presigned-only (V-2); this row
+// is the structured record. Verification state is verifiedAt — a timestamp only
+// the admin action writes. There is deliberately no client-writable boolean, so
+// self-set verification is structurally impossible (V-1). Nothing medical (D-1).
+
+model CredentialDoc {
+  id               String    @id @default(cuid())
+  profileId        String // seed registry profile; uploader must hold its CrewProfileClaim
+  uploadedByUserId String
+  uploadedBy       User      @relation("UserCredentialDocs", fields: [uploadedByUserId], references: [id], onDelete: Cascade)
+  kind             String // Credential.kind values from packages/types only
+  licenseClass     String?
+  expiresAt        DateTime?
+  s3Key            String    @unique // never logged (V-2)
+  contentType      String
+  sizeBytes        Int
+  uploadedAt       DateTime  @default(now())
+  verifiedAt       DateTime? // null = self-reported (V-1)
+  verifiedByEmail  String?
+
+  @@index([profileId])
+  @@map("credential_doc")
 }
 
 model Session {
