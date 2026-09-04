@@ -1,8 +1,12 @@
 # Design: STEWARD crew role (client request)
 
 Date: 2026-09-03
-Status: approved (client asked for a "stewardess option"; neutral industry form
-"Steward(ess)" chosen with user approval — enum value `STEWARD`)
+Status: approved; amended 2026-09-04 — client reviewed the shipped
+"Steward(ess)" label and directed the literal industry term **"Stewardess"**
+("no stewards in his industry"). Enum value renamed `STEWARD` → `STEWARDESS`
+to match; the neutral-form alternative was offered and declined, decision
+recorded here. References to `STEWARD`/"Steward(ess)" below are the original
+design; read them as `STEWARDESS`/"Stewardess".
 
 ## What
 

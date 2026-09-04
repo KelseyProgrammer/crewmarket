@@ -45,7 +45,7 @@ const BIOS = [
   "Delivery-capable, keeps a tight log, treats every trip like a survey run.",
 ];
 
-const ROLES = ["MATE", "DECKHAND", "CAPTAIN", "SECOND_CAPTAIN", "ENGINEER", "COOK", "STEWARD"];
+const ROLES = ["MATE", "DECKHAND", "CAPTAIN", "SECOND_CAPTAIN", "ENGINEER", "COOK", "STEWARDESS"];
 
 // Interior-crew bios kept in a separate pool so BIOS picks for deck roles don't shift.
 const STEW_BIOS = [
@@ -84,7 +84,7 @@ function availability(days) {
 
 const profiles = [];
 for (let i = 0; i < 25; i++) {
-  const primaryRole = i < 7 ? "CAPTAIN" : i < 9 ? "SECOND_CAPTAIN" : i < 18 ? "MATE" : i < 23 ? "DECKHAND" : i < 24 ? pick(["ENGINEER", "COOK"]) : "STEWARD";
+  const primaryRole = i < 7 ? "CAPTAIN" : i < 9 ? "SECOND_CAPTAIN" : i < 18 ? "MATE" : i < 23 ? "DECKHAND" : i < 24 ? pick(["ENGINEER", "COOK"]) : "STEWARDESS";
   const roles = [primaryRole, ...(rand() < 0.35 ? picks(ROLES.filter((r) => r !== primaryRole), 1) : [])];
   const isCapt = primaryRole === "CAPTAIN" || primaryRole === "SECOND_CAPTAIN";
   const dayRateUsd = isCapt ? 500 + Math.floor(rand() * 9) * 50 : 250 + Math.floor(rand() * 9) * 25; // rule M-2: crew-set rates (synthetic here)
@@ -100,7 +100,7 @@ for (let i = 0; i < 25; i++) {
     dayRateUsd,
     ...(rand() < 0.6 ? { halfDayRateUsd: Math.round(dayRateUsd * 0.65) } : {}),
     ...(rand() < 0.4 ? { tournamentRateUsd: Math.round(dayRateUsd * 1.6) } : {}),
-    bio: primaryRole === "STEWARD" ? pick(STEW_BIOS) : pick(BIOS),
+    bio: primaryRole === "STEWARDESS" ? pick(STEW_BIOS) : pick(BIOS),
     photoRefs: [],
     credentials: credentialFor(primaryRole, i, isCapt ? 0.75 : 0.5),
     availability: availability(14),

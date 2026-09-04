@@ -13,7 +13,7 @@ const ROLE_OPTIONS = [
   ["DECKHAND", "Deckhand"],
   ["ENGINEER", "Engineer"],
   ["COOK", "Cook"],
-  ["STEWARD", "Steward(ess)"],
+  ["STEWARDESS", "Stewardess"],
 ] as const;
 
 type Search = { role?: string; port?: string; date?: string; verified?: string };
