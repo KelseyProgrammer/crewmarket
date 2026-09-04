@@ -15,8 +15,8 @@
 | Payments (Stripe Connect Express) | Express onboarding, delayed payout, 48h dispute window, webhooks | 🟡 | `packages/payments` documented API surface + booking machine encodes ESCROW_FUNDED → COMPLETED → DISPUTE_WINDOW(48h) → PAID_OUT. Stripe calls not yet wired (needs client's Stripe keys — SOW 6.i) |
 | Booking Flow | State machine incl. CANCELLED_WEATHER first-class | ✅ | `packages/types/src/booking-machine.ts` — typed transition table + guards |
 | | Boat request/accept, crew accept/decline | ✅ | Voyage Ledger shipped 9/2: request form (`/bookings/new`), shared ledger (`/bookings/[id]`, role-gated actions), bookings index. Funds-held step simulated until Stripe keys |
-| Credential Verification | Presigned non-public storage | ⬜ | Schema ready (`docRef`, V-2); S3 wiring pending |
-| | Admin-only `verified` flag | 🟡 | Enforced in schema comments + seed models it; admin UI pending |
+| Credential Verification | Presigned non-public storage | ✅ | MinIO dev / env-swap AWS; presigned PUT+GET (60s GET / 5m PUT), HeadObject-confirmed uploads, uploader-bound access (V-2) |
+| | Admin-only `verified` flag | ✅ | `/admin/credentials` (unlinked), ADMIN_EMAILS allowlist, verifiedAt-only writer, allowlisted emails blocked from self-signup (V-1) |
 | | Verified badge on profiles | ✅ | Brass-seal badge on directory cards (V-1 visual distinction, V-4 license class at a glance) |
 | Compliance Scaffolding | Employer-language CI lint stub | ✅⁺ | **Exceeds SOW**: `scripts/classification-lint.mjs` fully implemented (was stub), wired to `pnpm compliance:check` |
 | | Structural crew-autonomy safeguards | ✅ | No supervision/assignment features exist; rates crew-set in schema (M-2/M-3) |

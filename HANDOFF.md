@@ -43,8 +43,25 @@
   NOTE: db-push drift consolidated 9/4 into migration `20260904000000_booking_and_profile_claim`
   (marked applied on dev DB; `prisma migrate status` clean). All states screenshot-verified except ESCROW_FUNDED/IN_PROGRESS/
   PAID_OUT ledger details + wrong-role/empty-list guards (code-reviewed; full pass is e2e QA, G-3).
-- Next steps: Stripe Connect Express (request test keys from client) → credential upload/admin
-  verify → admin metrics dashboard → Expo parity → e2e QA (G-3) → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
+- **Credential verification SHIPPED (9/4/2026)** per `docs/superpowers/plans/2026-09-04-credential-verification.md`:
+  crew upload docs on `/account` (begin → presigned PUT → confirm, with a server-side HeadObject
+  re-validation before the row is trusted); admin verify at `/admin/credentials` (unlinked from nav),
+  gated by an `ADMIN_EMAILS` env allowlist that also blocks those emails from self-signup; claimed
+  profiles and the directory board now surface live DB credential state (`verifiedAt` = admin-set
+  only, V-1) — profile pages switched from static generation to per-request rendering to read it,
+  so `generateStaticParams` was dropped there. Ops: MinIO runs in `docker-compose.yml`
+  (`docker compose up -d`, alongside postgres); `S3_*` and `ADMIN_EMAILS` vars live in `.env.local`
+  (see `.env.example`); demo drive `node --env-file=.env.local scripts/demo-credential-drive.mjs`
+  seeds one synthetic self-reported STCW doc through the real storage path onto the existing claimed
+  profile. `scripts/demo-claim.mjs` now refuses to reassign a claim away from a profile with uploaded
+  docs unless `--force-docs` is passed (V-2: a reclaim must never hand a stranger's documents to a new
+  account). Two follow-ups on the books, not blocking: an S3 lifecycle/orphan sweep for uploads that
+  call begin but never confirm (pairs with the `TODO(account-deletion)` note in `schema.prisma`), and
+  the AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
+  IAM-role creds instead of static keys, bucket security config) for when the client's real bucket
+  replaces MinIO.
+- Next steps: Stripe Connect Express (request test keys from client) → admin metrics dashboard →
+  Expo mobile parity → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
