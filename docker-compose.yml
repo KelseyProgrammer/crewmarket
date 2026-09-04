@@ -1,5 +1,5 @@
-# Local dev services. Postgres only — Stripe owns KYC/bank/tax data (P-1),
-# credential docs live in S3 (V-2); neither ever lands in this database.
+# Local dev services. Postgres + MinIO (local S3-compat) — Stripe owns KYC/bank/tax data (P-1),
+# credential docs live in MinIO locally, S3 in production (V-2); neither ever lands in this database.
 services:
   postgres:
     image: postgres:17-alpine
@@ -18,5 +18,24 @@ services:
       timeout: 3s
       retries: 10
 
+  minio:
+    image: minio/minio
+    container_name: crewmarket-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: crewmarket
+      MINIO_ROOT_PASSWORD: crewmarket-dev # local dev only; real AWS creds come from the client (env swap)
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   pgdata:
+  miniodata:
