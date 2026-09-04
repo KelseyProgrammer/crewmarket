@@ -12,12 +12,24 @@ export type PublicCredential = {
   verified: boolean;
 };
 
-function toPublic(d: {
+type SelectedCredentialDoc = {
+  profileId: string;
   kind: string;
   licenseClass: string | null;
   expiresAt: Date | null;
   verifiedAt: Date | null;
-}): PublicCredential {
+};
+
+/* s3Key deliberately never selected — it must not even reach this layer (V-2) */
+const CREDENTIAL_DOC_SELECT = {
+  profileId: true,
+  kind: true,
+  licenseClass: true,
+  expiresAt: true,
+  verifiedAt: true,
+} as const;
+
+export function toPublic(d: SelectedCredentialDoc): PublicCredential {
   return {
     kind: d.kind,
     ...(d.licenseClass ? { licenseClass: d.licenseClass } : {}),
@@ -30,13 +42,17 @@ export async function credentialsForProfile(profileId: string): Promise<PublicCr
   const docs = await prisma.credentialDoc.findMany({
     where: { profileId },
     orderBy: { uploadedAt: "desc" },
+    select: CREDENTIAL_DOC_SELECT,
   });
   return docs.length > 0 ? docs.map(toPublic) : null;
 }
 
 /** profileId → credentials, for every claimed profile with ≥1 doc (directory pass). */
 export async function credentialOverrideMap(): Promise<Map<string, PublicCredential[]>> {
-  const docs = await prisma.credentialDoc.findMany({ orderBy: { uploadedAt: "desc" } });
+  const docs = await prisma.credentialDoc.findMany({
+    orderBy: { uploadedAt: "desc" },
+    select: CREDENTIAL_DOC_SELECT,
+  });
   const map = new Map<string, PublicCredential[]>();
   for (const d of docs) {
     const list = map.get(d.profileId) ?? [];
