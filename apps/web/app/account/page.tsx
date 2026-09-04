@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Container } from "@crewmarket/ui";
 import { auth } from "../../lib/auth";
 import { SignOutButton } from "../../components/sign-out-button";
+import { CredentialsSection } from "./credentials-section";
 
 /* Role-based account shell (SOW 2.i: role-based views/permissions).
    Real session check happens here; middleware only does the optimistic cookie gate.
@@ -23,7 +24,6 @@ const SHELLS = {
     upcoming: [
       ["LISTING", "Profile & services listing — roles, rates you set, availability, home port"],
       ["PAYOUTS", "Payout onboarding via Stripe Connect — Stripe handles identity and bank details"],
-      ["CREDENTIALS", "Credential upload for admin review — the brass seal is earned, never self-set"],
     ],
   },
   BOAT: {
@@ -67,6 +67,8 @@ export default async function Account() {
             {shell.liveAction.label}
           </a>
         </div>
+
+        {accountType === "CREW" ? <CredentialsSection userId={session.user.id} /> : null}
 
         <div className="account__panel account__panel--upcoming">
           <span className="eyebrow">NEXT ON THE BUILD</span>

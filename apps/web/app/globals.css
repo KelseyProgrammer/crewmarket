@@ -597,3 +597,35 @@ a { color: inherit; }
   .trail__steps { grid-template-columns: 1fr; }
   .masthead__nav { gap: var(--s-2) var(--s-3); }
 }
+
+/* ---------- credentials (account panel) ---------- */
+.credlist { list-style: none; margin: 0 0 var(--s-4); padding: 0; display: flex; flex-direction: column; }
+.credlist__row {
+  display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: baseline;
+  padding: var(--s-3) 0; border-top: 1px solid var(--line-on-white); font-size: 14px;
+}
+.credlist__row:first-child { border-top: 0; }
+.credlist__kind { color: var(--ink); font-weight: 600; }
+.credlist__class, .credlist__exp { color: var(--ink-soft); }
+.credlist__state { color: var(--ink-soft); font-size: 13px; margin-left: auto; }
+.credlist__state--verified { color: var(--brass-text); }
+.credlist__empty { color: var(--ink-soft); font-size: 14px; margin: 0 0 var(--s-4); }
+
+.credform { display: flex; flex-direction: column; gap: var(--s-3); max-width: var(--measure); }
+.credform label { display: flex; flex-direction: column; gap: var(--s-1); font-size: 13px; color: var(--ink); }
+.credform select, .credform input[type="text"], .credform input[type="date"], .credform input[type="file"] {
+  font-family: var(--font-body); font-size: 15px; color: var(--ink);
+  padding: 10px 12px; border: 1px solid var(--line-on-white); border-radius: var(--radius);
+  background: var(--white-crisp); width: 100%;
+}
+.credform__opt { color: var(--ink-soft); font-weight: 400; }
+.credform__error {
+  margin: 0; padding: var(--s-3);
+  border: 1px solid var(--brass-engrave); border-radius: var(--radius);
+  font-size: 14px; color: var(--ink);
+}
+
+@media (max-width: 480px) {
+  .credlist__row { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
+  .credlist__state { margin-left: 0; }
+}
