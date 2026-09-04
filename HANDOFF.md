@@ -40,8 +40,8 @@
   "Funds held" vocabulary throughout — escrow never renders (verified in built HTML). Demo drive:
   `node --env-file=.env.local scripts/demo-booking-drive.mjs` seeds 7 states + demo accounts
   (boat@example.com / mate@example.com, passwords in script output; mate drives "Del Pinder").
-  NOTE: schema synced via `prisma db push` (dev DB had drift from 8/29) — consolidate a real
-  migration before any deploy. All states screenshot-verified except ESCROW_FUNDED/IN_PROGRESS/
+  NOTE: db-push drift consolidated 9/4 into migration `20260904000000_booking_and_profile_claim`
+  (marked applied on dev DB; `prisma migrate status` clean). All states screenshot-verified except ESCROW_FUNDED/IN_PROGRESS/
   PAID_OUT ledger details + wrong-role/empty-list guards (code-reviewed; full pass is e2e QA, G-3).
 - Next steps: Stripe Connect Express (request test keys from client) → credential upload/admin
   verify → admin metrics dashboard → Expo parity → e2e QA (G-3) → Stripe Connect Express (largest phase; request test keys from client) → credential upload/admin verify → admin metrics dashboard (SOW v2 bonus data source) → Expo mobile parity → e2e QA (G-3).
