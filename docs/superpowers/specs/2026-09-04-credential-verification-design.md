@@ -44,7 +44,7 @@ Proper migration (pipeline is clean as of 9/4).
 ## 2. Storage helper (`apps/web/lib/credential-storage.ts`, server-only)
 
 - `presignedPut(key, contentType)` / `presignedGet(key)` — short expiries
-  (PUT 60s, GET 60s).
+  (PUT 300s — mobile-first upload headroom, a post-review change; GET 60s).
 - Key format: `credentials/{profileId}/{cuid}.{ext}` — extension derived from
   the validated content type, never from the client filename.
 - Bucket is private; MinIO bucket auto-created on first use in dev.

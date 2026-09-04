@@ -55,11 +55,14 @@
   seeds one synthetic self-reported STCW doc through the real storage path onto the existing claimed
   profile. `scripts/demo-claim.mjs` now refuses to reassign a claim away from a profile with uploaded
   docs unless `--force-docs` is passed (V-2: a reclaim must never hand a stranger's documents to a new
-  account). Two follow-ups on the books, not blocking: an S3 lifecycle/orphan sweep for uploads that
-  call begin but never confirm (pairs with the `TODO(account-deletion)` note in `schema.prisma`), and
-  the AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
+  account). Three follow-ups on the books, not blocking: an S3 lifecycle/orphan sweep for uploads that
+  call begin but never confirm (pairs with the `TODO(account-deletion)` note in `schema.prisma`), the
+  AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
   IAM-role creds instead of static keys, bucket security config) for when the client's real bucket
-  replaces MinIO.
+  replaces MinIO, and the credential server-action guards (`requireClaimedProfile` in
+  `apps/web/app/account/credential-actions.ts`, `requireAdmin` in
+  `apps/web/app/admin/credentials/actions.ts`) and the verified-vs-self-reported UI rendering are
+  code-reviewed but not unit-tested — spec §7 items deferred pending a DB/session test harness.
 - Next steps: Stripe Connect Express (request test keys from client) → admin metrics dashboard →
   Expo mobile parity → e2e QA (G-3).
 

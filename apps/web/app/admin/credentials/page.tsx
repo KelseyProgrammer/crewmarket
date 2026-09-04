@@ -20,7 +20,17 @@ export default async function AdminCredentials() {
 
   const docs = await prisma.credentialDoc.findMany({
     orderBy: [{ verifiedAt: { sort: "asc", nulls: "first" } }, { uploadedAt: "desc" }],
-    include: { uploadedBy: { select: { email: true } } },
+    // s3Key not selected — fetched only inside the actions that need it (V-2)
+    select: {
+      id: true,
+      profileId: true,
+      kind: true,
+      licenseClass: true,
+      expiresAt: true,
+      uploadedAt: true,
+      verifiedAt: true,
+      uploadedBy: { select: { email: true } },
+    },
   });
 
   return (

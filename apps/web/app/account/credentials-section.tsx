@@ -25,6 +25,15 @@ export async function CredentialsSection({ userId, notice }: { userId: string; n
   const docs = await prisma.credentialDoc.findMany({
     where: { profileId },
     orderBy: { uploadedAt: "desc" },
+    // s3Key not selected — fetched only inside the actions that need it (V-2)
+    select: {
+      id: true,
+      kind: true,
+      licenseClass: true,
+      expiresAt: true,
+      uploadedAt: true,
+      verifiedAt: true,
+    },
   });
 
   return (
@@ -51,6 +60,7 @@ export async function CredentialsSection({ userId, notice }: { userId: string; n
                   expires {d.expiresAt.toISOString().slice(0, 10)}
                 </span>
               ) : null}
+              <span className="credlist__exp">uploaded {d.uploadedAt.toISOString().slice(0, 10)}</span>
               <span className={d.verifiedAt ? "credlist__state credlist__state--verified" : "credlist__state"}>
                 {d.verifiedAt ? "Verified — document reviewed" : "Self-reported — awaiting review"}
               </span>
