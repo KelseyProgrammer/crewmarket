@@ -56,13 +56,33 @@ export async function confirmCredentialUpload(input: {
 }): Promise<ConfirmUploadResult> {
   const ctx = await requireClaimedProfile();
   if ("error" in ctx) return { error: ctx.error };
-  // The key encodes the profile — reject confirms for keys this claim doesn't own.
+  // Cheap pre-HeadObject guard — the key encodes the profile, so this rejects
+  // foreign keys before we spend a HeadObject call on them.
   if (!input.s3Key.startsWith(`credentials/${ctx.profileId}/`)) {
     return { error: "That upload doesn't belong to your profile." };
   }
   if (!(CREDENTIAL_KINDS as readonly string[]).includes(input.kind)) {
     return { error: "Choose a credential type from the list." };
   }
+
+  const licenseClass = input.licenseClass?.trim() || null;
+  if (licenseClass && licenseClass.length > 80) {
+    return { error: "License class is capped at 80 characters." };
+  }
+  if (licenseClass && !/^[A-Za-z0-9 ./-]+$/.test(licenseClass)) {
+    return { error: "License class can use letters, numbers, spaces, . / - only." };
+  }
+
+  let expiresAt: Date | null = null;
+  if (input.expiresAt) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(input.expiresAt)) return { error: "Enter a valid expiry date." };
+    const d = new Date(input.expiresAt + "T00:00:00Z");
+    if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== input.expiresAt) {
+      return { error: "Enter a valid expiry date." };
+    }
+    expiresAt = d;
+  }
+
   const head = await headObject(input.s3Key);
   if (!head) return { error: "Upload didn't complete — try again." };
   const invalid = validateUpload(head.contentType, head.sizeBytes);
@@ -71,44 +91,64 @@ export async function confirmCredentialUpload(input: {
     return { error: invalid };
   }
 
-  const expiresAt =
-    input.expiresAt && /^\d{4}-\d{2}-\d{2}$/.test(input.expiresAt)
-      ? new Date(input.expiresAt + "T00:00:00Z")
-      : null;
+  // Bind id ↔ key ↔ stored content type: recomputing the key validates docId shape
+  // (s3KeyFor throws on malformed ids) and rejects any client-tampered pairing.
+  let expectedKey: string;
+  try {
+    expectedKey = s3KeyFor(ctx.profileId, input.docId, head.contentType);
+  } catch {
+    return { error: "That upload doesn't match your profile." };
+  }
+  if (expectedKey !== input.s3Key) return { error: "That upload doesn't match your profile." };
 
-  await prisma.credentialDoc.create({
-    data: {
-      id: input.docId,
-      profileId: ctx.profileId,
-      uploadedByUserId: ctx.user.id,
-      kind: input.kind,
-      licenseClass: input.licenseClass?.trim() || null,
-      expiresAt,
-      s3Key: input.s3Key,
-      contentType: head.contentType,
-      sizeBytes: head.sizeBytes,
-      // verifiedAt deliberately absent: every new upload is self-reported (V-1)
-    },
-  });
+  try {
+    await prisma.credentialDoc.create({
+      data: {
+        id: input.docId,
+        profileId: ctx.profileId,
+        uploadedByUserId: ctx.user.id,
+        kind: input.kind,
+        licenseClass,
+        expiresAt,
+        s3Key: input.s3Key,
+        contentType: head.contentType,
+        sizeBytes: head.sizeBytes,
+        // verifiedAt deliberately absent: every new upload is self-reported (V-1)
+      },
+    });
+  } catch (err) {
+    if ((err as { code?: string }).code === "P2002") return { error: "That document was already saved." };
+    throw err;
+  }
   revalidatePath("/account");
+  revalidatePath(`/crew/${ctx.profileId}`);
+  revalidatePath("/directory");
   return {};
 }
 
 export async function deleteCredentialDoc(formData: FormData): Promise<void> {
   const ctx = await requireClaimedProfile();
-  if ("error" in ctx) return;
+  if ("error" in ctx) redirect("/account?cred=denied");
   const doc = await prisma.credentialDoc.findUnique({ where: { id: String(formData.get("docId")) } });
-  if (!doc || doc.profileId !== ctx.profileId) return;
+  // uploader-bound, not just claim-bound: a re-assigned claim must never expose the previous person's documents (V-2)
+  if (!doc || doc.profileId !== ctx.profileId || doc.uploadedByUserId !== ctx.user.id) {
+    redirect("/account?cred=denied");
+  }
   await deleteObject(doc.s3Key); // S3 first — if this throws, the row survives and Remove can be retried (V-2)
   await prisma.credentialDoc.delete({ where: { id: doc.id } });
   revalidatePath("/account");
+  revalidatePath(`/crew/${ctx.profileId}`);
+  revalidatePath("/directory");
 }
 
 /** Owner-only short-lived view of their own document (V-2). */
 export async function viewOwnCredentialDoc(formData: FormData): Promise<void> {
   const ctx = await requireClaimedProfile();
-  if ("error" in ctx) return;
+  if ("error" in ctx) redirect("/account?cred=denied");
   const doc = await prisma.credentialDoc.findUnique({ where: { id: String(formData.get("docId")) } });
-  if (!doc || doc.profileId !== ctx.profileId) return;
+  // uploader-bound, not just claim-bound: a re-assigned claim must never expose the previous person's documents (V-2)
+  if (!doc || doc.profileId !== ctx.profileId || doc.uploadedByUserId !== ctx.user.id) {
+    redirect("/account?cred=denied");
+  }
   redirect(await presignedGet(doc.s3Key));
 }

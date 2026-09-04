@@ -21,13 +21,25 @@ export async function setCredentialVerified(formData: FormData): Promise<void> {
   if (!admin) return;
   const docId = String(formData.get("docId"));
   const verify = formData.get("verify") === "1";
-  await prisma.credentialDoc.update({
-    where: { id: docId },
-    data: verify
-      ? { verifiedAt: new Date(), verifiedByEmail: admin.email }
-      : { verifiedAt: null, verifiedByEmail: null },
-  });
+  const doc = await prisma.credentialDoc.findUnique({ where: { id: docId } });
+  if (!doc) return;
+  try {
+    await prisma.credentialDoc.update({
+      where: { id: docId },
+      data: verify
+        ? { verifiedAt: new Date(), verifiedByEmail: admin.email }
+        : { verifiedAt: null, verifiedByEmail: null },
+    });
+  } catch (err) {
+    if ((err as { code?: string }).code === "P2025") {
+      revalidatePath("/admin/credentials");
+      return;
+    }
+    throw err;
+  }
   revalidatePath("/admin/credentials");
+  revalidatePath(`/crew/${doc.profileId}`);
+  revalidatePath("/directory");
 }
 
 export async function viewCredentialDocAsAdmin(formData: FormData): Promise<void> {

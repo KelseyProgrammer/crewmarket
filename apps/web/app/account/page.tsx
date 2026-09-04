@@ -42,9 +42,14 @@ const SHELLS = {
   },
 } as const;
 
-export default async function Account() {
+export default async function Account({
+  searchParams,
+}: {
+  searchParams: Promise<{ cred?: string }>;
+}) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/sign-in?from=/account");
+  const { cred } = await searchParams;
 
   const accountType = session.user.accountType === "BOAT" ? "BOAT" : "CREW";
   const shell = SHELLS[accountType];
@@ -68,7 +73,9 @@ export default async function Account() {
           </a>
         </div>
 
-        {accountType === "CREW" ? <CredentialsSection userId={session.user.id} /> : null}
+        {accountType === "CREW" ? (
+          <CredentialsSection userId={session.user.id} notice={cred === "denied"} />
+        ) : null}
 
         <div className="account__panel account__panel--upcoming">
           <span className="eyebrow">NEXT ON THE BUILD</span>

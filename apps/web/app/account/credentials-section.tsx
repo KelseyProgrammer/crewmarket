@@ -18,7 +18,7 @@ const KIND_LABELS: Record<string, string> = {
   OTHER: "Other credential",
 };
 
-export async function CredentialsSection({ userId }: { userId: string }) {
+export async function CredentialsSection({ userId, notice }: { userId: string; notice?: boolean }) {
   const profileId = await claimedProfileId(userId);
   if (!profileId) return null; // no claim, no upload surface — the account shell copy covers this
 
@@ -35,6 +35,11 @@ export async function CredentialsSection({ userId }: { userId: string }) {
         admin reviewed the document — the brass seal is earned, never self-set. Documents
         stay private; your public listing shows only the credential details.
       </p>
+      {notice ? (
+        <p className="credform__error" role="alert">
+          That document isn&apos;t available from this account — reload the page.
+        </p>
+      ) : null}
       {docs.length > 0 ? (
         <ul className="credlist">
           {docs.map((d) => (
