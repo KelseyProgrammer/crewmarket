@@ -625,6 +625,21 @@ a { color: inherit; }
   font-size: 14px; color: var(--ink);
 }
 
+/* ---------- admin credential review ---------- */
+.admincreds { padding: var(--s-7) 0 var(--s-8); }
+.admincreds__table { width: 100%; border-collapse: collapse; margin-top: var(--s-4); }
+.admincreds__table th {
+  text-align: left; padding: var(--s-2) var(--s-3);
+  font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-soft);
+  border-bottom: 2px solid var(--navy-deep);
+}
+.admincreds__table td {
+  padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line-on-white);
+  font-size: 14px; vertical-align: middle;
+}
+.admincreds__acts { display: flex; gap: var(--s-2); }
+
 @media (max-width: 480px) {
   .credlist__row { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
   .credlist__state { margin-left: 0; }
