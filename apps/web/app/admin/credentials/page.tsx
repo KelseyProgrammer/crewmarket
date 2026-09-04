@@ -5,6 +5,9 @@ import { crewProfileById, sessionUser } from "../../../lib/bookings";
 import { isAdminEmail } from "../../../lib/credential-rules";
 import { setCredentialVerified, viewCredentialDocAsAdmin } from "./actions";
 
+// self-documenting defense-in-depth: this table must never be statically cached (V-2)
+export const dynamic = "force-dynamic";
+
 /* Admin credential review (V-1). Gate = ADMIN_EMAILS env allowlist; page 404s
    for everyone else (route stays unadvertised — no nav link anywhere).
    Scope by rule: view + verified toggle, nothing more (SOW 2.ii). */
