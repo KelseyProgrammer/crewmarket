@@ -63,8 +63,19 @@
   `apps/web/app/account/credential-actions.ts`, `requireAdmin` in
   `apps/web/app/admin/credentials/actions.ts`) and the verified-vs-self-reported UI rendering are
   code-reviewed but not unit-tested — spec §7 items deferred pending a DB/session test harness.
-- Next steps: Stripe Connect Express (request test keys from client) → admin metrics dashboard →
-  Expo mobile parity → e2e QA (G-3).
+- **Admin metrics dashboard SHIPPED (9/5/2026)** per
+  `docs/superpowers/plans/2026-09-05-admin-metrics.md`: `/admin/metrics` live behind the same
+  `ADMIN_EMAILS` gate used for `/admin/credentials`; aggregates only, nothing that ranks or lists
+  individual crew (M-2/P-4) — bookings by state, verification counts, and account counts, with
+  decline counts carrying an explicit non-performance note. An admin error boundary at
+  `apps/web/app/admin/error.tsx` degrades to a plain retry message rather than the framework crash
+  page, and never renders the underlying error (P-4). The revenue tile deliberately reads "Platform
+  fees · realized" — not "net revenue" — because the figure is still booking-derived and
+  dev-labeled simulated; `simulatedRevenueFromBookings()` in `apps/web/lib/admin-metrics.ts` is the
+  marked SOW 7.iii swap point, and the Stripe phase replaces that one function (the tile's simulated
+  flag branch flips its label at the same time figures become Stripe-derived).
+- Next steps: Stripe Connect Express (request test keys from client) → Expo mobile parity →
+  e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
