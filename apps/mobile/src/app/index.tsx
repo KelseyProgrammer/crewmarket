@@ -1,16 +1,147 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useFonts, Oswald_500Medium, Oswald_700Bold } from "@expo-google-fonts/oswald";
+import { Archivo_400Regular, Archivo_600SemiBold } from "@expo-google-fonts/archivo";
+import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
+import { BoardRow } from "../../components/board-row";
+import { Filters } from "../../components/filters";
+import { color, font, space } from "../../lib/tokens";
+import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilters, type BoardProfile } from "../../lib/board";
 
-// Placeholder screen for the Expo scaffold (slice 1, Task 2). Task 3 replaces
-// this with the live crew board (fetches GET /api/board, four SOW filters).
-export default function IndexScreen() {
+/* The crew board (slice 1, Task 3). Fetches GET /api/board once and filters
+   in memory — the four SOW filters {role, port, availability date,
+   verified-only}, exactly matching apps/web/app/directory/page.tsx. */
+
+export default function BoardScreen() {
+  const [fontsLoaded] = useFonts({
+    Oswald_500Medium,
+    Oswald_700Bold,
+    Archivo_400Regular,
+    Archivo_600SemiBold,
+    MartianMono_400Regular,
+  });
+
+  const [profiles, setProfiles] = useState<BoardProfile[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [filters, setFilters] = useState<BoardFilters>(EMPTY_FILTERS);
+
+  // No synchronous setState in the fetch body itself — only inside the
+  // promise callbacks below — so mount-time invocation from the effect
+  // doesn't trigger cascading synchronous renders.
+  const fetchOnce = useCallback(() => {
+    getBoard()
+      .then((p) => setProfiles(p))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetchOnce();
+  }, [fetchOnce]);
+
+  const retry = useCallback(() => {
+    setError(false);
+    setLoading(true);
+    fetchOnce();
+  }, [fetchOnce]);
+
+  const windowStart = useMemo(() => (profiles ? boardWindowStart(profiles) : undefined), [profiles]);
+  const results = useMemo(() => (profiles ? filterBoard(profiles, filters) : []), [profiles, filters]);
+
+  if (!fontsLoaded || loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator color={color.navyDeep} />
+        <Text style={styles.centerText}>Raising the board…</Text>
+      </View>
+    );
+  }
+
+  if (error || !profiles) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.centerText}>Can&apos;t reach the board — check your connection.</Text>
+        <Pressable style={styles.retry} onPress={retry}>
+          <Text style={styles.retryText}>Retry</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Crew Market — board coming in this build</Text>
-    </View>
+    <FlatList
+      style={styles.list}
+      data={results}
+      keyExtractor={(p) => p.id}
+      renderItem={({ item }) => <BoardRow profile={item} windowStart={windowStart ?? item.availability[0]?.date ?? ""} />}
+      ListHeaderComponent={
+        <>
+          <View style={styles.banner}>
+            <Text style={styles.bannerTitle}>THE CREW BOARD</Text>
+            <Text style={styles.bannerMeta}>
+              Independent crew list their own services and set their own rates.
+            </Text>
+          </View>
+          <Filters profiles={profiles} windowStart={windowStart} value={filters} onChange={setFilters} />
+        </>
+      }
+      ListEmptyComponent={
+        <View style={styles.empty}>
+          <Text style={styles.emptyText}>
+            No crew match these filters yet — the fishery is deep, the filters are narrow.
+          </Text>
+          <Pressable onPress={() => setFilters(EMPTY_FILTERS)}>
+            <Text style={styles.emptyLink}>Clear all filters</Text>
+          </Pressable>
+        </View>
+      }
+      ListFooterComponent={
+        results.length > 0 ? (
+          <View style={styles.footer}>
+            <Text style={styles.footerCount}>
+              {results.length} of {profiles.length} listed
+            </Text>
+            <Text style={styles.footerNote}>
+              A brass seal means credentials passed admin review; everything else is self-reported.
+            </Text>
+          </View>
+        ) : null
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", padding: 24 },
-  text: { fontSize: 16, textAlign: "center" },
+  list: { flex: 1, backgroundColor: color.boardBg },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: space.s4,
+    padding: space.s5,
+    backgroundColor: color.boardBg,
+  },
+  centerText: { fontFamily: font.body, fontSize: 15, color: color.inkSoft, textAlign: "center" },
+  retry: {
+    borderWidth: 1,
+    borderColor: color.brass,
+    paddingVertical: space.s2,
+    paddingHorizontal: space.s5,
+  },
+  retryText: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
+  banner: { backgroundColor: color.navyDeep, padding: space.s5, gap: space.s2 },
+  bannerTitle: {
+    fontFamily: font.display,
+    fontSize: 28,
+    color: color.whiteCrisp,
+    letterSpacing: 0.5,
+  },
+  bannerMeta: { fontFamily: font.body, fontSize: 14, color: color.navyMuted },
+  empty: { padding: space.s5, gap: space.s2, alignItems: "flex-start" },
+  emptyText: { fontFamily: font.body, fontSize: 14, color: color.inkSoft },
+  emptyLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
+  footer: { padding: space.s5, gap: space.s2 },
+  footerCount: { fontFamily: font.mono, fontSize: 12, color: color.inkSoft },
+  footerNote: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
 });

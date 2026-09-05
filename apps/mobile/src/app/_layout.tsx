@@ -1,7 +1,20 @@
 import { Stack } from "expo-router";
+import { color, font } from "../../lib/tokens";
 
-// Minimal shell for the Expo scaffold (slice 1, Task 2). Task 3 replaces this
-// with a Stack styled from lib/tokens.ts (navy header band, per-screen titles).
+// Navy header band matching the weigh-in board world (docs/DESIGN.md). Screen
+// content (board, and later the crew profile plate) supplies its own titles;
+// this header stays small and consistent across the stack.
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: color.navyDeep },
+        headerTintColor: color.whiteCrisp,
+        headerTitleStyle: { fontFamily: font.display },
+        headerShadowVisible: false,
+      }}
+    >
+      <Stack.Screen name="index" options={{ title: "Crew Market" }} />
+    </Stack>
+  );
 }
