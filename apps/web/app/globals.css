@@ -640,6 +640,29 @@ a { color: inherit; }
 }
 .admincreds__acts { display: flex; gap: var(--s-2); }
 
+/* ---------- admin metrics dashboard ---------- */
+.metrics { padding: var(--s-7) 0 var(--s-8); }
+.metrics__tiles {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s-4); margin-top: var(--s-5);
+}
+.metrics__tile {
+  background: #ffffff; border: 1px solid var(--line-on-white); border-radius: var(--radius);
+  padding: var(--s-4);
+}
+.metrics__figure {
+  margin: var(--s-2) 0 var(--s-1); font-size: 28px; color: var(--ink);
+}
+.metrics__unit { font-size: 13px; color: var(--ink-soft); }
+.metrics__note { margin: 0; font-size: 13px; color: var(--ink-soft); }
+.metrics__states { margin-top: var(--s-6); }
+.metrics__table { width: 100%; border-collapse: collapse; margin-top: var(--s-4); }
+.metrics__table td {
+  padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line-on-white);
+  font-size: 14px; vertical-align: middle;
+}
+.metrics__table td:last-child { text-align: right; }
+
 @media (max-width: 480px) {
   .credlist__row { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
   .credlist__state { margin-left: 0; }
