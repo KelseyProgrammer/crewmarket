@@ -6,6 +6,10 @@ on booking requests are the north star for later slices. This app shares
 `@crewmarket/types` (workspace package) with the web app so the two clients
 never drift on shape.
 
+**Node:** react-native's engine range wants `^22.13.0`+ (repo `.nvmrc` pins
+22.13.0). Older 22.x currently works with warnings — upgrade before
+native-module-heavy slices.
+
 Scaffolded with `create-expo-app@latest` (TypeScript + expo-router default
 template, Expo SDK 57). Routes live under `src/app` (the current create-expo-app
 default layout, not a top-level `app/`).
