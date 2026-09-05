@@ -1,6 +1,6 @@
 import { Container, CrewCard, type CrewCardData } from "@crewmarket/ui";
 import seed from "../../data/seed-crew.json";
-import { credentialOverrideMap } from "../../lib/credential-overrides";
+import { boardData } from "../../lib/board-data";
 
 /* Directory & Search (SOW 2.i): listing page + filters {role, port, availability date, verified-only}.
    Server-rendered GET form: zero client JS, shareable filter URLs, works on a dock connection.
@@ -26,10 +26,7 @@ export default async function Directory({ searchParams }: { searchParams: Promis
   const all = seed.profiles as unknown as CrewCardData[];
   // Claimed profiles with uploaded docs show DB credential state — the board
   // never contradicts the profile page (V-1).
-  const overrides = await credentialOverrideMap();
-  const board = all.map((c) =>
-    overrides.has(c.id) ? { ...c, credentials: overrides.get(c.id)! as CrewCardData["credentials"] } : c
-  );
+  const board = await boardData();
   const ports = [...new Set(all.map((c) => c.homePort))].sort();
   // Strip window start: earliest seeded availability date — deterministic, no new Date().
   // Profiles whose window opens later render leading days closed (M-2: absence is closed).
