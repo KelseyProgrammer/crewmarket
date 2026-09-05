@@ -7,7 +7,7 @@ import { bookingStateCounts, splitFees, verifiedProfileCount } from "./admin-met
    hand-entered (SOW 7.iii). Aggregates only (M-2/P-4). */
 
 export type AdminMetrics = {
-  revenue: { realizedFeeCents: number; heldFeeCents: number; simulated: true };
+  revenue: { realizedFeeCents: number; heldFeeCents: number; simulated: boolean };
   bookings: { total: number; byState: Record<BookingState, number> };
   verification: { verifiedProfiles: number; verifiedDocs: number; awaitingReview: number };
   accounts: { crew: number; boat: number };
@@ -15,18 +15,19 @@ export type AdminMetrics = {
 
 /**
  * SOW 7.iii swap point: the Stripe phase replaces THIS function with Stripe
- * reporting reads. Until then revenue is derived from booking records and the
- * UI labels it simulated.
+ * reporting reads, and stops passing booking rows in from computeMetrics.
+ * Until then revenue is derived from the same booking rows the caller already
+ * fetched, and the UI labels it simulated.
  */
-async function simulatedRevenueFromBookings(): Promise<AdminMetrics["revenue"]> {
-  const rows = await prisma.booking.findMany({ select: { state: true, feeCents: true } });
-  return { ...splitFees(rows), simulated: true };
+function simulatedRevenueFromBookings(
+  rows: { state: string; feeCents: number }[]
+): AdminMetrics["revenue"] {
+  return { ...splitFees(rows), simulated: true as const };
 }
 
 export async function computeMetrics(): Promise<AdminMetrics> {
-  const [revenue, bookingRows, verifiedDocs, awaitingReview, crew, boat] = await Promise.all([
-    simulatedRevenueFromBookings(),
-    prisma.booking.findMany({ select: { state: true } }),
+  const [bookingRows, verifiedDocs, awaitingReview, crew, boat] = await Promise.all([
+    prisma.booking.findMany({ select: { state: true, feeCents: true } }),
     prisma.credentialDoc.findMany({
       where: { verifiedAt: { not: null } },
       select: { profileId: true }, // s3Key not selected — never needed here (V-2)
@@ -36,7 +37,7 @@ export async function computeMetrics(): Promise<AdminMetrics> {
     prisma.user.count({ where: { accountType: "BOAT" } }),
   ]);
   return {
-    revenue,
+    revenue: simulatedRevenueFromBookings(bookingRows),
     bookings: { total: bookingRows.length, byState: bookingStateCounts(bookingRows) },
     verification: {
       verifiedProfiles: verifiedProfileCount(verifiedDocs),

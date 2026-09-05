@@ -43,9 +43,13 @@ export default async function AdminMetrics() {
           <div className="metrics__tile">
             <span className="eyebrow">NET REVENUE · REALIZED</span>
             <p className="metrics__figure mono">{fmtUsd(m.revenue.realizedFeeCents)}</p>
-            <p className="metrics__note">
-              Simulated — derived from booking records until Stripe payments go live.
-            </p>
+            {m.revenue.simulated ? (
+              <p className="metrics__note">
+                Simulated — derived from booking records until Stripe payments go live.
+              </p>
+            ) : (
+              <p className="metrics__note">Derived from Stripe reporting (SOW 7.iii).</p>
+            )}
           </div>
           <div className="metrics__tile">
             <span className="eyebrow">FEES ON HELD BOOKINGS</span>
