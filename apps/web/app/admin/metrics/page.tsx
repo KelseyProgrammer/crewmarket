@@ -18,13 +18,13 @@ const STATE_LABELS: Record<BookingState, string> = {
   REQUESTED: "Requested",
   ACCEPTED: "Accepted",
   ESCROW_FUNDED: "Funds held",
-  IN_PROGRESS: "Under way",
+  IN_PROGRESS: "Underway",
   COMPLETED: "Trip complete",
   DISPUTE_WINDOW: "48h review window",
   PAID_OUT: "Paid out",
   CANCELLED_WEATHER: "Cancelled — weather",
   CANCELLED_BOAT: "Cancelled by boat",
-  CANCELLED_CREW: "Cancelled by crew",
+  CANCELLED_CREW: "Declined / cancelled by crew",
 };
 
 export default async function AdminMetrics() {
@@ -41,7 +41,7 @@ export default async function AdminMetrics() {
 
         <div className="metrics__tiles">
           <div className="metrics__tile">
-            <span className="eyebrow">NET REVENUE · REALIZED</span>
+            <span className="eyebrow">PLATFORM FEES · REALIZED</span>
             <p className="metrics__figure mono">{fmtUsd(m.revenue.realizedFeeCents)}</p>
             {m.revenue.simulated ? (
               <p className="metrics__note">
@@ -82,6 +82,12 @@ export default async function AdminMetrics() {
         <section className="metrics__states">
           <span className="eyebrow">BOOKINGS BY STATE</span>
           <table className="metrics__table">
+            <thead>
+              <tr>
+                <th>State</th>
+                <th>Count</th>
+              </tr>
+            </thead>
             <tbody>
               {(Object.keys(m.bookings.byState) as BookingState[]).map((s) => (
                 <tr key={s}>
@@ -91,6 +97,10 @@ export default async function AdminMetrics() {
               ))}
             </tbody>
           </table>
+          <p className="metrics__note">
+            Crew accept or decline at their own discretion — decline counts are never a
+            performance signal (M-2/M-3).
+          </p>
         </section>
       </Container>
     </main>

@@ -657,6 +657,13 @@ a { color: inherit; }
 .metrics__note { margin: 0; font-size: 13px; color: var(--ink-soft); }
 .metrics__states { margin-top: var(--s-6); }
 .metrics__table { width: 100%; border-collapse: collapse; margin-top: var(--s-4); }
+.metrics__table th {
+  text-align: left; padding: var(--s-2) var(--s-3);
+  font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-soft);
+  border-bottom: 2px solid var(--navy-deep);
+}
+.metrics__table th:last-child { text-align: right; }
 .metrics__table td {
   padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--line-on-white);
   font-size: 14px; vertical-align: middle;
@@ -667,3 +674,7 @@ a { color: inherit; }
   .credlist__row { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
   .credlist__state { margin-left: 0; }
 }
+
+/* ---------- admin error boundary ---------- */
+.adminerror { max-width: 36rem; margin: var(--s-9) auto; padding: 0 var(--s-4); }
+.adminerror p { color: var(--ink-soft); margin: var(--s-3) 0 var(--s-4); }
