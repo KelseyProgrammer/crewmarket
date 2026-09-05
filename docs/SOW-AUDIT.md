@@ -21,7 +21,7 @@
 | Compliance Scaffolding | Employer-language CI lint stub | ✅⁺ | **Exceeds SOW**: `scripts/classification-lint.mjs` fully implemented (was stub), wired to `pnpm compliance:check` |
 | | Structural crew-autonomy safeguards | ✅ | No supervision/assignment features exist; rates crew-set in schema (M-2/M-3) |
 | Admin Metrics Dashboard | Net revenue, bookings, verified counts | 🟡 | `/admin/metrics` live (unlinked, ADMIN_EMAILS gate, admin error boundary): bookings by state (decline counts explicitly non-performance, M-2/M-3), verification counts, accounts; revenue tile reads "Platform fees · realized" — booking-derived and dev-labeled simulated; flips to Stripe-derived net revenue (and ✅) at the SOW 7.iii swap point in `apps/web/lib/admin-metrics.ts` |
-| Mobile (Full Marketplace) | Expo app, feature parity | ⬜ | `apps/mobile` placeholder; shares `@crewmarket/types` when initialized |
+| Mobile (Full Marketplace) | Expo app, feature parity | 🟡 | slice 1 of 5 live: Expo SDK 57 + expo-router in apps/mobile; board + profile screens fed by public GET /api/board (allowlisted projection — ratings/storage fields never leave the server, P-4/V-2; same assembly as the web directory so the two clients never disagree); four SOW filters; D-2 on board footer + every profile. Remaining slices: auth, bookings API, credential upload, boat side |
 | Deployment & QA | Env setup, e2e of booking + payments | 🟡 | `.env.example` present; e2e after payments wiring |
 
 ## Contract obligations embedded in the build (not just features)

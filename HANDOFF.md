@@ -75,8 +75,21 @@
   dev-labeled simulated; `simulatedRevenueFromBookings()` in `apps/web/lib/admin-metrics.ts` is the
   marked SOW 7.iii swap point, and the Stripe phase replaces that one function (the tile's simulated
   flag branch flips its label at the same time figures become Stripe-derived).
-- Next steps: Stripe Connect Express (request test keys from client) → Expo mobile parity →
-  e2e QA (G-3).
+- **Mobile slice 1 SHIPPED (9/5/2026)** per `docs/superpowers/plans/2026-09-05-expo-slice1.md`:
+  mobile board + registry-plate profile screens (the weigh-in board world translated to native;
+  tokens mirrored in `apps/mobile/lib/tokens.ts` from `packages/ui/src/tokens.css` — dual-maintenance
+  until a third consumer justifies a package); public `GET /api/board` with a `toPublicProfile`
+  allowlist (`avgRating`/`responseRate`/`photoRefs` deliberately never leave the server, P-4). How to
+  run: `pnpm dev` (web serves the API) + `cd apps/mobile && npx expo start`; `EXPO_PUBLIC_API_URL` for
+  device testing (LAN IP), `EXPO_PUBLIC_WEB_URL` exists for when web/API origins split. Honest
+  verification note: this dev machine has no iOS simulator runtime (no network to fetch one) — slice
+  1 was verified via typecheck/lint/`expo export` bundle gates + live API curls; a hands-on
+  simulator/device pass is still owed and is the first step of any demo prep. Debt/follow-ups: mobile
+  has no unit-test runner yet (`filterBoard`/`boardWindowStart` mirror web logic and should get tests
+  when a jest/vitest setup lands); `/api/board` is unauthenticated + un-rate-limited (fine for demo
+  scale, note before real traffic); node 22.13+ wanted by react-native (`.nvmrc` pinned).
+- Next steps: Stripe Connect Express (request test keys from client) → mobile slice 2 (auth, joins
+  after Stripe) → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
