@@ -15,9 +15,15 @@ export function BoardRow({ profile, windowStart }: { profile: BoardProfile; wind
   const license = profile.credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
   const homePort = profile.homePort.replace(", FL", "");
 
+  const a11yLabel = `${profile.displayName}${verified ? ", verified" : ""}, $${profile.dayRateUsd} per day`;
+
   return (
     <Link href={`/crew/${profile.id}` as Href} asChild>
-      <Pressable style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
+      <Pressable
+        style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+        accessibilityRole="link"
+        accessibilityLabel={a11yLabel}
+      >
         <View style={styles.headline}>
           <Text style={styles.name} numberOfLines={1}>
             {profile.displayName}
@@ -38,10 +44,18 @@ export function BoardRow({ profile, windowStart }: { profile: BoardProfile; wind
             : "No license listed"}
         </Text>
         <View style={styles.footer}>
-          <Text style={styles.rate}>
-            ${profile.dayRateUsd}
-            <Text style={styles.rateSuffix}>/day · sets own rate</Text>
-          </Text>
+          <View style={styles.figures}>
+            {/* Seasons chunk (DESIGN.md-contracted): mirrors web CrewCard's
+                `{years}<small>seasons</small>` pairing, beside the day rate. */}
+            <Text style={styles.years}>
+              {profile.yearsExperience}
+              <Text style={styles.figureSuffix}> seasons</Text>
+            </Text>
+            <Text style={styles.rate}>
+              ${profile.dayRateUsd}
+              <Text style={styles.figureSuffix}> /day · sets own rate</Text>
+            </Text>
+          </View>
           <AvailabilityStrip availability={profile.availability} start={windowStart} />
         </View>
       </Pressable>
@@ -92,6 +106,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: space.s3,
   },
+  figures: { flexDirection: "row", alignItems: "baseline", gap: space.s3, flexShrink: 1 },
+  years: { fontFamily: font.mono, fontSize: 15, color: color.ink },
   rate: { fontFamily: font.mono, fontSize: 15, color: color.ink },
-  rateSuffix: { fontFamily: font.mono, fontSize: 10, color: color.inkSoft },
+  figureSuffix: { fontFamily: font.mono, fontSize: 10, color: color.inkSoft },
 });

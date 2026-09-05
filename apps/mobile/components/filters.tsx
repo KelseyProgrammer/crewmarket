@@ -34,7 +34,12 @@ function dateChips(windowStart: string | undefined, days = 14): { value: string;
 
 function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} style={[styles.chip, active && styles.chipActive]}>
+    <Pressable
+      onPress={onPress}
+      style={[styles.chip, active && styles.chipActive]}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+    >
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
     </Pressable>
   );
@@ -105,8 +110,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.lineStrong,
     borderRadius: radius,
-    paddingVertical: space.s2,
+    paddingVertical: space.s3,
     paddingHorizontal: space.s3,
+    minHeight: 44,
+    justifyContent: "center",
     backgroundColor: color.whiteCrisp,
   },
   chipActive: { backgroundColor: color.navyDeep, borderColor: color.navyDeep },

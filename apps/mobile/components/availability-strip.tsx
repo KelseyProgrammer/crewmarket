@@ -10,6 +10,9 @@ import type { BoardAvailability } from "../lib/board";
 const DAYS = 14;
 
 function openDays(av: BoardAvailability[], start: string): boolean[] {
+  // Empty board / no seeded availability yet: render all-closed cells rather
+  // than constructing new Date("T00:00:00Z"), which is invalid.
+  if (!start) return Array.from({ length: DAYS }, () => false);
   const open = new Set(av.filter((a) => a.status === "OPEN").map((a) => a.date));
   const first = new Date(start + "T00:00:00Z");
   return Array.from({ length: DAYS }, (_, i) => {

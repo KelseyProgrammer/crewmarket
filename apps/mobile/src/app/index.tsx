@@ -1,26 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { useFonts, Oswald_500Medium, Oswald_700Bold } from "@expo-google-fonts/oswald";
-import { Archivo_400Regular, Archivo_600SemiBold } from "@expo-google-fonts/archivo";
-import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
 import { BoardRow } from "../../components/board-row";
 import { Filters } from "../../components/filters";
+import { DisclaimerD2 } from "../../components/disclaimer-d2";
 import { color, font, space } from "../../lib/tokens";
 import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilters, type BoardProfile } from "../../lib/board";
 
 /* The crew board (slice 1, Task 3). Fetches GET /api/board once and filters
    in memory — the four SOW filters {role, port, availability date,
-   verified-only}, exactly matching apps/web/app/directory/page.tsx. */
+   verified-only}, exactly matching apps/web/app/directory/page.tsx.
+   Fonts are loaded once in _layout.tsx, not here. */
 
 export default function BoardScreen() {
-  const [fontsLoaded] = useFonts({
-    Oswald_500Medium,
-    Oswald_700Bold,
-    Archivo_400Regular,
-    Archivo_600SemiBold,
-    MartianMono_400Regular,
-  });
-
   const [profiles, setProfiles] = useState<BoardProfile[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -49,7 +40,7 @@ export default function BoardScreen() {
   const windowStart = useMemo(() => (profiles ? boardWindowStart(profiles) : undefined), [profiles]);
   const results = useMemo(() => (profiles ? filterBoard(profiles, filters) : []), [profiles, filters]);
 
-  if (!fontsLoaded || loading) {
+  if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={color.navyDeep} />
@@ -62,7 +53,7 @@ export default function BoardScreen() {
     return (
       <View style={styles.center}>
         <Text style={styles.centerText}>Can&apos;t reach the board — check your connection.</Text>
-        <Pressable style={styles.retry} onPress={retry}>
+        <Pressable style={styles.retry} onPress={retry} accessibilityRole="button">
           <Text style={styles.retryText}>Retry</Text>
         </Pressable>
       </View>
@@ -91,22 +82,33 @@ export default function BoardScreen() {
           <Text style={styles.emptyText}>
             No crew match these filters yet — the fishery is deep, the filters are narrow.
           </Text>
-          <Pressable onPress={() => setFilters(EMPTY_FILTERS)}>
+          <Pressable
+            style={styles.emptyLinkTarget}
+            hitSlop={12}
+            onPress={() => setFilters(EMPTY_FILTERS)}
+            accessibilityRole="button"
+          >
             <Text style={styles.emptyLink}>Clear all filters</Text>
           </Pressable>
         </View>
       }
       ListFooterComponent={
-        results.length > 0 ? (
-          <View style={styles.footer}>
-            <Text style={styles.footerCount}>
-              {results.length} of {profiles.length} listed
-            </Text>
-            <Text style={styles.footerNote}>
-              A brass seal means credentials passed admin review; everything else is self-reported.
-            </Text>
-          </View>
-        ) : null
+        <>
+          {results.length > 0 && (
+            <View style={styles.footer}>
+              <Text style={styles.footerCount}>
+                {results.length} of {profiles.length} listed
+              </Text>
+              <Text style={styles.footerNote}>
+                A brass seal means credentials passed admin review; everything else is self-reported.
+              </Text>
+            </View>
+          )}
+          {/* D-2 (conscious decision, approved): persistent footer disclaimer
+              on the board screen, mirroring apps/web/app/layout.tsx's global
+              footer — renders regardless of filter results. */}
+          <DisclaimerD2 />
+        </>
       }
     />
   );
@@ -126,8 +128,11 @@ const styles = StyleSheet.create({
   retry: {
     borderWidth: 1,
     borderColor: color.brass,
-    paddingVertical: space.s2,
+    paddingVertical: space.s3,
     paddingHorizontal: space.s5,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   retryText: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
   banner: { backgroundColor: color.navyDeep, padding: space.s5, gap: space.s2 },
@@ -140,6 +145,7 @@ const styles = StyleSheet.create({
   bannerMeta: { fontFamily: font.body, fontSize: 14, color: color.navyMuted },
   empty: { padding: space.s5, gap: space.s2, alignItems: "flex-start" },
   emptyText: { fontFamily: font.body, fontSize: 14, color: color.inkSoft },
+  emptyLinkTarget: { paddingVertical: space.s3, paddingHorizontal: space.s1, minHeight: 44, justifyContent: "center" },
   emptyLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
   footer: { padding: space.s5, gap: space.s2 },
   footerCount: { fontFamily: font.mono, fontSize: 12, color: color.inkSoft },

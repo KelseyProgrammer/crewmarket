@@ -43,7 +43,15 @@ export async function fetchBoard(): Promise<BoardProfile[]> {
   const res = await fetch(`${API_URL}/api/board`);
   if (!res.ok) throw new Error(`board fetch failed: ${res.status}`);
   const json = (await res.json()) as { profiles: BoardProfile[] };
-  return json.profiles;
+  if (!Array.isArray(json.profiles)) throw new Error("board response malformed");
+  // Guard array fields individually so server-side drift (a profile missing
+  // credentials/availability) lands in the existing error+retry UI instead of
+  // crashing the row/filter render, which assumes these are always arrays.
+  return json.profiles.map((p) => ({
+    ...p,
+    credentials: p.credentials ?? [],
+    availability: p.availability ?? [],
+  }));
 }
 
 export type BoardFilters = { role: string; port: string; date: string; verifiedOnly: boolean };
@@ -77,11 +85,23 @@ export function boardWindowStart(profiles: BoardProfile[]): string | undefined {
    link (no board fetch has happened yet in this app session). */
 let boardCache: BoardProfile[] | null = null;
 
+// Concurrent callers (e.g. the board screen and a cold-start profile deep
+// link mounting in the same tick) share one in-flight fetch instead of
+// racing two requests; cleared on settle regardless of outcome so a failed
+// fetch doesn't wedge future retries.
+let inflight: Promise<BoardProfile[]> | null = null;
+
 export async function getBoard(): Promise<BoardProfile[]> {
   if (boardCache) return boardCache;
-  const profiles = await fetchBoard();
-  boardCache = profiles;
-  return profiles;
+  if (inflight) return inflight;
+  inflight = fetchBoard();
+  try {
+    const profiles = await inflight;
+    boardCache = profiles;
+    return profiles;
+  } finally {
+    inflight = null;
+  }
 }
 
 export function cachedBoard(): BoardProfile[] | null {

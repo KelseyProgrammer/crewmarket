@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { useFonts, Oswald_500Medium, Oswald_700Bold } from "@expo-google-fonts/oswald";
-import { Archivo_400Regular, Archivo_600SemiBold } from "@expo-google-fonts/archivo";
-import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { ROLE_LABELS } from "../../../lib/roles";
 import { WEB_URL } from "../../../lib/api";
@@ -41,14 +38,6 @@ type LoadState = "loading" | "not-found" | "error" | "ready";
 
 export default function CrewProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-
-  const [fontsLoaded] = useFonts({
-    Oswald_500Medium,
-    Oswald_700Bold,
-    Archivo_400Regular,
-    Archivo_600SemiBold,
-    MartianMono_400Regular,
-  });
 
   const [profile, setProfile] = useState<BoardProfile | null>(null);
   const [state, setState] = useState<LoadState>("loading");
@@ -95,7 +84,7 @@ export default function CrewProfileScreen() {
       .catch(() => setState("error"));
   };
 
-  if (!fontsLoaded || state === "loading") {
+  if (state === "loading") {
     return (
       <View style={styles.center}>
         <Stack.Screen options={{ title: "Crew Market" }} />
