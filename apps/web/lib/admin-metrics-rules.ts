@@ -27,7 +27,8 @@ const ZERO_COUNTS: Record<BookingState, number> = {
 export function bookingStateCounts(rows: { state: string }[]): Record<BookingState, number> {
   const counts = { ...ZERO_COUNTS };
   for (const row of rows) {
-    if (row.state in counts) counts[row.state as BookingState] += 1;
+    // own-property check: `in` would also accept prototype keys like "toString"
+    if (Object.prototype.hasOwnProperty.call(counts, row.state)) counts[row.state as BookingState] += 1;
   }
   return counts;
 }

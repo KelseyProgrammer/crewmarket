@@ -58,8 +58,9 @@ that read as ranking (M-2/P-4).
 
 TDD the pure aggregation helpers. Gates: compliance lint, `pnpm lint`,
 apps/web + packages/ui vitest, `pnpm build`. Demo state: the booking drive's
-7 seeded states + the seeded credential doc give every tile a non-trivial
-value.
+7 seeded states populate the revenue/booking tiles; the seeded credential doc
+starts self-reported, so the verification tile shows non-zero verified counts
+only after an admin verifies it at `/admin/credentials`.
 
 ## Out of scope
 

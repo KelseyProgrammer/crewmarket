@@ -21,6 +21,10 @@ describe("bookingStateCounts", () => {
   it("ignores unknown state strings rather than throwing (defensive against drift)", () => {
     expect(bookingStateCounts([{ state: "NOT_A_STATE" }]).REQUESTED).toBe(0);
   });
+  it("rejects prototype-chain keys — 'toString' must not become an eleventh row", () => {
+    const counts = bookingStateCounts([{ state: "toString" }, { state: "constructor" }]);
+    expect(Object.keys(counts)).toHaveLength(10);
+  });
 });
 
 describe("splitFees", () => {

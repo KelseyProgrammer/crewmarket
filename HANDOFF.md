@@ -68,8 +68,9 @@
   `ADMIN_EMAILS` gate used for `/admin/credentials`; aggregates only, nothing that ranks or lists
   individual crew (M-2/P-4) — bookings by state, verification counts, and account counts, with
   decline counts carrying an explicit non-performance note. An admin error boundary at
-  `apps/web/app/admin/error.tsx` degrades to a plain retry message rather than the framework crash
-  page, and never renders the underlying error (P-4). The revenue tile deliberately reads "Platform
+  `apps/web/app/admin/error.tsx` degrades to a plain retry message after hydration (errors that
+  precede the first HTML flush still show a brief blank frame — inherent Next behavior), and never
+  renders the underlying error (P-4). The revenue tile deliberately reads "Platform
   fees · realized" — not "net revenue" — because the figure is still booking-derived and
   dev-labeled simulated; `simulatedRevenueFromBookings()` in `apps/web/lib/admin-metrics.ts` is the
   marked SOW 7.iii swap point, and the Stripe phase replaces that one function (the tile's simulated
