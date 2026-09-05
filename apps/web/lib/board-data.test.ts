@@ -4,7 +4,7 @@ vi.mock("@crewmarket/db", () => ({ prisma: {} }));
 vi.mock("./credential-overrides", () => ({
   credentialOverrideMap: vi.fn(async () => new Map([["p-1", [{ kind: "STCW_BASIC", verified: true }]]])),
 }));
-const { mergeBoard } = await import("./board-data");
+const { mergeBoard, toPublicProfile } = await import("./board-data");
 
 describe("mergeBoard — the one board-assembly source (web page + mobile API)", () => {
   const seed = [
@@ -19,5 +19,21 @@ describe("mergeBoard — the one board-assembly source (web page + mobile API)",
   });
   it("empty override map returns the seed as-is", () => {
     expect(mergeBoard(seed, new Map())).toEqual(seed);
+  });
+});
+
+describe("toPublicProfile — public allowlist (P-4)", () => {
+  it("strips never-rendered fields and passes rendered ones", () => {
+    const p = toPublicProfile({
+      id: "x", displayName: "N", roles: ["MATE"], homePort: "Key West, FL",
+      regions: ["Lower Keys"], yearsExperience: 5, fisheries: ["sailfish"],
+      vesselExperience: ["express"], dayRateUsd: 300, bio: "b",
+      credentials: [], availability: [],
+      stats: { tripsCompleted: 10, avgRating: 4.9, responseRate: 0.99 },
+      photoRefs: ["ref"],
+    } as never);
+    expect(p.stats).toEqual({ tripsCompleted: 10 });
+    expect("photoRefs" in p).toBe(false);
+    expect(JSON.stringify(p)).not.toMatch(/avgRating|responseRate|photoRefs/);
   });
 });
