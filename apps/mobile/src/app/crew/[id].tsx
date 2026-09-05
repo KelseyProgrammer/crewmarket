@@ -6,7 +6,7 @@ import { Archivo_400Regular, Archivo_600SemiBold } from "@expo-google-fonts/arch
 import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { ROLE_LABELS } from "../../../lib/roles";
-import { API_URL } from "../../../lib/api";
+import { WEB_URL } from "../../../lib/api";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
 import { color, font, space, radius } from "../../../lib/tokens";
 
@@ -52,6 +52,7 @@ export default function CrewProfileScreen() {
 
   const [profile, setProfile] = useState<BoardProfile | null>(null);
   const [state, setState] = useState<LoadState>("loading");
+  const [bookingLinkError, setBookingLinkError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -150,7 +151,9 @@ export default function CrewProfileScreen() {
             </View>
           )}
         </View>
-        <Text style={styles.name}>{profile.displayName}</Text>
+        <Text style={styles.name} accessibilityRole="header">
+          {profile.displayName}
+        </Text>
         <Text style={styles.role}>
           {profile.roles.map((r) => ROLE_LABELS[r] ?? r).join(" · ")}
           {license && (
@@ -230,10 +233,18 @@ export default function CrewProfileScreen() {
         </Text>
         <Pressable
           style={styles.webButton}
-          onPress={() => Linking.openURL(`${API_URL}/bookings/new?crew=${profile.id}`)}
+          onPress={() => {
+            setBookingLinkError(false);
+            Linking.openURL(`${WEB_URL}/bookings/new?crew=${profile.id}`).catch(() => {
+              setBookingLinkError(true);
+            });
+          }}
         >
           <Text style={styles.webButtonText}>Open {firstName}&apos;s booking form on the web</Text>
         </Pressable>
+        {bookingLinkError && (
+          <Text style={styles.bookingLinkError}>Couldn&apos;t open the booking form — try again.</Text>
+        )}
       </View>
 
       <View style={styles.disclaimer}>
@@ -340,11 +351,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.brass,
     borderRadius: radius,
-    paddingVertical: space.s2,
+    paddingVertical: space.s3,
     paddingHorizontal: space.s4,
     marginTop: space.s1,
   },
   webButtonText: { fontFamily: font.body, fontSize: 13, fontWeight: "600", color: color.brassText },
+  bookingLinkError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft, marginTop: space.s2 },
 
   disclaimer: { marginTop: space.s2 },
 });

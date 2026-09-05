@@ -2,21 +2,12 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Link, type Href } from "expo-router";
 import { color, font, space } from "../lib/tokens";
 import type { BoardProfile } from "../lib/board";
+import { ROLE_LABELS } from "../lib/roles";
 import { AvailabilityStrip } from "./availability-strip";
 
 /* Weigh-in board row (mirrors packages/ui/src/components.tsx CrewCard).
    Probe C guard (M-2/P-4): no rank numbers, no ordinals anywhere — order is
    whatever the filters produced, never a score. */
-
-const ROLE_LABELS: Record<string, string> = {
-  CAPTAIN: "Captain",
-  SECOND_CAPTAIN: "Second Captain",
-  MATE: "Mate",
-  DECKHAND: "Deckhand",
-  ENGINEER: "Engineer",
-  COOK: "Cook",
-  STEWARDESS: "Stewardess",
-};
 
 export function BoardRow({ profile, windowStart }: { profile: BoardProfile; windowStart: string }) {
   const verified = profile.credentials.some((c) => c.verified);
