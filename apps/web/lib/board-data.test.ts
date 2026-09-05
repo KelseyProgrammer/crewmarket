@@ -36,4 +36,20 @@ describe("toPublicProfile — public allowlist (P-4)", () => {
     expect("photoRefs" in p).toBe(false);
     expect(JSON.stringify(p)).not.toMatch(/avgRating|responseRate|photoRefs/);
   });
+  it("wire contract is frozen — apps/mobile/lib/board.ts hand-types this exact key set", () => {
+    const p = toPublicProfile({
+      id: "x", displayName: "N", roles: ["MATE"], homePort: "Key West, FL",
+      regions: ["Lower Keys"], yearsExperience: 5, fisheries: ["sailfish"],
+      vesselExperience: ["express"], dayRateUsd: 300, halfDayRateUsd: 195,
+      tournamentRateUsd: 480, bio: "b", credentials: [], availability: [],
+      stats: { tripsCompleted: 10 },
+    } as never);
+    // Changing this list is a BREAKING mobile change — update BoardProfile in
+    // apps/mobile/lib/board.ts in the same commit.
+    expect(Object.keys(p).sort()).toEqual([
+      "availability", "bio", "credentials", "dayRateUsd", "displayName",
+      "fisheries", "halfDayRateUsd", "homePort", "id", "regions", "roles",
+      "stats", "tournamentRateUsd", "vesselExperience", "yearsExperience",
+    ]);
+  });
 });

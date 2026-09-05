@@ -17,7 +17,7 @@ concern: see docs/COMPLIANCE.md and cite rule IDs (M-*, V-*, P-*, D-*, G-*) in c
 7. Synthetic seed data only; commit style: `[ai-assisted]` + rule IDs.
 
 ## Architecture
-Turborepo + pnpm: apps/web (Next.js 15), apps/mobile (Expo placeholder, crew-side is mobile-first),
+Turborepo + pnpm: apps/web (Next.js 15), apps/mobile (Expo, board browsing live, crew-side is mobile-first),
 packages/types (Zod schemas), packages/payments (Stripe Connect), packages/ui.
 Postgres + Prisma (encrypted at rest); AWS S3 presigned for credential docs.
 

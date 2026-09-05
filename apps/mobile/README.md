@@ -16,9 +16,10 @@ default layout, not a top-level `app/`).
 
 ## Status
 
-Slice 1 of 5 (see `docs/SOW-AUDIT.md`): scaffold only. `src/app/index.tsx` is a
-placeholder — the crew board and profile screens land in the next tasks of
-`docs/superpowers/plans/2026-09-05-expo-slice1.md`.
+Slice 1 of 5 SHIPPED (see `docs/SOW-AUDIT.md`): board screen (four SOW filters,
+availability strips, brass seals) + registry-plate profile screens with D-2,
+fed by the web app's public `GET /api/board`. Remaining slices: auth, bookings
+API, credential upload, boat side.
 
 ## Design tokens
 

@@ -40,7 +40,7 @@ export function BoardRow({ profile, windowStart }: { profile: BoardProfile; wind
         </Text>
         <Text style={styles.license}>
           {license
-            ? `${license.licenseClass}${license.verified ? " · passed admin review" : " · self-reported"}`
+            ? `${license.licenseClass}${license.expiresAt ? ` · exp ${license.expiresAt.slice(0, 7)}` : ""}${license.verified ? " · passed admin review" : " · self-reported"}`
             : "No license listed"}
         </Text>
         <View style={styles.footer}>
