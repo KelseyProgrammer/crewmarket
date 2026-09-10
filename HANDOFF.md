@@ -81,10 +81,15 @@
   until a third consumer justifies a package); public `GET /api/board` with a `toPublicProfile`
   allowlist (`avgRating`/`responseRate`/`photoRefs` deliberately never leave the server, P-4). How to
   run: `pnpm dev` (web serves the API) + `cd apps/mobile && npx expo start`; `EXPO_PUBLIC_API_URL` for
-  device testing (LAN IP), `EXPO_PUBLIC_WEB_URL` exists for when web/API origins split. Honest
-  verification note: this dev machine has no iOS simulator runtime (no network to fetch one) — slice
-  1 was verified via typecheck/lint/`expo export` bundle gates + live API curls; a hands-on
-  simulator/device pass is still owed and is the first step of any demo prep. Debt/follow-ups: mobile
+  device testing (LAN IP), `EXPO_PUBLIC_WEB_URL` exists for when web/API origins split. Device
+  verification ran 9/9/2026 on a physical iPhone via Expo Go (working path: web dev + postgres
+  container only, `npx expo login --browser` on the Mac + signed-in Expo Go, then
+  `EXPO_PUBLIC_API_URL=http://<LAN-IP>:3000 npx expo start`): board loads live data, filters work.
+  It caught two layout bugs the typecheck/lint/export gates could not — `<Link asChild>` (Radix
+  Slot) silently destroying the board row's function-form style, and the availability strip
+  overdrawing the rate text at 390pt — both fixed in d80bca0, user-confirmed on device. Still
+  unverified: font-failure fallback, and a post-fix tap-through of board→profile (nav mechanism
+  changed to router.push in that fix). Debt/follow-ups: mobile
   has no unit-test runner yet (`filterBoard`/`boardWindowStart` mirror web logic and should get tests
   when a jest/vitest setup lands); `/api/board` is unauthenticated + un-rate-limited (fine for demo
   scale, note before real traffic); node 22.13+ wanted by react-native (`.nvmrc` pinned).
