@@ -87,9 +87,9 @@
   `EXPO_PUBLIC_API_URL=http://<LAN-IP>:3000 npx expo start`): board loads live data, filters work.
   It caught two layout bugs the typecheck/lint/export gates could not — `<Link asChild>` (Radix
   Slot) silently destroying the board row's function-form style, and the availability strip
-  overdrawing the rate text at 390pt — both fixed in d80bca0, user-confirmed on device. Still
-  unverified: font-failure fallback, and a post-fix tap-through of board→profile (nav mechanism
-  changed to router.push in that fix). Debt/follow-ups: mobile
+  overdrawing the rate text at 390pt — both fixed in d80bca0, user-confirmed on device, including
+  a post-fix board→profile tap-through of the new router.push nav. Only the font-failure fallback
+  remains unverified. Debt/follow-ups: mobile
   has no unit-test runner yet (`filterBoard`/`boardWindowStart` mirror web logic and should get tests
   when a jest/vitest setup lands); `/api/board` is unauthenticated + un-rate-limited (fine for demo
   scale, note before real traffic); node 22.13+ wanted by react-native (`.nvmrc` pinned).
