@@ -55,11 +55,15 @@
   seeds one synthetic self-reported STCW doc through the real storage path onto the existing claimed
   profile. `scripts/demo-claim.mjs` now refuses to reassign a claim away from a profile with uploaded
   docs unless `--force-docs` is passed (V-2: a reclaim must never hand a stranger's documents to a new
-  account). Three follow-ups on the books, not blocking: an S3 lifecycle/orphan sweep for uploads that
-  call begin but never confirm (pairs with the `TODO(account-deletion)` note in `schema.prisma`), the
+  account). Follow-ups (updated 2026-09-13): the orphan sweep SHIPPED —
+  `node --env-file=.env.local scripts/sweep-orphan-credentials.mjs` (dry-run default, `--delete`
+  to remove, 24h age gate so in-flight PUTs are never eligible, dangling DB rows report-only
+  pending the client's verified-doc-deletion policy call; rehearsal-verified against MinIO;
+  still pairs with the `TODO(account-deletion)` note in `schema.prisma`). Still open: the
   AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
   IAM-role creds instead of static keys, bucket security config) for when the client's real bucket
-  replaces MinIO, and the credential server-action guards (`requireClaimedProfile` in
+  replaces MinIO. Now unit-tested by the 2026-09-13 hardening bundle: the credential
+  server-action guards (`requireClaimedProfile` in
   `apps/web/app/account/credential-actions.ts`, `requireAdmin` in
   `apps/web/app/admin/credentials/actions.ts`) and the verified-vs-self-reported UI rendering are
   code-reviewed but not unit-tested — spec §7 items deferred pending a DB/session test harness.
