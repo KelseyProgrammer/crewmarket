@@ -37,7 +37,11 @@ file (audience, palette, type, signature element). Tooling that produced/maintai
    `/plugin marketplace add ghaida/intent` (Claude Code) or `npx skills add ghaida/intent --all`.
    Used for: anti-pattern catalog (no dark patterns — pairs with rule P-4), UX copy discipline.
 3. **Impeccable (design craft + anti-slop detector)** — vendored at `.claude/skills/impeccable/`
-   (Apache 2.0, Paul Bakaus; compiled plugin build @ ea36002, 2026-08-28). Canonical install:
+   (Apache 2.0 — noted in SKILL.md frontmatter since v4.3; Paul Bakaus; v4.3.1 compiled build,
+   updated 2026-09-13). Since v4.3 the scripts are a compiled engine: the per-platform binary in
+   `scripts/bin/` is gitignored — each new machine's `npx impeccable skills install` fetches its
+   own (alongside the existing per-machine `/impeccable hooks on` consent step). Skill subagents
+   live at `.claude/agents/impeccable-*.md` (vendored). Canonical install:
    `npx impeccable skills install` from repo root (CLI ≥2.3 renamed `install`/`update` to
    `skills install`/`skills update`), then `/impeccable init` in-agent. The design detector hook
    is toggled in-agent via `/impeccable hooks on|off|status` — enabled for this project 8/28/2026

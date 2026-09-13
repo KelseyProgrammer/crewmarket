@@ -12,3 +12,7 @@ dist/
 
 # finish-review evidence (regenerated per round, not source)
 .impeccable/review/
+
+# impeccable v4.3+ compiled engine: per-platform binary, fetched per machine
+# by `npx impeccable skills install` (see CLAUDE.md) — never vendored
+.claude/skills/impeccable/scripts/bin/
