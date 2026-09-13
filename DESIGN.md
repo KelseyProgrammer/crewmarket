@@ -433,9 +433,10 @@ Mist) and the mono legal line on every page.
 Dashed hairline plate, plain-spoken copy, a single Brass Text link out. The board count line
 ("N of M listed") is 10px mono uppercase census furniture.
 
-### Chart-Room Engravings (native, apps/mobile)
-The mobile board carries an engraved instrument layer — line-drawn SVG in
-`apps/mobile/components/engravings.tsx`, stroke-only with square caps, no fills:
+### Chart-Room Engravings (both platforms)
+The board carries an engraved instrument layer — line-drawn SVG, stroke-only with square caps,
+no fills. Two mirrored implementations kept in lockstep: `packages/ui/src/engravings.tsx` (web,
+currentColor) and `apps/mobile/components/engravings.tsx` (native):
 - **Compass rose**: outer ring, dashed inner ring, long cardinals / short intercardinals. A
   cropped watermark in the banner's top-right (mist at ~0.15) and a small loading mark.
 - **Anchor**: ring, shank, stock, arced crown with barbed flukes. Empty and not-found states only.
@@ -444,8 +445,9 @@ The mobile board carries an engraved instrument layer — line-drawn SVG in
   credential rows (V-1: admin-set flag only).
 - **Latitude hairlines**: 1px mist lines at ~0.12 on navy fields (banner, profile head) —
   the hero's latitude texture, shared via the `LATITUDE_LINE` ink constant.
-- **Coordinates chart line**: "SOUTH FLORIDA FISHERY · 25°46′ N · 80°08′ W" as 10px mono
-  furniture *below* the banner meta — chart annotation, not an eyebrow (D-3: region-coarse).
+- **Coordinates chart line**: "24.9° N · 80.6° W — SOUTH FLORIDA FISHERY" — one canonical
+  string (verbatim from the landing hero) as 10px mono furniture *below* the banner meta on
+  both platforms — chart annotation, not an eyebrow (D-3: region-coarse).
 - **Manifest leaders**: profile fact rows run label · dotted hairline leader · mono value,
   like a line in the ship's papers.
 

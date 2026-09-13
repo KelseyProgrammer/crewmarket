@@ -16,3 +16,4 @@ dist/
 # impeccable v4.3+ compiled engine: per-platform binary, fetched per machine
 # by `npx impeccable skills install` (see CLAUDE.md) — never vendored
 .claude/skills/impeccable/scripts/bin/
+*.tsbuildinfo

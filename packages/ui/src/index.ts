@@ -4,3 +4,4 @@ export { VerifiedSeal, DisclaimerD2, BookingStateBadge, CrewCard, Container } fr
 export type { CrewCardData } from "./components";
 export { availabilityWindow, AvailabilityStrip } from "./availability";
 export type { DayCell } from "./availability";
+export { CompassRose, AnchorMark } from "./engravings";

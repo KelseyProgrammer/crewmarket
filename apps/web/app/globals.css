@@ -120,10 +120,24 @@ a { color: inherit; }
    Tournament board rows, no cards. The board lists; it never ranks (M-2/P-4). */
 .directory { padding: 0 0 var(--s-8); background: var(--board-bg); }
 
-.banner { background: var(--navy-deep); color: var(--white-crisp); padding: var(--s-7) 0 var(--s-6); }
+.banner {
+  background:
+    /* latitude hairlines — the hero's chart texture, shared verbatim */
+    repeating-linear-gradient(to bottom, transparent 0 71px, rgba(143, 166, 186, 0.1) 71px 72px),
+    var(--navy-deep);
+  color: var(--white-crisp); padding: var(--s-7) 0 var(--s-6);
+  position: relative; overflow: hidden;
+}
+/* Chart-room watermark: compass rose cropped at the banner's edge, mist ink
+   (Ornament Ink Rule — never brass), behind the text. */
+.banner__rose {
+  position: absolute; top: -44px; right: -56px;
+  color: var(--mist); opacity: 0.15; pointer-events: none;
+}
 .banner__inner {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
   gap: var(--s-4) var(--s-5);
+  position: relative;
 }
 .banner__title {
   font-family: var(--font-display); font-weight: 700;
@@ -134,6 +148,11 @@ a { color: inherit; }
 .banner__meta { max-width: 44ch; font-size: 15px; line-height: 1.55; color: var(--navy-muted); margin: 0; }
 /* emphasis by weight only — brass in running text would dilute the seal (reviewer fix 3) */
 .banner__meta b { color: var(--white-crisp); font-weight: 600; }
+/* coordinates as chart furniture (below the meta, never an eyebrow) */
+.banner__chart {
+  flex-basis: 100%; margin: 0;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mist);
+}
 
 .directory .filters { margin-top: var(--s-5); }
 .filters {
@@ -291,15 +310,24 @@ a { color: inherit; }
   background: #ffffff; border: 1px solid var(--line-on-white); border-radius: var(--radius);
   padding: var(--s-5); margin-bottom: var(--s-5);
 }
+/* Manifest rows (DESIGN.md chart-room layer): label · dotted leader · value,
+   like a line in the ship's papers. */
 .profile__facts {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--s-4);
-  margin: var(--s-3) 0 0;
+  display: flex; flex-direction: column; gap: var(--s-3);
+  margin: var(--s-3) 0 0; max-width: 520px;
+}
+.profile__facts div { display: flex; align-items: baseline; gap: var(--s-2); }
+.profile__facts div::after {
+  content: ""; order: 2; flex: 1;
+  border-bottom: 1px dotted var(--line-strong);
+  transform: translateY(-3px);
 }
 .profile__facts dt {
+  order: 1;
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--ink-soft);
 }
-.profile__facts dd { margin: 2px 0 0; font-size: 16px; }
+.profile__facts dd { order: 3; margin: 0; font-size: 16px; font-variant-numeric: tabular-nums; }
 .profile__credentials { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-3); }
 .profile__credentials li { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); font-size: 15px; }
 .profile__note { margin: var(--s-4) 0 0; font-size: 13px; color: var(--ink-soft); max-width: var(--measure); }
@@ -335,6 +363,8 @@ a { color: inherit; }
   padding: var(--s-6); text-align: center; color: var(--ink-soft);
 }
 .empty a { color: var(--brass-text); }
+/* anchor engraving in ink, not brass (Ornament Ink Rule) */
+.empty__anchor { color: var(--ink-soft); opacity: 0.5; margin-bottom: var(--s-3); }
 
 /* ---------- auth (sign-up / sign-in) ---------- */
 .auth { padding: var(--s-8) 0; }

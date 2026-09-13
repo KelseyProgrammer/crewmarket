@@ -1,4 +1,4 @@
-import { Container, CrewCard, type CrewCardData } from "@crewmarket/ui";
+import { AnchorMark, CompassRose, Container, CrewCard, type CrewCardData } from "@crewmarket/ui";
 import seed from "../../data/seed-crew.json";
 import { boardData } from "../../lib/board-data";
 
@@ -42,8 +42,11 @@ export default async function Directory({ searchParams }: { searchParams: Promis
 
   return (
     <main className="directory">
-      {/* Banner: the board's masthead. No counts-as-ranks, no ordinals (M-2/P-4). */}
+      {/* Banner: the board's masthead. No counts-as-ranks, no ordinals (M-2/P-4).
+          Chart-room layer (DESIGN.md): compass-rose watermark + latitude hairlines
+          in mist ink, coordinates as chart furniture BELOW the meta — not an eyebrow. */}
       <section className="banner">
+        <CompassRose className="banner__rose" size={230} />
         <Container wide>
           <div className="banner__inner">
             <h1 className="banner__title">
@@ -53,6 +56,8 @@ export default async function Directory({ searchParams }: { searchParams: Promis
               Independent crew list their own services and <b>set their own rates</b>. A brass seal
               means credentials passed admin review; everything else is self-reported.
             </p>
+            {/* D-3: region-coarse — same canonical line as the landing hero */}
+            <p className="banner__chart mono">24.9° N · 80.6° W — SOUTH FLORIDA FISHERY</p>
           </div>
         </Container>
       </section>
@@ -88,6 +93,7 @@ export default async function Directory({ searchParams }: { searchParams: Promis
 
         {results.length === 0 ? (
           <div className="empty">
+            <AnchorMark className="empty__anchor" size={26} />
             <p>No crew match these filters yet — the fishery is deep, the filters are narrow.</p>
             <p><a href="/directory">Clear all filters</a> to see the full board.</p>
           </div>

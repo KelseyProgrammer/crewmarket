@@ -13,8 +13,9 @@ import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilte
    Fonts are loaded once in _layout.tsx, not here. */
 
 // Coarse fishery coordinates (rule D-3: region-level chart furniture, never a
-// person's location). Matches the web hero's sanctioned coordinates line.
-const CHART_LINE = "SOUTH FLORIDA FISHERY · 25°46′ N · 80°08′ W";
+// person's location). One canonical line everywhere: verbatim from the web
+// hero's sanctioned coordinates line (apps/web/app/page.tsx).
+const CHART_LINE = "24.9° N · 80.6° W — SOUTH FLORIDA FISHERY";
 
 export default function BoardScreen() {
   const [profiles, setProfiles] = useState<BoardProfile[] | null>(null);
