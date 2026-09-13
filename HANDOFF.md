@@ -89,10 +89,15 @@
   Slot) silently destroying the board row's function-form style, and the availability strip
   overdrawing the rate text at 390pt — both fixed in d80bca0, user-confirmed on device, including
   a post-fix board→profile tap-through of the new router.push nav. Only the font-failure fallback
-  remains unverified. Debt/follow-ups: mobile
-  has no unit-test runner yet (`filterBoard`/`boardWindowStart` mirror web logic and should get tests
-  when a jest/vitest setup lands); `/api/board` is unauthenticated + un-rate-limited (fine for demo
-  scale, note before real traffic); node 22.13+ wanted by react-native (`.nvmrc` pinned).
+  remains unverified. Debt/follow-ups (updated by the 2026-09-13 hardening bundle): mobile unit
+  tests now run via vitest (`lib/` pure logic only — `board.test.ts` pins the filter/window
+  lockstep semantics; component behavior stays device-verified; config is `vitest.config.mts`
+  because the Expo package is CJS and vite 7 is ESM-only); `/api/board` stays public by design
+  (V-2/D-3/P-4) and is now per-IP rate-limited (60/min → 429 + Retry-After, live-verified) with a
+  30s in-process payload cache — both per-instance and in-memory, revisit with a shared store
+  before real multi-instance traffic; credential server-action guards are unit-tested (spec §7
+  matrix, crew + admin — 20 tests); root `pnpm test` runs turbo test across web/ui/mobile;
+  node 22.13+ wanted by react-native (`.nvmrc` pinned).
 - Next steps: Stripe Connect Express (request test keys from client) → mobile slice 2 (auth, joins
   after Stripe) → e2e QA (G-3).
 
