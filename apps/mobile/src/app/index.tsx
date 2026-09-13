@@ -3,13 +3,18 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "
 import { BoardRow } from "../../components/board-row";
 import { Filters } from "../../components/filters";
 import { DisclaimerD2 } from "../../components/disclaimer-d2";
-import { color, font, space } from "../../lib/tokens";
+import { Anchor, CompassRose, LATITUDE_LINE } from "../../components/engravings";
+import { color, font, radius, space } from "../../lib/tokens";
 import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilters, type BoardProfile } from "../../lib/board";
 
 /* The crew board (slice 1, Task 3). Fetches GET /api/board once and filters
    in memory — the four SOW filters {role, port, availability date,
    verified-only}, exactly matching apps/web/app/directory/page.tsx.
    Fonts are loaded once in _layout.tsx, not here. */
+
+// Coarse fishery coordinates (rule D-3: region-level chart furniture, never a
+// person's location). Matches the web hero's sanctioned coordinates line.
+const CHART_LINE = "SOUTH FLORIDA FISHERY · 25°46′ N · 80°08′ W";
 
 export default function BoardScreen() {
   const [profiles, setProfiles] = useState<BoardProfile[] | null>(null);
@@ -43,6 +48,7 @@ export default function BoardScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
+        <CompassRose size={44} stroke={color.inkSoft} opacity={0.4} />
         <ActivityIndicator color={color.navyDeep} />
         <Text style={styles.centerText}>Raising the board…</Text>
       </View>
@@ -69,16 +75,26 @@ export default function BoardScreen() {
       ListHeaderComponent={
         <>
           <View style={styles.banner}>
+            {/* Chart texture: latitude hairlines + a cropped compass rose in
+                mist ink — sub-attentional, never brass (Brass Ledger). */}
+            <View pointerEvents="none" style={styles.bannerRose}>
+              <CompassRose size={200} opacity={0.15} />
+            </View>
+            <View pointerEvents="none" style={[styles.latitude, { top: "24%" }]} />
+            <View pointerEvents="none" style={[styles.latitude, { top: "52%" }]} />
+            <View pointerEvents="none" style={[styles.latitude, { top: "80%" }]} />
             <Text style={styles.bannerTitle}>THE CREW BOARD</Text>
             <Text style={styles.bannerMeta}>
               Independent crew list their own services and set their own rates.
             </Text>
+            <Text style={styles.bannerChart}>{CHART_LINE}</Text>
           </View>
           <Filters profiles={profiles} windowStart={windowStart} value={filters} onChange={setFilters} />
         </>
       }
       ListEmptyComponent={
         <View style={styles.empty}>
+          <Anchor size={26} opacity={0.5} />
           <Text style={styles.emptyText}>
             No crew match these filters yet — the fishery is deep, the filters are narrow.
           </Text>
@@ -97,7 +113,7 @@ export default function BoardScreen() {
           {results.length > 0 && (
             <View style={styles.footer}>
               <Text style={styles.footerCount}>
-                {results.length} of {profiles.length} listed
+                {results.length} OF {profiles.length} LISTED
               </Text>
               <Text style={styles.footerNote}>
                 A brass seal means credentials passed admin review; everything else is self-reported.
@@ -135,19 +151,50 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   retryText: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
-  banner: { backgroundColor: color.navyDeep, padding: space.s5, gap: space.s2 },
+  banner: {
+    backgroundColor: color.navyDeep,
+    paddingTop: space.s7,
+    paddingBottom: space.s5,
+    paddingHorizontal: space.s5,
+    gap: space.s2,
+    overflow: "hidden",
+    // The masthead seam: brass-engrave hairline between header band and banner.
+    borderTopWidth: 1,
+    borderTopColor: color.brassEngrave,
+  },
+  bannerRose: { position: "absolute", top: -34, right: -48 },
+  latitude: { position: "absolute", left: 0, right: 0, ...LATITUDE_LINE },
   bannerTitle: {
-    fontFamily: font.display,
-    fontSize: 28,
+    fontFamily: font.displayBold,
+    fontSize: 38,
+    lineHeight: 40,
     color: color.whiteCrisp,
     letterSpacing: 0.5,
   },
-  bannerMeta: { fontFamily: font.body, fontSize: 14, color: color.navyMuted },
-  empty: { padding: space.s5, gap: space.s2, alignItems: "flex-start" },
-  emptyText: { fontFamily: font.body, fontSize: 14, color: color.inkSoft },
+  bannerMeta: { fontFamily: font.body, fontSize: 14, lineHeight: 20, color: color.navyMuted, maxWidth: 300 },
+  bannerChart: {
+    fontFamily: font.mono,
+    fontSize: 10,
+    letterSpacing: 1.4,
+    color: color.mist,
+    marginTop: space.s3,
+  },
+  empty: {
+    marginHorizontal: space.s4,
+    marginTop: space.s5,
+    padding: space.s5,
+    gap: space.s3,
+    alignItems: "flex-start",
+    backgroundColor: color.whiteCrisp,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: color.lineStrong,
+    borderRadius: radius,
+  },
+  emptyText: { fontFamily: font.body, fontSize: 14, lineHeight: 20, color: color.inkSoft },
   emptyLinkTarget: { paddingVertical: space.s3, paddingHorizontal: space.s1, minHeight: 44, justifyContent: "center" },
   emptyLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
   footer: { padding: space.s5, gap: space.s2 },
-  footerCount: { fontFamily: font.mono, fontSize: 12, color: color.inkSoft },
-  footerNote: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
+  footerCount: { fontFamily: font.mono, fontSize: 11, letterSpacing: 1, color: color.inkSoft },
+  footerNote: { fontFamily: font.body, fontSize: 12, lineHeight: 17, color: color.inkSoft },
 });

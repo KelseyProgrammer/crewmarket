@@ -4,10 +4,18 @@ import { color, font, space } from "../lib/tokens";
 import type { BoardProfile } from "../lib/board";
 import { ROLE_LABELS } from "../lib/roles";
 import { AvailabilityStrip } from "./availability-strip";
+import { SealRing } from "./engravings";
 
 /* Weigh-in board row (mirrors packages/ui/src/components.tsx CrewCard).
    Probe C guard (M-2/P-4): no rank numbers, no ordinals anywhere — order is
-   whatever the filters produced, never a score. */
+   whatever the filters produced, never a score. Five chunks, per DESIGN.md:
+   seal+name · port/roles · license · seasons+rate · availability. */
+
+function fmtNextOpen(iso: string) {
+  return new Date(iso + "T00:00:00Z")
+    .toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })
+    .toUpperCase();
+}
 
 export function BoardRow({
   profile,
@@ -23,6 +31,10 @@ export function BoardRow({
     (c) => c.kind.startsWith("USCG") && c.licenseClass,
   );
   const homePort = profile.homePort.replace(", FL", "");
+  const nextOpen = profile.availability
+    .filter((a) => a.status === "OPEN" && (!windowStart || a.date >= windowStart))
+    .map((a) => a.date)
+    .sort()[0];
 
   const a11yLabel = `${profile.displayName}${verified ? ", verified" : ""}, $${profile.dayRateUsd} per day`;
 
@@ -42,7 +54,7 @@ export function BoardRow({
         </Text>
         {verified && (
           <View style={styles.seal}>
-            <View style={styles.sealDot} />
+            <SealRing size={16} />
             <Text style={styles.sealLabel}>VERIFIED</Text>
           </View>
         )}
@@ -52,8 +64,14 @@ export function BoardRow({
       </Text>
       <Text style={styles.license}>
         {license
-          ? `${license.licenseClass}${license.expiresAt ? ` · exp ${license.expiresAt.slice(0, 7)}` : ""}${license.verified ? " · passed admin review" : " · self-reported"}`
+          ? `${license.licenseClass}${license.expiresAt ? ` · exp ${license.expiresAt.slice(0, 7)}` : ""} · `
           : "No license listed"}
+        {/* V-1: verification status stated in words, in italic — never implied */}
+        {license && (
+          <Text style={styles.licenseStatus}>
+            {license.verified ? "passed admin review" : "self-reported"}
+          </Text>
+        )}
       </Text>
       <View style={styles.footer}>
         <View style={styles.figures}>
@@ -68,10 +86,17 @@ export function BoardRow({
             <Text style={styles.figureSuffix}> /day · sets own rate</Text>
           </Text>
         </View>
-        <AvailabilityStrip
-          availability={profile.availability}
-          start={windowStart}
-        />
+        <View style={styles.stripCol}>
+          <AvailabilityStrip
+            availability={profile.availability}
+            start={windowStart}
+          />
+          {/* Web chunk-⑤ parity: the strip's next-open microlabel (M-2:
+              absence of a date is closed, "booked out" is the honest floor). */}
+          <Text style={styles.nextOpen}>
+            {nextOpen ? `NEXT OPEN ${fmtNextOpen(nextOpen)}` : "BOOKED OUT"}
+          </Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -97,14 +122,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   seal: { flexDirection: "row", alignItems: "center", gap: space.s1 },
-  sealDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: color.brass,
-    borderWidth: 1,
-    borderColor: color.brassText,
-  },
   sealLabel: {
     fontFamily: font.mono,
     fontSize: 10,
@@ -113,10 +130,11 @@ const styles = StyleSheet.create({
   },
   meta: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
   license: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
+  licenseStatus: { fontStyle: "italic" },
   footer: {
     marginTop: space.s2,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     // Figures + 14-day strip don't fit one line on a 390pt phone — the strip
     // wraps to its own line rather than overdrawing the rate text.
@@ -137,4 +155,11 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   figureSuffix: { fontFamily: font.mono, fontSize: 10, color: color.inkSoft },
+  stripCol: { gap: 3, alignItems: "flex-start" },
+  nextOpen: {
+    fontFamily: font.mono,
+    fontSize: 9,
+    letterSpacing: 0.8,
+    color: color.inkSoft,
+  },
 });

@@ -433,6 +433,29 @@ Mist) and the mono legal line on every page.
 Dashed hairline plate, plain-spoken copy, a single Brass Text link out. The board count line
 ("N of M listed") is 10px mono uppercase census furniture.
 
+### Chart-Room Engravings (native, apps/mobile)
+The mobile board carries an engraved instrument layer — line-drawn SVG in
+`apps/mobile/components/engravings.tsx`, stroke-only with square caps, no fills:
+- **Compass rose**: outer ring, dashed inner ring, long cardinals / short intercardinals. A
+  cropped watermark in the banner's top-right (mist at ~0.15) and a small loading mark.
+- **Anchor**: ring, shank, stock, arced crown with barbed flukes. Empty and not-found states only.
+- **Seal ring**: the web profile ring (solid ring, dashed inner ring, square-capped check)
+  rendered native in graphic brass — replaces the old seal dot on rows, profile heads, and
+  credential rows (V-1: admin-set flag only).
+- **Latitude hairlines**: 1px mist lines at ~0.12 on navy fields (banner, profile head) —
+  the hero's latitude texture, shared via the `LATITUDE_LINE` ink constant.
+- **Coordinates chart line**: "SOUTH FLORIDA FISHERY · 25°46′ N · 80°08′ W" as 10px mono
+  furniture *below* the banner meta — chart annotation, not an eyebrow (D-3: region-coarse).
+- **Manifest leaders**: profile fact rows run label · dotted hairline leader · mono value,
+  like a line in the ship's papers.
+
+**The Ornament Ink Rule.** Engravings draw in mist or ink-soft, never brass — the seal ring is
+the only brass engraving, because verification is a Brass Ledger meaning and decoration is not.
+Native-only translations, same ledger: the mobile filters console is a white plate with the 2px
+navy rule and the sanctioned grounding shadow; the profile's booking CTA is the screen's one
+primary action (Brass Text fill); the booking plate borders dashed (provisional) while the flow
+lives on the web; Oswald 700 carries the banner and profile name (web Display weight).
+
 ## Do's and Don'ts
 
 ### Do:

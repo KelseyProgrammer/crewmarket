@@ -32,7 +32,17 @@ function dateChips(windowStart: string | undefined, days = 14): { value: string;
   });
 }
 
-function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+function Chip({
+  label,
+  active,
+  onPress,
+  sealDot,
+}: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  sealDot?: boolean;
+}) {
   return (
     <Pressable
       onPress={onPress}
@@ -40,6 +50,9 @@ function Chip({ label, active, onPress }: { label: string; active: boolean; onPr
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
     >
+      {/* Brass dot on the verified-only chip: brass meaning "verification"
+          (Brass Ledger) — Brass Bright on the inverted navy chip. */}
+      {sealDot && <View style={[styles.chipDot, active && styles.chipDotActive]} />}
       <Text style={[styles.chipText, active && styles.chipTextActive]}>{label}</Text>
     </Pressable>
   );
@@ -88,6 +101,7 @@ export function Filters({
         <Chip
           label="Verified only"
           active={value.verifiedOnly}
+          sealDot
           onPress={() => onChange({ ...value, verifiedOnly: !value.verifiedOnly })}
         />
       </View>
@@ -96,17 +110,37 @@ export function Filters({
 }
 
 const styles = StyleSheet.create({
-  wrap: { backgroundColor: color.boardBg, paddingTop: space.s4, paddingBottom: space.s2, gap: space.s2 },
+  // The filters console: a white plate closed by the 2px navy rule, seated on
+  // the board with the system's one sanctioned grounding shadow (DESIGN.md
+  // "Filters Bar" — ported from the web filters bar, not a new shadow).
+  wrap: {
+    backgroundColor: color.whiteCrisp,
+    paddingTop: space.s4,
+    paddingBottom: space.s3,
+    gap: space.s2,
+    borderBottomWidth: 2,
+    borderBottomColor: color.navyDeep,
+    marginBottom: space.s3,
+    shadowColor: color.ink,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 10,
+    shadowOpacity: 0.12,
+    elevation: 4,
+  },
+  // The one display-face label in the system (web filters spec): Oswald caps.
   label: {
-    fontFamily: font.mono,
+    fontFamily: font.display,
     fontSize: 11,
-    letterSpacing: 0.4,
+    letterSpacing: 1.3,
     color: color.inkSoft,
     textTransform: "uppercase",
     paddingHorizontal: space.s4,
   },
   chipRow: { flexDirection: "row", gap: space.s2, paddingHorizontal: space.s4, paddingBottom: space.s2 },
   chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.s2,
     borderWidth: 1,
     borderColor: color.lineStrong,
     borderRadius: radius,
@@ -114,9 +148,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.s3,
     minHeight: 44,
     justifyContent: "center",
-    backgroundColor: color.whiteCrisp,
+    // Inputs sit on Board Ground when the plate is white (web filters spec).
+    backgroundColor: color.boardBg,
   },
   chipActive: { backgroundColor: color.navyDeep, borderColor: color.navyDeep },
   chipText: { fontFamily: font.body, fontSize: 13, color: color.ink },
   chipTextActive: { color: color.whiteCrisp },
+  chipDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: color.brass },
+  chipDotActive: { backgroundColor: color.brassBright },
 });

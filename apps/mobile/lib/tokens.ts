@@ -29,6 +29,7 @@ export const color = {
 
 export const font = {
   display: "Oswald_500Medium", // fallback stack on web is Oswald, Archivo, sans-serif
+  displayBold: "Oswald_700Bold", // web Display Banner/Hero weight — banner + profile name only
   body: "Archivo_400Regular", // fallback stack on web is Archivo, system-ui, sans-serif
   mono: "MartianMono_400Regular", // fallback stack on web is Martian Mono, ui-monospace, monospace
 } as const;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
+import { Anchor, LATITUDE_LINE, SealRing } from "../../../components/engravings";
 import { ROLE_LABELS } from "../../../lib/roles";
 import { WEB_URL } from "../../../lib/api";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
@@ -110,6 +111,7 @@ export default function CrewProfileScreen() {
     return (
       <View style={styles.center}>
         <Stack.Screen options={{ title: "Crew Market" }} />
+        <Anchor size={26} opacity={0.5} />
         <Text style={styles.centerText}>This profile isn&apos;t on the board.</Text>
         <Link href="/" asChild>
           <Pressable>
@@ -129,13 +131,16 @@ export default function CrewProfileScreen() {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Stack.Screen options={{ title: profile.displayName }} />
 
-      <View style={styles.head}>
+      <View style={[styles.head, verified && styles.headVerified]}>
+        {/* Chart texture: latitude hairlines in mist ink (see board banner). */}
+        <View pointerEvents="none" style={[styles.latitude, { top: "30%" }]} />
+        <View pointerEvents="none" style={[styles.latitude, { top: "68%" }]} />
         <View style={styles.eyebrowRow}>
           {/* No ordinals in the board world (M-2/P-4): port furniture only, never a number */}
           <Text style={styles.eyebrow}>{profile.homePort.toUpperCase()} · SYNTHETIC DEMO PROFILE</Text>
           {verified && (
             <View style={styles.seal}>
-              <View style={styles.sealDot} />
+              <SealRing size={22} />
               <Text style={styles.sealLabel}>Verified</Text>
             </View>
           )}
@@ -150,7 +155,7 @@ export default function CrewProfileScreen() {
               {" — "}
               {license.licenseClass}
               {license.expiresAt ? `, exp. ${license.expiresAt.slice(0, 7)}` : ""}
-              {!license.verified && <Text style={styles.selfReported}> (self-reported)</Text>}
+              {!license.verified && <Text style={styles.headSelfReported}> (self-reported)</Text>}
             </Text>
           )}
         </Text>
@@ -182,8 +187,8 @@ export default function CrewProfileScreen() {
               </Text>
               {c.verified ? (
                 <View style={styles.seal}>
-                  <View style={styles.sealDot} />
-                  <Text style={styles.sealLabel}>Verified</Text>
+                  <SealRing size={14} />
+                  <Text style={styles.credentialSealLabel}>Verified</Text>
                 </View>
               ) : (
                 <Text style={styles.selfReported}>Self-reported</Text>
@@ -213,7 +218,9 @@ export default function CrewProfileScreen() {
         )}
       </View>
 
-      <View style={styles.panel}>
+      {/* Dashed hairline = provisional surface (DESIGN.md): the booking flow
+          lives on the web for now, so its plate is drawn provisional. */}
+      <View style={[styles.panel, styles.panelProvisional]}>
         <Text style={styles.panelEyebrow}>BOOKING</Text>
         <Text style={styles.list}>
           Booking runs on the web for now — the mobile booking flow arrives in a later phase.
@@ -243,10 +250,12 @@ export default function CrewProfileScreen() {
   );
 }
 
+// Manifest row: label · dotted leader · value, like a line in a ship's papers.
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.fact}>
       <Text style={styles.factLabel}>{label}</Text>
+      <View style={styles.factLeader} />
       <Text style={styles.factValue}>{value}</Text>
     </View>
   );
@@ -273,7 +282,18 @@ const styles = StyleSheet.create({
   },
   retryText: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
 
-  head: { backgroundColor: color.navyDeep, padding: space.s5, gap: space.s2 },
+  head: {
+    backgroundColor: color.navyDeep,
+    padding: space.s5,
+    gap: space.s2,
+    overflow: "hidden",
+    // The masthead seam, closing the navy field over the plates below.
+    borderBottomWidth: 1,
+    borderBottomColor: color.brassEngrave,
+  },
+  // Verified profile heads edge in brass-engrave (web spec).
+  headVerified: { borderWidth: 1, borderColor: color.brassEngrave },
+  latitude: { position: "absolute", left: 0, right: 0, ...LATITUDE_LINE },
   eyebrowRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 },
   eyebrow: {
     fontFamily: font.mono,
@@ -284,8 +304,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   name: {
-    fontFamily: font.display,
-    fontSize: 30,
+    fontFamily: font.displayBold,
+    fontSize: 32,
+    lineHeight: 34,
     color: color.whiteCrisp,
     textTransform: "uppercase",
     letterSpacing: 0.4,
@@ -293,38 +314,53 @@ const styles = StyleSheet.create({
   role: { fontFamily: font.body, fontSize: 14, color: color.navyMuted },
   bio: { fontFamily: font.body, fontSize: 14, color: color.navyMuted, marginTop: space.s2 },
 
-  seal: { flexDirection: "row", alignItems: "center", gap: space.s1 },
-  sealDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: color.brass,
-    borderWidth: 1,
-    borderColor: color.brassText,
-  },
+  seal: { flexDirection: "row", alignItems: "center", gap: space.s2 },
   sealLabel: { fontFamily: font.mono, fontSize: 10, letterSpacing: 0.6, color: color.brassBright },
+  credentialSealLabel: { fontFamily: font.mono, fontSize: 10, letterSpacing: 0.6, color: color.brassText },
   selfReported: { fontFamily: font.body, fontSize: 12, fontStyle: "italic", color: color.inkSoft },
+  // On the navy head, ink-soft is illegible — the head's status word stays mist.
+  headSelfReported: { fontFamily: font.body, fontSize: 12, fontStyle: "italic", color: color.mist },
 
+  // Registry plates: white, hairline-edged, on the board ground (web spec —
+  // panels are plates, not full-bleed sections).
   panel: {
     backgroundColor: color.whiteCrisp,
-    marginTop: space.s2,
+    marginTop: space.s3,
+    marginHorizontal: space.s3,
     padding: space.s5,
     gap: space.s3,
-    borderTopWidth: 1,
-    borderTopColor: color.lineOnWhite,
+    borderWidth: 1,
+    borderColor: color.lineOnWhite,
+    borderRadius: radius,
   },
+  panelProvisional: { borderStyle: "dashed", borderColor: color.lineStrong },
+  // Data furniture, not a brass slot: ink-soft mono keeps the Brass Ledger closed.
   panelEyebrow: {
     fontFamily: font.mono,
     fontSize: 11,
     letterSpacing: 0.5,
-    color: color.brassText,
+    color: color.inkSoft,
     textTransform: "uppercase",
   },
 
-  facts: { gap: space.s2 },
-  fact: { flexDirection: "row", justifyContent: "space-between" },
-  factLabel: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
-  factValue: { fontFamily: font.mono, fontSize: 14, color: color.ink },
+  facts: { gap: space.s3 },
+  fact: { flexDirection: "row", alignItems: "flex-end" },
+  factLabel: {
+    fontFamily: font.mono,
+    fontSize: 10,
+    letterSpacing: 0.8,
+    color: color.inkSoft,
+    textTransform: "uppercase",
+  },
+  factLeader: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderStyle: "dotted",
+    borderColor: color.lineOnWhite,
+    marginHorizontal: space.s2,
+    marginBottom: 3,
+  },
+  factValue: { fontFamily: font.mono, fontSize: 15, color: color.ink },
 
   credentialList: { gap: space.s3 },
   credentialRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.s3 },
@@ -335,17 +371,31 @@ const styles = StyleSheet.create({
   listMuted: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
   dates: { fontFamily: font.mono, fontSize: 14, color: color.ink },
 
+  // The screen's one primary action: Brass Text fill, white text (Brass
+  // Ledger "primary action" slot — web btn--brass).
   webButton: {
-    alignSelf: "flex-start",
-    borderWidth: 1,
-    borderColor: color.brass,
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
+    backgroundColor: color.brassText,
     borderRadius: radius,
     paddingVertical: space.s3,
-    paddingHorizontal: space.s4,
+    paddingHorizontal: space.s5,
     marginTop: space.s1,
   },
-  webButtonText: { fontFamily: font.body, fontSize: 13, fontWeight: "600", color: color.brassText },
+  webButtonText: { fontFamily: font.body, fontSize: 14, fontWeight: "600", color: "#ffffff" },
   bookingLinkError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft, marginTop: space.s2 },
 
-  disclaimer: { marginTop: space.s2 },
+  // The in-page D-2 plate: navy-edged so it reads as intentional (web spec).
+  disclaimer: {
+    marginTop: space.s3,
+    marginHorizontal: space.s3,
+    backgroundColor: color.whiteCrisp,
+    borderWidth: 1,
+    borderColor: color.lineOnWhite,
+    borderBottomWidth: 2,
+    borderBottomColor: color.navyDeep,
+    borderRadius: radius,
+  },
 });
