@@ -72,7 +72,7 @@ export async function withElapsedWindow(booking: Booking): Promise<Booking> {
 
   // Stripe-funded bookings must transfer before PAID_OUT (P-2). Pre-Stripe
   // (simulated) bookings have no PaymentIntent and close as before. Exactly-once:
-  // idempotency key payout-<id> in the payments package + this null-check.
+  // source_transaction + transfer_group in the payments package + this null-check.
   if (booking.stripePaymentIntentId && !booking.stripeTransferId) {
     if (booking.stripeRefundId) {
       // The boat's payment was refunded (cancel racing completion) — paying the
@@ -85,7 +85,12 @@ export async function withElapsedWindow(booking: Booking): Promise<Booking> {
     });
     if (!claim?.stripeAccountId) return booking; // payout waits on setup; retried next read
     try {
-      const transferId = await releaseCrewPayout(booking.id, claim.stripeAccountId, booking.rateCents);
+      const transferId = await releaseCrewPayout(
+        booking.id,
+        claim.stripeAccountId,
+        booking.rateCents,
+        booking.stripePaymentIntentId
+      );
       const closedAt = new Date();
       const updated = await prisma.booking.updateMany({
         where: { id: booking.id, state: "DISPUTE_WINDOW" }, // CAS: no-op if state moved since read

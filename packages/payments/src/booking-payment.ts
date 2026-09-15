@@ -59,29 +59,43 @@ export async function refundBookingPayment(
 /**
  * Exactly-once crew payout, with Stripe itself as the source of truth.
  *
- * A prior attempt whose HTTP response we lost (crash/timeout after the transfer
- * was created) still shows up in the transfer_group here, so we adopt it instead
- * of paying twice. Critically, we do NOT pin a static idempotency key: separate
- * charges & transfers means the charge sits in `pending` for days before it is
- * `available`, so the first payout attempt after the 48h window routinely fails
- * with `balance_insufficient` — and Stripe caches that failure against a static
- * key for 24h, wedging every retry. The existence check gives at-most-once
- * without letting a transient failure poison future reads.
+ * Two guards, no static idempotency key (a static key caches a transient
+ * `balance_insufficient` failure for 24h and wedges every retry — see below):
+ *
+ * 1. `source_transaction` ties the transfer to the booking's own charge. Stripe
+ *    holds the transfer until THAT charge's funds settle (separate charges &
+ *    transfers leaves them `pending` for days), so the post-window payout never
+ *    fails on general `balance_insufficient`. Stripe also caps the total
+ *    transferred against a charge at the charge amount — and rateCents > feeCents
+ *    always, so a second payout-sized transfer against the same charge is
+ *    rejected. That makes a concurrent double-read (two lazy reads racing to pay)
+ *    unable to double-pay: the loser errors and retries into guard 2.
+ * 2. The `transfer_group` existence check adopts a transfer from a prior attempt
+ *    whose HTTP response we lost (crash/timeout after create) instead of paying
+ *    again — the crash-recovery net.
  */
 export async function releaseCrewPayout(
   bookingId: string,
   accountId: string,
-  rateCents: number
+  rateCents: number,
+  paymentIntentId: string
 ): Promise<string> {
   const transferGroup = `booking-${bookingId}`;
   const existing = await stripeClient().transfers.list({ transfer_group: transferGroup, limit: 1 });
   if (existing.data.length > 0) return existing.data[0].id;
+
+  const intent = await stripeClient().paymentIntents.retrieve(paymentIntentId);
+  const chargeId = typeof intent.latest_charge === "string" ? intent.latest_charge : intent.latest_charge?.id;
+  if (!chargeId) {
+    throw new Error(`payments: no settled charge on PaymentIntent ${paymentIntentId} for booking ${bookingId}`);
+  }
 
   const transfer = await stripeClient().transfers.create({
     amount: rateCents,
     currency: "usd",
     destination: accountId,
     transfer_group: transferGroup,
+    source_transaction: chargeId,
     metadata: { bookingId },
   });
   return transfer.id;

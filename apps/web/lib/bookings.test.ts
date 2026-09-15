@@ -54,7 +54,7 @@ describe("withElapsedWindow payout release", () => {
 
   it("elapsed + onboarded: transfers exactly rateCents, stores id, goes PAID_OUT", async () => {
     const out = await withElapsedWindow({ ...base } as never);
-    expect(seams.releaseCrewPayout).toHaveBeenCalledWith("b1", "acct_1", 10000);
+    expect(seams.releaseCrewPayout).toHaveBeenCalledWith("b1", "acct_1", 10000, "pi_1");
     expect(seams.prisma.booking.updateMany).toHaveBeenCalledWith({
       where: { id: "b1", state: "DISPUTE_WINDOW" },
       data: expect.objectContaining({ state: "PAID_OUT", stripeTransferId: "tr_1" }),
