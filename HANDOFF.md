@@ -149,6 +149,33 @@
   data (any name/DOB, SSN `000000000`, phone `0000000000`, Stripe's test bank);
   `node --env-file=.env.local scripts/dev-backdate-booking.mjs <bookingId> [hoursAgo=49]`
   backdates `completedAt` so the next ledger read releases the payout.
+- **DEPLOYED to Vercel (client demo, 9/15/2026): https://crewmarket-web.vercel.app** (test mode).
+  Vercel project `crewmarket-web` (Root Directory `apps/web`), Git-connected to
+  KelseyProgrammer/crewmarket (push to main auto-deploys). Postgres = **Neon** via the Vercel
+  Storage integration (injects `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `POSTGRES_PRISMA_URL`,
+  etc., all marked Sensitive so the CLI can't read them). Prisma datasource now reads Neon var
+  names: `url = env("POSTGRES_PRISMA_URL")` (pooled), `directUrl = env("DATABASE_URL_UNPOOLED")`
+  (migrations); locally both are set to the local Postgres in `.env.local`. Migrations run at
+  build via `apps/web` `vercel-build`: `prisma migrate deploy && next build`; `packages/db`
+  `postinstall: prisma generate`. **Prisma-on-Vercel gotcha (cost hours, now fixed):** the query
+  engine wasn't bundled into serverless functions (pnpm hoists it to the root `.pnpm` store, and
+  it loads via a runtime path static tracing can't see). Fix = `binaryTargets = ["native",
+  "rhel-openssl-3.0.x"]` in schema + `outputFileTracingRoot` at repo root + `outputFileTracingIncludes`
+  forcing the `.node` engine into `"/**"` (ALL routes — pages hit the DB too, not just `/api`) in
+  `apps/web/next.config.mjs`. Env vars set via CLI (production): `BETTER_AUTH_SECRET` (fresh, NOT
+  the local one), `BETTER_AUTH_URL=https://crewmarket-web.vercel.app`,
+  `ADMIN_EMAILS=chrisament45@gmail.com`, `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`,
+  `STRIPE_CONNECT_WEBHOOK_SECRET`. Live Stripe **webhook** registered via API
+  (`we_1UFyBb...` → `https://crewmarket-web.vercel.app/api/stripe/webhook`,
+  event `checkout.session.completed`) — replaces `stripe listen` for prod. **Demo data** seeded
+  once via a temporary token-gated route (since removed): boat `boat@example.com` /
+  `demo-boat-pass-1`, crew `mate@example.com` / `demo-crew-pass-1` (claimed profile **Del Pinder**,
+  id ...005), plus one REQUESTED booking. NOTE: there is NO claim UI — `CrewProfileClaim` is a
+  demo bridge created only by scripts/the seed route, so any new crew account can't drive a profile
+  without a seeded claim. DEFERRED on the deploy: credential-doc uploads (no object store yet —
+  add Cloudflare R2 via `S3_ENDPOINT`/`S3_*` env when wanted; the app degrades gracefully, uploads
+  just error if attempted). To seed again, re-add a token-gated route (the removed one is in git
+  history at 13d213f) — Neon vars are Sensitive so local scripts can't reach the DB directly.
 - Next steps: mobile slice 2 (auth, joins after Stripe) → e2e QA (G-3). Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
