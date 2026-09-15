@@ -102,8 +102,32 @@
   before real multi-instance traffic; credential server-action guards are unit-tested (spec §7
   matrix, crew + admin — 20 tests); root `pnpm test` runs turbo test across web/ui/mobile;
   node 22.13+ wanted by react-native (`.nvmrc` pinned).
-- Next steps: Stripe Connect Express (request test keys from client) → mobile slice 2 (auth, joins
-  after Stripe) → e2e QA (G-3).
+- **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
+  (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
+  sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
+  (`v2.core.accounts`, recipient configuration + Express dashboard, stripe SDK ^22) because the
+  client's new-generation Stripe account has the v1 Accounts API disabled (dashboard override
+  needs the client's Administrator role). Everything else is v1: Checkout (card-only, two
+  itemized line items per P-3), refunds, Transfers (v2 account ids interop). Webhook
+  `/api/stripe/webhook` is the source of truth for ACCEPTED→ESCROW_FUNDED (sig check, paid-status
+  guard, amount guard, CAS write, and auto-refund of orphaned paid sessions — duplicate-tab
+  payments and pay-vs-cancel races refund themselves). Cancellations refund-first
+  (`REFUND_TIERS` placeholder 1.0, G-1) with a `cancel-refund-<bookingId>` idempotency key;
+  payout releases lazily on read in `withElapsedWindow` (exactly-once via `payout-<bookingId>`
+  key + `stripeTransferId` null-check; blocked while a refund is on record). ALL booking state
+  writes are now CAS (`updateMany` guarded on the read state) — terminal states are sticky.
+  80 unit tests across web+payments; lint/compliance/build green.
+  **Run recipe (dev):** `colima start && docker compose up -d`; terminal 2:
+  `stripe listen --api-key $STRIPE_SECRET_KEY --forward-to localhost:3002/api/stripe/webhook`
+  (no `stripe login` needed; copy the printed `whsec_` into `STRIPE_CONNECT_WEBHOOK_SECRET` in
+  both `.env.local` files if it changed); terminal 3: `PORT=3002 pnpm dev` from `apps/web`.
+  Port is 3002 locally because other projects hold 3000/3001 — `BETTER_AUTH_URL` in `.env.local`
+  must match. Live-drive helpers: pay with card `4242 4242 4242 4242`; Express onboarding test
+  data (any name/DOB, SSN `000000000`, phone `0000000000`, Stripe's test bank);
+  `node --env-file=.env.local scripts/dev-backdate-booking.mjs <bookingId> [hoursAgo=49]`
+  backdates `completedAt` so the next ledger read releases the payout.
+- Next steps: live test-mode drive sign-off → admin-metrics Stripe swap (SOW 7.iii follow-up
+  spec) → mobile slice 2 (auth, joins after Stripe) → e2e QA (G-3).
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
