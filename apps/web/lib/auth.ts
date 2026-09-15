@@ -16,7 +16,12 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
   trustedOrigins: [
-    "crewmarket://",
+    "crewmarket://", // standalone / dev-client builds use the app scheme
+    // Expo Go sends origin `exp://<lan-ip>:8081`. The @better-auth/expo plugin only
+    // auto-trusts "exp://" when NODE_ENV==="development"; on Vercel (production) it
+    // doesn't, so we trust it explicitly for the Expo Go device pass. DEV/DEMO ONLY —
+    // remove before a real production launch (standalone builds use crewmarket://).
+    "exp://",
     "http://localhost:3000",
     "http://localhost:3002",
     "https://crewmarket-web.vercel.app",
