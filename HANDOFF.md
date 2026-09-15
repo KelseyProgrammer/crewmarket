@@ -132,9 +132,21 @@
   path, but only for UNCLAIMED profiles with no docs — reassignment is still script-only (V-2).
   typedRoutes caveat: after adding routes, `.expo/types/router.d.ts` regenerates only on
   `expo start` (not `expo export`), so a fresh checkout must run the dev server once before `tsc`.
-  **PENDING: device pass (S9)** — physical-iPhone Expo Go run-through of sign-up (both roles, D-2)
-  → sign-in → session persists across restart → claim from a profile → account shows it → sign
-  out; not yet done.
+  **DEVICE PASS PASSED 9/15** (physical iPhone, Expo Go, pointed at the deployed API): crew
+  sign-up with the required D-2 checkbox → claim a profile from its screen → account names the
+  claimed profile; boat account shows no claim button; session persists across an app restart.
+  Two device-only bugs surfaced and fixed during the pass (gates couldn't catch either):
+  (1) **`exp://` origin** — Expo Go sends origin `exp://<lan-ip>:8081`; the @better-auth/expo
+  plugin only auto-trusts `exp://` when NODE_ENV==="development", so on Vercel (production) sign-up
+  POSTs were rejected "Invalid origin". Fixed by adding `"exp://"` to `trustedOrigins` in
+  `auth.ts` (0e9a798) — marked DEV/DEMO-ONLY, remove before a real launch (standalone builds use
+  `crewmarket://`). (2) **auth-client base-path join** — `authClient.$fetch("/api/me")` prepends
+  the client's `/api/auth` base → `/api/auth/api/me` → 404; fixed by calling custom routes with
+  absolute URLs `${API_URL}/api/me` and `${API_URL}/api/claim` (still runs the Expo cookie +
+  expo-origin onRequest hook) (eac6812). Diagnosed the 404 vs 401 from on-device `console.error`
+  logging (since removed) + curl replaying the signed session cookie. Note: a few `probe-*@example.com`
+  CREW test accounts exist in the Neon demo DB from curl-based debugging — harmless (no claims),
+  clean up if desired. Slice 2 COMPLETE.
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
