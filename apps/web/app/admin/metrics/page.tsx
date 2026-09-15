@@ -5,9 +5,10 @@ import { sessionUser } from "../../../lib/bookings";
 import { isAdminEmail } from "../../../lib/credential-rules";
 import { computeMetrics } from "../../../lib/admin-metrics";
 
-/* Admin metrics (SOW 2.i): net revenue (simulated until Stripe — SOW 7.iii),
-   bookings by state, verification counts. Aggregates only (M-2/P-4).
-   Unlinked route, same gate as /admin/credentials. */
+/* Admin metrics (SOW 2.i): platform fees retained from Stripe balance transactions
+   (SOW 7.iii), with a simulated booking-derived fallback when Stripe is unconfigured;
+   bookings by state, verification counts. Aggregates only (M-2/P-4). Unlinked route,
+   same gate as /admin/credentials. */
 
 // self-documenting defense-in-depth: never statically cached
 export const dynamic = "force-dynamic";
@@ -60,12 +61,20 @@ export default async function AdminMetrics() {
               <div className="metrics__tile">
                 <span className="eyebrow">PLATFORM FEES · RETAINED</span>
                 <p className="metrics__figure mono">{fmtUsd(m.revenue.platformFeesRetainedCents)}</p>
-                <p className="metrics__note">Derived from Stripe reporting (SOW 7.iii).</p>
+                <p className="metrics__note">
+                  {fmtUsd(m.revenue.grossChargesCents)} in · {fmtUsd(m.revenue.refundsCents)} refunded ·{" "}
+                  {fmtUsd(m.revenue.crewPayoutsCents)} to crew
+                </p>
+                <p className="metrics__note">Derived from Stripe balance transactions (SOW 7.iii).</p>
               </div>
               <div className="metrics__tile">
-                <span className="eyebrow">BALANCE · AVAILABLE</span>
-                <p className="metrics__figure mono">{fmtUsd(m.revenue.availableCents)}</p>
-                <p className="metrics__note">{fmtUsd(m.revenue.pendingCents)} pending settlement.</p>
+                <span className="eyebrow">BALANCE</span>
+                <p className="metrics__figure mono">
+                  {fmtUsd(m.revenue.availableCents)} <span className="metrics__unit">available</span>
+                </p>
+                <p className="metrics__note">
+                  {fmtUsd(m.revenue.pendingCents)} still settling — charges clear in ~2 days.
+                </p>
               </div>
             </>
           )}
