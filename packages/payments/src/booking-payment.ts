@@ -56,15 +56,33 @@ export async function refundBookingPayment(
   return refund.id;
 }
 
-/** Exactly-once = this idempotency key + the caller's null-check on stripeTransferId. */
+/**
+ * Exactly-once crew payout, with Stripe itself as the source of truth.
+ *
+ * A prior attempt whose HTTP response we lost (crash/timeout after the transfer
+ * was created) still shows up in the transfer_group here, so we adopt it instead
+ * of paying twice. Critically, we do NOT pin a static idempotency key: separate
+ * charges & transfers means the charge sits in `pending` for days before it is
+ * `available`, so the first payout attempt after the 48h window routinely fails
+ * with `balance_insufficient` — and Stripe caches that failure against a static
+ * key for 24h, wedging every retry. The existence check gives at-most-once
+ * without letting a transient failure poison future reads.
+ */
 export async function releaseCrewPayout(
   bookingId: string,
   accountId: string,
   rateCents: number
 ): Promise<string> {
-  const transfer = await stripeClient().transfers.create(
-    { amount: rateCents, currency: "usd", destination: accountId, metadata: { bookingId } },
-    { idempotencyKey: `payout-${bookingId}` }
-  );
+  const transferGroup = `booking-${bookingId}`;
+  const existing = await stripeClient().transfers.list({ transfer_group: transferGroup, limit: 1 });
+  if (existing.data.length > 0) return existing.data[0].id;
+
+  const transfer = await stripeClient().transfers.create({
+    amount: rateCents,
+    currency: "usd",
+    destination: accountId,
+    transfer_group: transferGroup,
+    metadata: { bookingId },
+  });
   return transfer.id;
 }
