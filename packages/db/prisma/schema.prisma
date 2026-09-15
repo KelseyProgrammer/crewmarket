@@ -9,10 +9,10 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  // Serverless (Vercel/Neon): the app uses the pooled DATABASE_URL; migrations use
-  // the direct/unpooled connection. Locally both point at the same Postgres.
-  directUrl = env("DIRECT_URL")
+  // Neon/Vercel var names: app uses the pooled (pgbouncer) URL, migrations use the
+  // direct/unpooled URL. Locally both are set to the same local Postgres in .env.local.
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
