@@ -113,8 +113,20 @@
   guard, amount guard, CAS write, and auto-refund of orphaned paid sessions — duplicate-tab
   payments and pay-vs-cancel races refund themselves). Cancellations refund-first
   (`REFUND_TIERS` placeholder 1.0, G-1) with a `cancel-refund-<bookingId>` idempotency key;
-  payout releases lazily on read in `withElapsedWindow` (exactly-once via `payout-<bookingId>`
-  key + `stripeTransferId` null-check; blocked while a refund is on record). ALL booking state
+  payout releases lazily on read in `withElapsedWindow`, blocked while a refund is on record.
+  **Payout exactly-once = `source_transaction` (ties the transfer to the booking's charge) +
+  a `transfer_group` existence check + the `stripeTransferId` null-check** — NOT a static
+  idempotency key. Reason (found in the 9/14 live drive): a static `payout-<id>` key caches the
+  first `balance_insufficient` failure for 24h, and separate charges & transfers leaves charge
+  funds `pending` for days, so the first post-window payout reliably wedged. `source_transaction`
+  makes Stripe hold the transfer until that charge settles (no wedge) and caps total transfers
+  at the charge amount, so a concurrent double-read can't double-pay — guaranteed by fee < rate,
+  asserted at `PLATFORM_FEE_RATE` in `packages/types/src/booking-pricing.ts`. **Live test-mode
+  drive PASSED 9/14** end-to-end against the sandbox: crew Express onboarding (payouts active) →
+  boat pays `4242` → webhook funds-held → weather-cancel full refund → 48h backdated → automatic
+  crew payout (exactly rateCents, fee retained). Test-mode note: charge funds land in `pending`
+  and `source_transaction` holds the transfer until they settle (to force it, fund available
+  balance with a `tok_bypassPending` charge or the `4000000000000077` test card). ALL booking state
   writes are now CAS (`updateMany` guarded on the read state) — terminal states are sticky.
   80 unit tests across web+payments; lint/compliance/build green.
   **Run recipe (dev):** `colima start && docker compose up -d`; terminal 2:
@@ -126,8 +138,10 @@
   data (any name/DOB, SSN `000000000`, phone `0000000000`, Stripe's test bank);
   `node --env-file=.env.local scripts/dev-backdate-booking.mjs <bookingId> [hoursAgo=49]`
   backdates `completedAt` so the next ledger read releases the payout.
-- Next steps: live test-mode drive sign-off → admin-metrics Stripe swap (SOW 7.iii follow-up
-  spec) → mobile slice 2 (auth, joins after Stripe) → e2e QA (G-3).
+- Next steps: admin-metrics Stripe swap (SOW 7.iii follow-up spec) → mobile slice 2 (auth, joins
+  after Stripe) → e2e QA (G-3). Optional payout micro-optimization (non-blocking): persist the
+  charge id at webhook time so `releaseCrewPayout` skips the `paymentIntents.retrieve` on the
+  first payout read.
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.

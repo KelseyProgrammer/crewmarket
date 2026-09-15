@@ -10,6 +10,15 @@
 export const PLATFORM_FEE_RATE = 0.12;
 export const PLATFORM_FEE_SIDE: "BOAT" | "CREW" = "BOAT";
 
+// Payout exactly-once relies on fee < rate: the crew payout transfers rateCents
+// against a charge of rateCents+feeCents via source_transaction, and Stripe caps
+// total transfers at the charge amount — so a concurrent double-read can't fit a
+// second payout only while feeCents < rateCents (see releaseCrewPayout). Guard the
+// invariant here so a future fee change can't silently reopen a double-pay race.
+if (PLATFORM_FEE_RATE >= 1) {
+  throw new Error("PLATFORM_FEE_RATE must be < 1: payout double-pay guard depends on fee < rate");
+}
+
 export const TRIP_TYPES = ["FULL_DAY", "HALF_DAY", "MULTI_DAY", "TOURNAMENT"] as const;
 export type TripType = (typeof TRIP_TYPES)[number];
 
