@@ -10,8 +10,11 @@ const nextConfig = {
   // Monorepo: trace server files from the repo root so the hoisted Prisma query
   // engine (node_modules/.pnpm/.../.prisma) is bundled into serverless functions.
   outputFileTracingRoot: path.join(import.meta.dirname, "../.."),
+  // Prisma loads its engine via a runtime path static tracing can't see, so force-
+  // include the .node engine into EVERY server route's bundle (pages + API), not
+  // just /api. The pnpm-hoisted location is under the repo-root .pnpm store.
   outputFileTracingIncludes: {
-    "/api/**": ["../../node_modules/.pnpm/@prisma+client*/node_modules/.prisma/client/*.node"],
+    "/**": ["../../node_modules/.pnpm/@prisma+client*/node_modules/.prisma/client/*.node"],
   },
   transpilePackages: ["@crewmarket/ui", "@crewmarket/types", "@crewmarket/payments", "@crewmarket/db"],
   async headers() { return [{ source: "/(.*)", headers: securityHeaders }]; },
