@@ -17,3 +17,5 @@ export type { CheckoutInput, CheckoutUrls } from "./booking-payment";
 export { verifyStripeEvent } from "./webhook";
 export { CANCEL_STATES, REFUND_TIERS, isCancelState, refundCentsFor } from "./refund-tiers";
 export type { CancelState } from "./refund-tiers";
+export { stripeRevenue, aggregateBalanceTransactions, sumUsdBalance } from "./revenue";
+export type { StripeRevenue } from "./revenue";
