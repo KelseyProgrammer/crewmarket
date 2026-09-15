@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import { prisma } from "@crewmarket/db";
-import { verifyStripeEvent } from "@crewmarket/payments";
+import { refundBookingPayment, verifyStripeEvent } from "@crewmarket/payments";
 import { transition, type BookingState } from "@crewmarket/types";
 
 /* Source of truth for funds-held (spec): the booking leaves ACCEPTED only when
@@ -8,6 +8,22 @@ import { transition, type BookingState } from "@crewmarket/types";
    deliveries are no-ops via transition returning null. */
 
 export const dynamic = "force-dynamic";
+
+/** A paid session that can't drive the transition and isn't a replay of the
+    recorded charge is an orphaned double-charge (duplicate session, or payment
+    racing a cancellation) — refund it in full. Refund failures throw → 500 →
+    Stripe retries; the idempotency key makes retries converge. */
+async function refundOrphanedCharge(
+  booking: { id: string; state: string; stripePaymentIntentId: string | null },
+  session: Stripe.Checkout.Session,
+  paymentIntentId: string | null
+) {
+  if (!paymentIntentId || booking.stripePaymentIntentId === paymentIntentId) return; // replay of the recorded charge
+  console.error(
+    `stripe webhook: orphaned paid session ${session.id} on booking ${booking.id} (state ${booking.state}) — auto-refunding ${session.amount_total}`
+  );
+  await refundBookingPayment(paymentIntentId, session.amount_total ?? 0, `orphan-refund-${session.id}`);
+}
 
 export async function POST(req: Request) {
   const rawBody = await req.text();
@@ -44,8 +60,14 @@ export async function POST(req: Request) {
     return Response.json({ received: true });
   }
 
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent?.id ?? null);
+
   const next = transition(booking.state as BookingState, "ESCROW_CONFIRMED");
   if (!next) {
+    await refundOrphanedCharge(booking, session, paymentIntentId);
     return Response.json({ received: true }); // replay or stale delivery
   }
 
@@ -57,17 +79,15 @@ export async function POST(req: Request) {
     return Response.json({ received: true }); // no transition; never trust the redirect
   }
 
-  const paymentIntentId =
-    typeof session.payment_intent === "string"
-      ? session.payment_intent
-      : (session.payment_intent?.id ?? null);
-
   const updated = await prisma.booking.updateMany({
     where: { id: bookingId, state: booking.state }, // CAS: no-op if state moved since read
     data: { state: next, stripePaymentIntentId: paymentIntentId, fundsHeldAt: new Date() },
   });
   if (updated.count === 0) {
-    return Response.json({ received: true }); // lost the race (e.g. concurrent cancel) — no-op
+    // lost the race (e.g. concurrent cancel) — the payment may now be orphaned
+    const current = await prisma.booking.findUnique({ where: { id: bookingId } });
+    if (current) await refundOrphanedCharge(current, session, paymentIntentId);
+    return Response.json({ received: true });
   }
 
   return Response.json({ received: true });

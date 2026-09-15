@@ -199,7 +199,7 @@ export default async function VoyageLedger({
             // G-1: the state badge stays "Accepted" until the webhook lands — never trust the redirect.
             <p className="ledger__waiting mono">Payment received by Stripe — confirming the transfer of funds. Refresh in a moment.</p>
           )}
-          <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} rateCents={booking.rateCents} dates={dates} />
+          <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} rateCents={booking.rateCents} dates={dates} paidPending={paid === "pending"} />
         </article>
 
         {/* Rule D-2 — explicit placement in the booking flow */}
@@ -239,6 +239,7 @@ function ActionSlot({
   totalCents,
   rateCents,
   dates,
+  paidPending,
 }: {
   bookingId: string;
   state: BookingState;
@@ -246,6 +247,7 @@ function ActionSlot({
   totalCents: number;
   rateCents: number;
   dates: string[];
+  paidPending: boolean;
 }) {
   const when = fmtTripDates(dates);
   const rows: React.ReactNode[] = [];
@@ -262,15 +264,19 @@ function ActionSlot({
   }
   if (state === "ACCEPTED") {
     if (role === "BOAT") {
-      rows.push(
-        // Redirects to Stripe Checkout; the webhook — not this page — moves the state to ESCROW_FUNDED.
-        <form action={beginBookingCheckout.bind(null, bookingId)} className="ledger__action-form" key="f">
-          <button className="btn btn--brass" type="submit">
-            Hold funds — {fmtUsd(totalCents)}
-          </button>
-        </form>,
-        <Event key="cb" bookingId={bookingId} event="CANCEL_BOAT" label="Cancel booking" />
-      );
+      // While the confirming note shows (payment received, webhook pending) the Hold-funds
+      // CTA is suppressed — offering to pay again would invite a double-charge.
+      if (!paidPending) {
+        rows.push(
+          // Redirects to Stripe Checkout; the webhook — not this page — moves the state to ESCROW_FUNDED.
+          <form action={beginBookingCheckout.bind(null, bookingId)} className="ledger__action-form" key="f">
+            <button className="btn btn--brass" type="submit">
+              Hold funds — {fmtUsd(totalCents)}
+            </button>
+          </form>
+        );
+      }
+      rows.push(<Event key="cb" bookingId={bookingId} event="CANCEL_BOAT" label="Cancel booking" />);
     } else {
       rows.push(<Event key="cc" bookingId={bookingId} event="CANCEL_CREW" label="Cancel booking" />);
     }

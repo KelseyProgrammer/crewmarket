@@ -46,12 +46,13 @@ export async function createBookingCheckout(
 
 export async function refundBookingPayment(
   paymentIntentId: string,
-  refundCents: number
+  refundCents: number,
+  idempotencyKey?: string
 ): Promise<string> {
-  const refund = await stripeClient().refunds.create({
-    payment_intent: paymentIntentId,
-    amount: refundCents,
-  });
+  const refund = await stripeClient().refunds.create(
+    { payment_intent: paymentIntentId, amount: refundCents },
+    idempotencyKey ? { idempotencyKey } : undefined
+  );
   return refund.id;
 }
 

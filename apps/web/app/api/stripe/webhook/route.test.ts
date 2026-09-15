@@ -6,15 +6,25 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const seams = vi.hoisted(() => ({
   verifyStripeEvent: vi.fn(),
+  refundBookingPayment: vi.fn(),
   prisma: { booking: { findUnique: vi.fn(), updateMany: vi.fn() } },
 }));
 
-vi.mock("@crewmarket/payments", () => ({ verifyStripeEvent: seams.verifyStripeEvent }));
+vi.mock("@crewmarket/payments", () => ({
+  verifyStripeEvent: seams.verifyStripeEvent,
+  refundBookingPayment: seams.refundBookingPayment,
+}));
 vi.mock("@crewmarket/db", () => ({ prisma: seams.prisma }));
 
 import { POST } from "./route";
 
-const BOOKING = { id: "b1", state: "ACCEPTED", rateCents: 10000, feeCents: 1200 };
+const BOOKING = {
+  id: "b1",
+  state: "ACCEPTED",
+  rateCents: 10000,
+  feeCents: 1200,
+  stripePaymentIntentId: null,
+};
 
 function session(over: Record<string, unknown> = {}) {
   return {
@@ -45,6 +55,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   seams.prisma.booking.findUnique.mockResolvedValue({ ...BOOKING });
   seams.prisma.booking.updateMany.mockResolvedValue({ count: 1 });
+  seams.refundBookingPayment.mockResolvedValue("re_orphan");
 });
 
 describe("POST /api/stripe/webhook", () => {
@@ -79,11 +90,46 @@ describe("POST /api/stripe/webhook", () => {
   });
 
   it("replay is a no-op: already ESCROW_FUNDED means no update, still 200", async () => {
-    seams.prisma.booking.findUnique.mockResolvedValue({ ...BOOKING, state: "ESCROW_FUNDED" });
+    seams.prisma.booking.findUnique.mockResolvedValue({
+      ...BOOKING, state: "ESCROW_FUNDED", stripePaymentIntentId: "pi_1",
+    });
     seams.verifyStripeEvent.mockReturnValue(completedEvent());
     const res = await post();
     expect(res.status).toBe(200);
     expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
+    expect(seams.refundBookingPayment).not.toHaveBeenCalled();
+  });
+
+  it("orphaned duplicate payment (different PI, untransitionable state): full auto-refund, 200", async () => {
+    seams.prisma.booking.findUnique.mockResolvedValue({
+      ...BOOKING, state: "ESCROW_FUNDED", stripePaymentIntentId: "pi_1",
+    });
+    seams.verifyStripeEvent.mockReturnValue(completedEvent({ payment_intent: "pi_2" }));
+    const res = await post();
+    expect(res.status).toBe(200);
+    expect(seams.refundBookingPayment).toHaveBeenCalledWith("pi_2", 11200, "orphan-refund-cs_1");
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("payment racing a cancel (CAS count 0): refunds against the re-read booking", async () => {
+    seams.prisma.booking.findUnique
+      .mockResolvedValueOnce({ ...BOOKING })
+      .mockResolvedValueOnce({ ...BOOKING, state: "CANCELLED_BOAT", stripePaymentIntentId: null });
+    seams.prisma.booking.updateMany.mockResolvedValue({ count: 0 });
+    seams.verifyStripeEvent.mockReturnValue(completedEvent());
+    const res = await post();
+    expect(res.status).toBe(200);
+    expect(seams.refundBookingPayment).toHaveBeenCalledWith("pi_1", 11200, "orphan-refund-cs_1");
+  });
+
+  it("paid session vs cancelled booking with no recorded PI: refunds", async () => {
+    seams.prisma.booking.findUnique.mockResolvedValue({
+      ...BOOKING, state: "CANCELLED_WEATHER", stripePaymentIntentId: null,
+    });
+    seams.verifyStripeEvent.mockReturnValue(completedEvent());
+    const res = await post();
+    expect(res.status).toBe(200);
+    expect(seams.refundBookingPayment).toHaveBeenCalledWith("pi_1", 11200, "orphan-refund-cs_1");
   });
 
   it("amount mismatch: 200, no transition (operator investigates)", async () => {
