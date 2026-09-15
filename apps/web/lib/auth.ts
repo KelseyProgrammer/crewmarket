@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
+import { expo } from "@better-auth/expo";
 import { APIError } from "better-auth/api";
 import { prisma } from "@crewmarket/db";
 import { isAdminEmail } from "./credential-rules";
@@ -14,6 +15,12 @@ export type AccountType = (typeof ACCOUNT_TYPES)[number];
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
+  trustedOrigins: [
+    "crewmarket://",
+    "http://localhost:3000",
+    "http://localhost:3002",
+    "https://crewmarket-web.vercel.app",
+  ],
   user: {
     additionalFields: {
       accountType: { type: "string", required: true, input: true },
@@ -46,7 +53,7 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [nextCookies()],
+  plugins: [expo(), nextCookies()],
 });
 
 export type ServerSession = typeof auth.$Infer.Session;
