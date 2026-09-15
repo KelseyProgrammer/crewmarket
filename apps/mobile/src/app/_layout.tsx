@@ -1,8 +1,9 @@
-import { ActivityIndicator, Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
 import { useFonts, Oswald_500Medium, Oswald_700Bold } from "@expo-google-fonts/oswald";
 import { Archivo_400Regular } from "@expo-google-fonts/archivo";
 import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
+import { useSession } from "../../lib/auth-client";
 import { color, font } from "../../lib/tokens";
 
 // Navy header band matching the weigh-in board world (docs/DESIGN.md). Screen
@@ -40,10 +41,32 @@ export default function RootLayout() {
         headerTitleStyle: { fontFamily: font.display },
         headerShadowVisible: false,
         headerBackButtonDisplayMode: "minimal",
+        headerRight: () => <AccountEntry />,
       }}
     >
       <Stack.Screen name="index" options={{ headerTitle: () => <Wordmark /> }} />
     </Stack>
+  );
+}
+
+// Header-right entry point (slice 2, Task 6). Signed in → Account; signed out →
+// Sign in. expo-router is file-based, so sign-in/sign-up/account auto-register;
+// their titles are set per-screen via <Stack.Screen options={{ title }} />.
+function AccountEntry() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const signedIn = !!session;
+  return (
+    <Pressable
+      onPress={() => router.push(signedIn ? "/account" : "/sign-in")}
+      hitSlop={8}
+      accessibilityRole="button"
+      style={{ paddingHorizontal: 4, minHeight: 44, justifyContent: "center" }}
+    >
+      <Text style={{ fontFamily: font.display, fontSize: 14, letterSpacing: 0.6, color: color.brassBright }}>
+        {signedIn ? "Account" : "Sign in"}
+      </Text>
+    </Pressable>
   );
 }
 
