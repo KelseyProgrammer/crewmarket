@@ -79,6 +79,17 @@
   dev-labeled simulated; `simulatedRevenueFromBookings()` in `apps/web/lib/admin-metrics.ts` is the
   marked SOW 7.iii swap point, and the Stripe phase replaces that one function (the tile's simulated
   flag branch flips its label at the same time figures become Stripe-derived).
+  **SWAP DONE (9/15/2026)** per `docs/superpowers/specs/2026-09-15-admin-metrics-stripe-swap-design.md`
+  + plan `docs/superpowers/plans/2026-09-15-admin-metrics-stripe-swap.md`: revenue is now sourced
+  from Stripe **balance transactions** via `stripeRevenue()` in `packages/payments`
+  (`aggregateBalanceTransactions` is the pure, unit-tested core). `AdminMetrics.revenue` is a
+  discriminated union on `source`: `"stripe"` (gross platform fees retained = charges − refunds −
+  crew transfers, plus available/pending balance, tile shows the money-flow) or `"simulated"` (the
+  old booking-derived fallback, used when `STRIPE_SECRET_KEY` is unset OR Stripe errors — page never
+  hard-crashes). Cached ~60s via `createTtlCache` (rejections not cached). Realized/held split was
+  intentionally replaced by the money-flow + balance framing (balance transactions are money-movement,
+  not booking-lifecycle). Live-verified 9/15 against the sandbox (figures inflated by the drive's
+  test-mode top-up/probe transfers — expected noise).
 - **Mobile slice 1 SHIPPED (9/5/2026)** per `docs/superpowers/plans/2026-09-05-expo-slice1.md`:
   mobile board + registry-plate profile screens (the weigh-in board world translated to native;
   tokens mirrored in `apps/mobile/lib/tokens.ts` from `packages/ui/src/tokens.css` — dual-maintenance
@@ -138,10 +149,9 @@
   data (any name/DOB, SSN `000000000`, phone `0000000000`, Stripe's test bank);
   `node --env-file=.env.local scripts/dev-backdate-booking.mjs <bookingId> [hoursAgo=49]`
   backdates `completedAt` so the next ledger read releases the payout.
-- Next steps: admin-metrics Stripe swap (SOW 7.iii follow-up spec) → mobile slice 2 (auth, joins
-  after Stripe) → e2e QA (G-3). Optional payout micro-optimization (non-blocking): persist the
-  charge id at webhook time so `releaseCrewPayout` skips the `paymentIntents.retrieve` on the
-  first payout read.
+- Next steps: mobile slice 2 (auth, joins after Stripe) → e2e QA (G-3). Optional payout
+  micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
+  skips the `paymentIntents.retrieve` on the first payout read.
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
