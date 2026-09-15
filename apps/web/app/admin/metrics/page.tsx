@@ -40,22 +40,35 @@ export default async function AdminMetrics() {
         <h1>Marketplace metrics</h1>
 
         <div className="metrics__tiles">
-          <div className="metrics__tile">
-            <span className="eyebrow">PLATFORM FEES · REALIZED</span>
-            <p className="metrics__figure mono">{fmtUsd(m.revenue.realizedFeeCents)}</p>
-            {m.revenue.simulated ? (
-              <p className="metrics__note">
-                Simulated — derived from booking records until Stripe payments go live.
-              </p>
-            ) : (
-              <p className="metrics__note">Derived from Stripe reporting (SOW 7.iii).</p>
-            )}
-          </div>
-          <div className="metrics__tile">
-            <span className="eyebrow">FEES ON HELD BOOKINGS</span>
-            <p className="metrics__figure mono">{fmtUsd(m.revenue.heldFeeCents)}</p>
-            <p className="metrics__note">Funds held or in the 48-hour review window.</p>
-          </div>
+          {m.revenue.source === "simulated" ? (
+            <>
+              <div className="metrics__tile">
+                <span className="eyebrow">PLATFORM FEES · REALIZED</span>
+                <p className="metrics__figure mono">{fmtUsd(m.revenue.realizedFeeCents)}</p>
+                <p className="metrics__note">
+                  Simulated — derived from booking records until Stripe payments go live.
+                </p>
+              </div>
+              <div className="metrics__tile">
+                <span className="eyebrow">FEES ON HELD BOOKINGS</span>
+                <p className="metrics__figure mono">{fmtUsd(m.revenue.heldFeeCents)}</p>
+                <p className="metrics__note">Funds held or in the 48-hour review window.</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="metrics__tile">
+                <span className="eyebrow">PLATFORM FEES · RETAINED</span>
+                <p className="metrics__figure mono">{fmtUsd(m.revenue.platformFeesRetainedCents)}</p>
+                <p className="metrics__note">Derived from Stripe reporting (SOW 7.iii).</p>
+              </div>
+              <div className="metrics__tile">
+                <span className="eyebrow">BALANCE · AVAILABLE</span>
+                <p className="metrics__figure mono">{fmtUsd(m.revenue.availableCents)}</p>
+                <p className="metrics__note">{fmtUsd(m.revenue.pendingCents)} pending settlement.</p>
+              </div>
+            </>
+          )}
           <div className="metrics__tile">
             <span className="eyebrow">BOOKINGS</span>
             <p className="metrics__figure mono">{m.bookings.total}</p>
