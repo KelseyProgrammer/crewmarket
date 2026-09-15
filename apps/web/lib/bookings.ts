@@ -9,6 +9,7 @@ import {
   type CrewRates,
   type TripType,
 } from "@crewmarket/types";
+import { releaseCrewPayout } from "@crewmarket/payments";
 import { auth } from "./auth";
 import seed from "../data/seed-crew.json";
 
@@ -68,6 +69,33 @@ export async function withElapsedWindow(booking: Booking): Promise<Booking> {
   if (!payoutReleasable(booking.state as BookingState, booking.completedAt)) return booking;
   const next = transition(booking.state as BookingState, "DISPUTE_WINDOW_ELAPSED");
   if (!next) return booking;
+
+  // Stripe-funded bookings must transfer before PAID_OUT (P-2). Pre-Stripe
+  // (simulated) bookings have no PaymentIntent and close as before. Exactly-once:
+  // idempotency key payout-<id> in the payments package + this null-check.
+  if (booking.stripePaymentIntentId && !booking.stripeTransferId) {
+    if (booking.stripeRefundId) {
+      // The boat's payment was refunded (cancel racing completion) — paying the
+      // crew too would be a double loss. Hold in DISPUTE_WINDOW for the operator.
+      console.error(`booking ${booking.id}: payout blocked — refund ${booking.stripeRefundId} on record`);
+      return booking;
+    }
+    const claim = await prisma.crewProfileClaim.findUnique({
+      where: { profileId: booking.crewProfileId },
+    });
+    if (!claim?.stripeAccountId) return booking; // payout waits on setup; retried next read
+    try {
+      const transferId = await releaseCrewPayout(booking.id, claim.stripeAccountId, booking.rateCents);
+      return prisma.booking.update({
+        where: { id: booking.id },
+        data: { state: next, closedAt: new Date(), stripeTransferId: transferId },
+      });
+    } catch (err) {
+      console.error(`payout release failed for booking ${booking.id}`, err);
+      return booking; // stays DISPUTE_WINDOW; retried on next read
+    }
+  }
+
   return prisma.booking.update({
     where: { id: booking.id },
     data: { state: next, closedAt: new Date() },

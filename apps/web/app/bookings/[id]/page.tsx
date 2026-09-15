@@ -199,7 +199,19 @@ export default async function VoyageLedger({
             // G-1: the state badge stays "Accepted" until the webhook lands — never trust the redirect.
             <p className="ledger__waiting mono">Payment received by Stripe — confirming the transfer of funds. Refresh in a moment.</p>
           )}
-          <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} rateCents={booking.rateCents} dates={dates} paidPending={paid === "pending"} />
+          <ActionSlot
+            bookingId={booking.id}
+            state={state}
+            role={role}
+            totalCents={totalCents}
+            rateCents={booking.rateCents}
+            dates={dates}
+            paidPending={paid === "pending"}
+            completedAt={booking.completedAt}
+            stripePaymentIntentId={booking.stripePaymentIntentId}
+            stripeTransferId={booking.stripeTransferId}
+            stripeRefundId={booking.stripeRefundId}
+          />
         </article>
 
         {/* Rule D-2 — explicit placement in the booking flow */}
@@ -240,6 +252,10 @@ function ActionSlot({
   rateCents,
   dates,
   paidPending,
+  completedAt,
+  stripePaymentIntentId,
+  stripeTransferId,
+  stripeRefundId,
 }: {
   bookingId: string;
   state: BookingState;
@@ -248,6 +264,10 @@ function ActionSlot({
   rateCents: number;
   dates: string[];
   paidPending: boolean;
+  completedAt: Date | null;
+  stripePaymentIntentId: string | null;
+  stripeTransferId: string | null;
+  stripeRefundId: string | null;
 }) {
   const when = fmtTripDates(dates);
   const rows: React.ReactNode[] = [];
@@ -301,6 +321,24 @@ function ActionSlot({
     );
   }
   if (state === "DISPUTE_WINDOW") {
+    // Window elapsed but the payout couldn't move because the crew hasn't finished
+    // payout setup — say so, only to the crew. Refund-blocked holds are an operator
+    // concern and are never surfaced here.
+    if (
+      role === "CREW" &&
+      completedAt &&
+      payoutReleaseAt(completedAt) <= new Date() &&
+      stripePaymentIntentId &&
+      !stripeTransferId &&
+      !stripeRefundId
+    ) {
+      return (
+        <p className="ledger__waiting mono">
+          Payout is waiting on your payout setup — finish it from your account page and this
+          releases automatically.
+        </p>
+      );
+    }
     return (
       <p className="ledger__waiting">
         Nothing to do here — the payout releases automatically when the 48-hour review window
