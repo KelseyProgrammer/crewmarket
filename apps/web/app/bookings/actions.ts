@@ -169,7 +169,7 @@ export async function bookingEventAction(bookingId: string, eventType: keyof typ
     data.state = next;
   }
 
-  if (["CANCELLED_WEATHER", "CANCELLED_BOAT", "CANCELLED_CREW", "PAID_OUT"].includes(next)) {
+  if (isCancelState(next) || next === "PAID_OUT") {
     data.closedAt = new Date();
   }
 
@@ -179,6 +179,7 @@ export async function bookingEventAction(bookingId: string, eventType: keyof typ
   if (isCancelState(next) && booking.stripePaymentIntentId && !booking.stripeRefundId) {
     const refundCents = refundCentsFor(next, booking.rateCents + booking.feeCents);
     if (refundCents > 0) {
+      // Key is amount/target-agnostic: safe while all tiers are 1.0 — revisit if tiers diverge.
       data.stripeRefundId = await refundBookingPayment(
         booking.stripePaymentIntentId,
         refundCents,
@@ -187,7 +188,27 @@ export async function bookingEventAction(bookingId: string, eventType: keyof typ
     }
   }
 
-  await prisma.booking.update({ where: { id: bookingId }, data });
+  const updated = await prisma.booking.updateMany({
+    where: { id: bookingId, state: from }, // CAS: no-op if state moved since read
+    data,
+  });
+  if (updated.count === 0) {
+    if (data.stripeRefundId) {
+      // Refund already landed at Stripe but the transition lost the race — persist
+      // the id (field-only, no state change) so the ledger shows it, a later
+      // cancel's !stripeRefundId guard skips re-refunding, and payout release
+      // can block on it.
+      console.error(
+        `booking ${bookingId}: refund ${data.stripeRefundId} issued but ${eventType} lost the state race`
+      );
+      await prisma.booking.update({
+        where: { id: bookingId },
+        data: { stripeRefundId: data.stripeRefundId },
+      });
+    }
+    revalidatePath(`/bookings/${bookingId}`);
+    return; // stale: state moved under this button — re-render current truth
+  }
   revalidatePath(`/bookings/${bookingId}`);
   revalidatePath("/bookings");
 }
