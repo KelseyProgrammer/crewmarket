@@ -1,1 +1,13 @@
-{ "name": "@crewmarket/payments", "version": "0.0.1", "main": "src/index.ts", "dependencies": { "stripe": "^17.0.0" } }
+{
+  "name": "@crewmarket/payments",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "scripts": { "test": "vitest run" },
+  "dependencies": {
+    "@crewmarket/types": "workspace:*",
+    "stripe": "^22.6.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  }
+}

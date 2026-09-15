@@ -57,6 +57,11 @@ model Booking {
 
   state String @default("REQUESTED")
 
+  // Stripe ids only (P-1) — Stripe Connect Express owns KYC/bank/tax data.
+  stripePaymentIntentId String? // set by the checkout.session.completed webhook
+  stripeRefundId        String? // set when a cancellation refund succeeds
+  stripeTransferId      String? // set when the crew payout transfer succeeds (exactly-once null-check)
+
   piAttestedAt  DateTime // D-4: boat attested P&I coverage on the request form
   requestedAt   DateTime  @default(now())
   acceptedAt    DateTime?
@@ -77,6 +82,9 @@ model Booking {
 model CrewProfileClaim {
   profileId String   @id
   userId    String   @unique
+
+  stripeAccountId String? // Express account id (P-1) — created on "Set up payouts"
+
   createdAt DateTime @default(now())
 
   @@map("crew_profile_claim")
