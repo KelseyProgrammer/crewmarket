@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const seams = vi.hoisted(() => ({
   verifyStripeEvent: vi.fn(),
-  prisma: { booking: { findUnique: vi.fn(), update: vi.fn() } },
+  prisma: { booking: { findUnique: vi.fn(), updateMany: vi.fn() } },
 }));
 
 vi.mock("@crewmarket/payments", () => ({ verifyStripeEvent: seams.verifyStripeEvent }));
@@ -20,6 +20,7 @@ function session(over: Record<string, unknown> = {}) {
   return {
     id: "cs_1",
     amount_total: 11200,
+    payment_status: "paid",
     payment_intent: "pi_1",
     metadata: { bookingId: "b1" },
     ...over,
@@ -43,7 +44,7 @@ function post(body = "{}", sig = "t=1,v1=sig") {
 beforeEach(() => {
   vi.clearAllMocks();
   seams.prisma.booking.findUnique.mockResolvedValue({ ...BOOKING });
-  seams.prisma.booking.update.mockResolvedValue({});
+  seams.prisma.booking.updateMany.mockResolvedValue({ count: 1 });
 });
 
 describe("POST /api/stripe/webhook", () => {
@@ -67,8 +68,8 @@ describe("POST /api/stripe/webhook", () => {
     seams.verifyStripeEvent.mockReturnValue(completedEvent());
     const res = await post();
     expect(res.status).toBe(200);
-    expect(seams.prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: "b1" },
+    expect(seams.prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: { id: "b1", state: "ACCEPTED" },
       data: expect.objectContaining({
         state: "ESCROW_FUNDED",
         stripePaymentIntentId: "pi_1",
@@ -82,14 +83,14 @@ describe("POST /api/stripe/webhook", () => {
     seams.verifyStripeEvent.mockReturnValue(completedEvent());
     const res = await post();
     expect(res.status).toBe(200);
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
   });
 
   it("amount mismatch: 200, no transition (operator investigates)", async () => {
     seams.verifyStripeEvent.mockReturnValue(completedEvent({ amount_total: 999 }));
     const res = await post();
     expect(res.status).toBe(200);
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
   });
 
   it("unknown booking id: 200, no update", async () => {
@@ -97,6 +98,27 @@ describe("POST /api/stripe/webhook", () => {
     seams.verifyStripeEvent.mockReturnValue(completedEvent());
     const res = await post();
     expect(res.status).toBe(200);
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("session without bookingId metadata: 200, no db access", async () => {
+    seams.verifyStripeEvent.mockReturnValue(completedEvent({ metadata: {} }));
+    const res = await post();
+    expect(res.status).toBe(200);
+    expect(seams.prisma.booking.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("unpaid session (async payment method): 200, no update", async () => {
+    seams.verifyStripeEvent.mockReturnValue(completedEvent({ payment_status: "unpaid" }));
+    const res = await post();
+    expect(res.status).toBe(200);
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("state moved between read and write (CAS count 0): 200, treated as no-op", async () => {
+    seams.prisma.booking.updateMany.mockResolvedValue({ count: 0 });
+    seams.verifyStripeEvent.mockReturnValue(completedEvent());
+    const res = await post();
+    expect(res.status).toBe(200);
   });
 });

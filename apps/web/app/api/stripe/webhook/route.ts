@@ -1,11 +1,11 @@
 import type Stripe from "stripe";
 import { prisma } from "@crewmarket/db";
 import { verifyStripeEvent } from "@crewmarket/payments";
-import { canTransition, transition, type BookingState } from "@crewmarket/types";
+import { transition, type BookingState } from "@crewmarket/types";
 
 /* Source of truth for funds-held (spec): the booking leaves ACCEPTED only when
    this event arrives — never on the Checkout redirect. Replays and out-of-order
-   deliveries are no-ops via canTransition. */
+   deliveries are no-ops via transition returning null. */
 
 export const dynamic = "force-dynamic";
 
@@ -31,13 +31,21 @@ export async function POST(req: Request) {
     return Response.json({ received: true });
   }
 
+  if (session.payment_status !== "paid") {
+    console.error(
+      `stripe webhook: session ${session.id} completed with payment_status ${session.payment_status} — no transition (async payment methods are not supported)`
+    );
+    return Response.json({ received: true });
+  }
+
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
   if (!booking) {
     console.error(`stripe webhook: no booking ${bookingId} for session ${session.id}`);
     return Response.json({ received: true });
   }
 
-  if (!canTransition(booking.state as BookingState, "ESCROW_CONFIRMED")) {
+  const next = transition(booking.state as BookingState, "ESCROW_CONFIRMED");
+  if (!next) {
     return Response.json({ received: true }); // replay or stale delivery
   }
 
@@ -54,14 +62,13 @@ export async function POST(req: Request) {
       ? session.payment_intent
       : (session.payment_intent?.id ?? null);
 
-  await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
-      state: transition(booking.state as BookingState, "ESCROW_CONFIRMED")!,
-      stripePaymentIntentId: paymentIntentId,
-      fundsHeldAt: new Date(),
-    },
+  const updated = await prisma.booking.updateMany({
+    where: { id: bookingId, state: booking.state }, // CAS: no-op if state moved since read
+    data: { state: next, stripePaymentIntentId: paymentIntentId, fundsHeldAt: new Date() },
   });
+  if (updated.count === 0) {
+    return Response.json({ received: true }); // lost the race (e.g. concurrent cancel) — no-op
+  }
 
   return Response.json({ received: true });
 }

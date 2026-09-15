@@ -16,6 +16,8 @@ export async function createBookingCheckout(
 ): Promise<string> {
   const session = await stripeClient().checkout.sessions.create({
     mode: "payment",
+    payment_method_types: ["card"], // card-only: async methods would complete Checkout before funds move
+
     line_items: [
       {
         price_data: {
