@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { Anchor, LATITUDE_LINE, SealRing } from "../../../components/engravings";
 import { ROLE_LABELS } from "../../../lib/roles";
 import { WEB_URL } from "../../../lib/api";
+import { authClient, useSession } from "../../../lib/auth-client";
+import { claimButtonState, type Me } from "../../../lib/claim-state";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
 import { color, font, space, radius } from "../../../lib/tokens";
 
@@ -35,14 +37,61 @@ function fmtDate(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+/* Pull the human message off a $fetch error. /api/claim answers a 4xx with a
+   JSON body `{ error }`; better-fetch spreads that body onto the error object
+   (alongside status/statusText), so the server's copy lands on `error.error`.
+   `message` is the transport fallback. */
+function serverError(error: unknown): string | null {
+  if (error && typeof error === "object") {
+    const e = error as { error?: unknown; message?: unknown };
+    if (typeof e.error === "string" && e.error) return e.error;
+    if (typeof e.message === "string" && e.message) return e.message;
+  }
+  return null;
+}
+
 type LoadState = "loading" | "not-found" | "error" | "ready";
 
 export default function CrewProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
 
   const [profile, setProfile] = useState<BoardProfile | null>(null);
   const [state, setState] = useState<LoadState>("loading");
   const [bookingLinkError, setBookingLinkError] = useState(false);
+
+  // Claim button (Task 7, spec §6). `me` is null unless a session is present and
+  // /api/me resolves — any error or missing session is treated as signed-out for
+  // the button, so anonymous browsing (the existing behavior) never breaks.
+  const [me, setMe] = useState<Me | null>(null);
+  const [claimed, setClaimed] = useState(false); // local override to OWNED after a successful POST
+  const [claiming, setClaiming] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    // All setState lives inside the async callback, never the effect body — same
+    // discipline as the board/profile/account fetch callbacks
+    // (react-hooks/set-state-in-effect).
+    (async () => {
+      if (isPending) return;
+      if (!session) {
+        if (!cancelled) setMe(null);
+        return;
+      }
+      try {
+        const { data, error } = await authClient.$fetch<Me>("/api/me");
+        if (cancelled) return;
+        setMe(error || !data ? null : data);
+      } catch {
+        if (!cancelled) setMe(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isPending, session]);
 
   useEffect(() => {
     let cancelled = false;
@@ -85,6 +134,27 @@ export default function CrewProfileScreen() {
       .catch(() => setState("error"));
   };
 
+  async function onClaim() {
+    if (!profile || claiming) return; // guard double-tap
+    setClaiming(true);
+    setClaimError(null);
+    try {
+      const { data, error } = await authClient.$fetch<{ ok: boolean; profileId: string }>(
+        "/api/claim",
+        { method: "POST", body: { profileId: profile.id } },
+      );
+      if (error || !data) {
+        setClaimError(serverError(error) ?? "Couldn't claim this profile — try again.");
+        return;
+      }
+      setClaimed(true); // becomes OWNED via effectiveState below
+    } catch {
+      setClaimError("Couldn't claim this profile — try again.");
+    } finally {
+      setClaiming(false);
+    }
+  }
+
   if (state === "loading") {
     return (
       <View style={styles.center}>
@@ -126,6 +196,9 @@ export default function CrewProfileScreen() {
   const license = profile.credentials.find((c) => c.kind.startsWith("USCG") && c.licenseClass);
   const openDates = profile.availability.filter((a) => a.status === "OPEN").slice(0, 6);
   const firstName = profile.displayName.split(" ")[0];
+
+  // A successful claim this session pins OWNED without re-fetching /api/me.
+  const claimState = claimed ? "OWNED" : claimButtonState(me, profile.id);
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -242,6 +315,40 @@ export default function CrewProfileScreen() {
           <Text style={styles.bookingLinkError}>Couldn&apos;t open the booking form — try again.</Text>
         )}
       </View>
+
+      {/* Claim (Task 7, spec §6). Crew claiming is opt-in (M-2); the profile still
+          renders for anonymous browsing when signed out or the fetch fails. */}
+      {claimState !== "HIDDEN" && (
+        <View style={styles.claimPanel}>
+          {claimState === "SIGNED_OUT" && (
+            <Pressable onPress={() => router.push("/sign-in")}>
+              <Text style={styles.claimSignInLink}>Sign in to claim this profile</Text>
+            </Pressable>
+          )}
+          {claimState === "CLAIMABLE" && (
+            <>
+              <Pressable
+                style={[styles.claimButton, claiming && styles.claimButtonDisabled]}
+                onPress={onClaim}
+                disabled={claiming}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: claiming }}
+              >
+                <Text style={styles.claimButtonText}>
+                  {claiming ? "Claiming…" : "This is my profile — claim it"}
+                </Text>
+              </Pressable>
+              {claimError && <Text style={styles.claimError}>{claimError}</Text>}
+            </>
+          )}
+          {claimState === "OWNED" && (
+            <View style={styles.ownedBadge}>
+              <SealRing size={16} />
+              <Text style={styles.ownedBadgeText}>You drive this profile</Text>
+            </View>
+          )}
+        </View>
+      )}
 
       <View style={styles.disclaimer}>
         <DisclaimerD2 />
@@ -386,6 +493,38 @@ const styles = StyleSheet.create({
   },
   webButtonText: { fontFamily: font.body, fontSize: 14, fontWeight: "600", color: "#ffffff" },
   bookingLinkError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft, marginTop: space.s2 },
+
+  // Claim plate (Task 7). White plate on the board ground like the other panels,
+  // but no eyebrow — it carries a single control, not a data section.
+  claimPanel: {
+    backgroundColor: color.whiteCrisp,
+    marginTop: space.s3,
+    marginHorizontal: space.s3,
+    padding: space.s5,
+    gap: space.s3,
+    borderWidth: 1,
+    borderColor: color.lineOnWhite,
+    borderRadius: radius,
+  },
+  // Signed-out: a subtle brass-text link, not the loud primary slot.
+  claimSignInLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
+  // Claimable: the brass primary action (same slot idiom as the booking CTA).
+  claimButton: {
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
+    backgroundColor: color.brassText,
+    borderRadius: radius,
+    paddingVertical: space.s3,
+    paddingHorizontal: space.s5,
+  },
+  claimButtonDisabled: { opacity: 0.5 },
+  claimButtonText: { fontFamily: font.body, fontSize: 14, fontWeight: "600", color: "#ffffff" },
+  claimError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
+  // Owned: a static seal badge, no control.
+  ownedBadge: { flexDirection: "row", alignItems: "center", gap: space.s2 },
+  ownedBadgeText: { fontFamily: font.mono, fontSize: 12, letterSpacing: 0.4, color: color.brassText },
 
   // The in-page D-2 plate: navy-edged so it reads as intentional (web spec).
   disclaimer: {
