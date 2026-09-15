@@ -4,6 +4,7 @@ import { Container } from "@crewmarket/ui";
 import { auth } from "../../lib/auth";
 import { SignOutButton } from "../../components/sign-out-button";
 import { CredentialsSection } from "./credentials-section";
+import { PayoutsSection } from "./payouts-section";
 
 /* Role-based account shell (SOW 2.i: role-based views/permissions).
    Real session check happens here; middleware only does the optimistic cookie gate.
@@ -23,7 +24,6 @@ const SHELLS = {
     liveAction: { href: "/bookings", label: "See your bookings" },
     upcoming: [
       ["LISTING", "Profile & services listing — roles, rates you set, availability, home port"],
-      ["PAYOUTS", "Payout onboarding via Stripe Connect — Stripe handles identity and bank details"],
     ],
   },
   BOAT: {
@@ -76,6 +76,8 @@ export default async function Account({
         {accountType === "CREW" ? (
           <CredentialsSection userId={session.user.id} notice={cred === "denied"} />
         ) : null}
+
+        {accountType === "CREW" ? <PayoutsSection userId={session.user.id} /> : null}
 
         <div className="account__panel account__panel--upcoming">
           <span className="eyebrow">NEXT ON THE BUILD</span>
