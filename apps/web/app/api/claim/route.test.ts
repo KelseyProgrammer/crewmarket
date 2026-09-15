@@ -47,13 +47,13 @@ describe("POST /api/claim", () => {
     expect((await post({ profileId: "nope" })).status).toBe(404);
   });
   it("409 when the user already has a claim", async () => {
-    seams.prisma.crewProfileClaim.findUnique.mockImplementation(({ where }: any) =>
+    seams.prisma.crewProfileClaim.findUnique.mockImplementation(({ where }: { where: { userId?: string; profileId?: string } }) =>
       where.userId ? { userId: "u1", profileId: "other" } : null);
     expect((await post({ profileId: "p-known" })).status).toBe(409);
     expect(seams.prisma.crewProfileClaim.create).not.toHaveBeenCalled();
   });
   it("409 when the profile is already claimed", async () => {
-    seams.prisma.crewProfileClaim.findUnique.mockImplementation(({ where }: any) =>
+    seams.prisma.crewProfileClaim.findUnique.mockImplementation(({ where }: { where: { userId?: string; profileId?: string } }) =>
       where.profileId ? { userId: "someoneelse", profileId: "p-known" } : null);
     expect((await post({ profileId: "p-known" })).status).toBe(409);
     expect(seams.prisma.crewProfileClaim.create).not.toHaveBeenCalled();
