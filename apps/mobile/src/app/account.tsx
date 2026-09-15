@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { authClient, signOut, useSession } from "../../lib/auth-client";
+import { API_URL } from "../../lib/api";
 import { getBoard } from "../../lib/board";
 import type { Me } from "../../lib/claim-state";
 import { color, font, radius, space } from "../../lib/tokens";
@@ -50,7 +51,10 @@ export default function AccountScreen() {
     (async () => {
       setClaim({ kind: "loading" });
       try {
-        const { data, error } = await authClient.$fetch<Me>("/api/me");
+        // Absolute URL: authClient prepends its /api/auth base to relative paths,
+        // so a bare "/api/me" would 404. Passing the full URL still runs the Expo
+        // client's onRequest hook (session cookie + expo-origin get attached).
+        const { data, error } = await authClient.$fetch<Me>(`${API_URL}/api/me`);
         if (cancelled) return;
         if (error || !data) {
           setClaim({ kind: "error" });

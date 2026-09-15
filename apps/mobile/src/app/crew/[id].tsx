@@ -4,7 +4,7 @@ import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { Anchor, LATITUDE_LINE, SealRing } from "../../../components/engravings";
 import { ROLE_LABELS } from "../../../lib/roles";
-import { WEB_URL } from "../../../lib/api";
+import { API_URL, WEB_URL } from "../../../lib/api";
 import { authClient, useSession } from "../../../lib/auth-client";
 import { claimButtonState, type Me } from "../../../lib/claim-state";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
@@ -81,7 +81,7 @@ export default function CrewProfileScreen() {
         return;
       }
       try {
-        const { data, error } = await authClient.$fetch<Me>("/api/me");
+        const { data, error } = await authClient.$fetch<Me>(`${API_URL}/api/me`);
         if (cancelled) return;
         setMe(error || !data ? null : data);
       } catch {
@@ -140,7 +140,7 @@ export default function CrewProfileScreen() {
     setClaimError(null);
     try {
       const { data, error } = await authClient.$fetch<{ ok: boolean; profileId: string }>(
-        "/api/claim",
+        `${API_URL}/api/claim`,
         { method: "POST", body: { profileId: profile.id } },
       );
       if (error || !data) {
