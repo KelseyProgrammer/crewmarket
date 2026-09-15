@@ -86,20 +86,26 @@ export async function withElapsedWindow(booking: Booking): Promise<Booking> {
     if (!claim?.stripeAccountId) return booking; // payout waits on setup; retried next read
     try {
       const transferId = await releaseCrewPayout(booking.id, claim.stripeAccountId, booking.rateCents);
-      return prisma.booking.update({
-        where: { id: booking.id },
-        data: { state: next, closedAt: new Date(), stripeTransferId: transferId },
+      const closedAt = new Date();
+      const updated = await prisma.booking.updateMany({
+        where: { id: booking.id, state: "DISPUTE_WINDOW" }, // CAS: no-op if state moved since read
+        data: { state: next, closedAt, stripeTransferId: transferId },
       });
+      if (updated.count === 0) return booking; // stale render; next read shows truth
+      return { ...booking, state: next, closedAt, stripeTransferId: transferId };
     } catch (err) {
       console.error(`payout release failed for booking ${booking.id}`, err);
       return booking; // stays DISPUTE_WINDOW; retried on next read
     }
   }
 
-  return prisma.booking.update({
-    where: { id: booking.id },
-    data: { state: next, closedAt: new Date() },
+  const closedAt = new Date();
+  const updated = await prisma.booking.updateMany({
+    where: { id: booking.id, state: "DISPUTE_WINDOW" }, // CAS: no-op if state moved since read
+    data: { state: next, closedAt },
   });
+  if (updated.count === 0) return booking;
+  return { ...booking, state: next, closedAt };
 }
 
 export async function bookingsForUser(userId: string, role: "BOAT" | "CREW"): Promise<Booking[]> {

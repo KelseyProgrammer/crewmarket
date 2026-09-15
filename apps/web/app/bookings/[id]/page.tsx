@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Container, DisclaimerD2, BookingStateBadge } from "@crewmarket/ui";
 import { prisma } from "@crewmarket/db";
-import { fmtUsd, TRIP_TYPE_LABELS, type BookingState } from "@crewmarket/types";
+import { fmtUsd, payoutReleasable, TRIP_TYPE_LABELS, type BookingState } from "@crewmarket/types";
 import {
   bookingDates,
   crewProfileById,
@@ -327,7 +327,7 @@ function ActionSlot({
     if (
       role === "CREW" &&
       completedAt &&
-      payoutReleaseAt(completedAt) <= new Date() &&
+      payoutReleasable("DISPUTE_WINDOW", completedAt) &&
       stripePaymentIntentId &&
       !stripeTransferId &&
       !stripeRefundId

@@ -36,7 +36,7 @@ const base = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  seams.prisma.booking.update.mockImplementation(async ({ data }) => ({ ...base, ...data }));
+  seams.prisma.booking.updateMany.mockResolvedValue({ count: 1 });
   seams.prisma.crewProfileClaim.findUnique.mockResolvedValue({
     profileId: "p1",
     userId: "u1",
@@ -53,12 +53,13 @@ describe("withElapsedWindow payout release", () => {
   });
 
   it("elapsed + onboarded: transfers exactly rateCents, stores id, goes PAID_OUT", async () => {
-    await withElapsedWindow({ ...base } as never);
+    const out = await withElapsedWindow({ ...base } as never);
     expect(seams.releaseCrewPayout).toHaveBeenCalledWith("b1", "acct_1", 10000);
-    expect(seams.prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: "b1" },
+    expect(seams.prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: { id: "b1", state: "DISPUTE_WINDOW" },
       data: expect.objectContaining({ state: "PAID_OUT", stripeTransferId: "tr_1" }),
     });
+    expect(out).toMatchObject({ state: "PAID_OUT", stripeTransferId: "tr_1" });
   });
 
   it("crew not onboarded: stays DISPUTE_WINDOW, no transfer, no update", async () => {
@@ -66,28 +67,28 @@ describe("withElapsedWindow payout release", () => {
     const b = { ...base };
     expect(await withElapsedWindow(b as never)).toBe(b);
     expect(seams.releaseCrewPayout).not.toHaveBeenCalled();
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
   });
 
   it("transfer failure: stays DISPUTE_WINDOW, retried on next read", async () => {
     seams.releaseCrewPayout.mockRejectedValue(new Error("stripe down"));
     const b = { ...base };
     expect(await withElapsedWindow(b as never)).toBe(b);
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
   });
 
   it("refunded booking never pays out: no transfer, stays put for the operator", async () => {
     const b = { ...base, stripeRefundId: "re_1" };
     expect(await withElapsedWindow(b as never)).toBe(b);
     expect(seams.releaseCrewPayout).not.toHaveBeenCalled();
-    expect(seams.prisma.booking.update).not.toHaveBeenCalled();
+    expect(seams.prisma.booking.updateMany).not.toHaveBeenCalled();
   });
 
   it("transfer id already set: no second transfer call, closes normally", async () => {
     await withElapsedWindow({ ...base, stripeTransferId: "tr_0" } as never);
     expect(seams.releaseCrewPayout).not.toHaveBeenCalled();
-    expect(seams.prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: "b1" },
+    expect(seams.prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: { id: "b1", state: "DISPUTE_WINDOW" },
       data: expect.objectContaining({ state: "PAID_OUT" }),
     });
   });
@@ -95,9 +96,15 @@ describe("withElapsedWindow payout release", () => {
   it("pre-Stripe booking (no PaymentIntent): legacy close without transfer", async () => {
     await withElapsedWindow({ ...base, stripePaymentIntentId: null } as never);
     expect(seams.releaseCrewPayout).not.toHaveBeenCalled();
-    expect(seams.prisma.booking.update).toHaveBeenCalledWith({
-      where: { id: "b1" },
+    expect(seams.prisma.booking.updateMany).toHaveBeenCalledWith({
+      where: { id: "b1", state: "DISPUTE_WINDOW" },
       data: expect.objectContaining({ state: "PAID_OUT" }),
     });
+  });
+
+  it("PAID_OUT write loses the CAS: returns the original row untouched", async () => {
+    seams.prisma.booking.updateMany.mockResolvedValue({ count: 0 });
+    const b = { ...base };
+    expect(await withElapsedWindow(b as never)).toBe(b);
   });
 });
