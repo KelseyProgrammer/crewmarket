@@ -16,7 +16,7 @@ import {
   withElapsedWindow,
   type PartyRole,
 } from "../../../lib/bookings";
-import { bookingEventAction } from "../actions";
+import { beginBookingCheckout, bookingEventAction } from "../actions";
 
 /* The Voyage Ledger (docs/BOOKING_BRIEF.md): one canonical booking document,
    identical for both parties. One current state, one brass action per role (R1/R5);
@@ -55,8 +55,15 @@ function trailIndex(state: BookingState): number {
   return state === "PAID_OUT" ? TRAIL.length - 1 : -1; // cancels handled separately
 }
 
-export default async function VoyageLedger({ params }: { params: Promise<{ id: string }> }) {
+export default async function VoyageLedger({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ paid?: string }>;
+}) {
   const { id } = await params;
+  const { paid } = await searchParams;
   const user = await sessionUser();
   if (!user) redirect(`/sign-in?from=/bookings/${id}`);
 
@@ -188,6 +195,10 @@ export default async function VoyageLedger({ params }: { params: Promise<{ id: s
           )}
 
           {/* Action slot — one brass action per role per state (R5). */}
+          {paid === "pending" && state === "ACCEPTED" && (
+            // G-1: the state badge stays "Accepted" until the webhook lands — never trust the redirect.
+            <p className="ledger__waiting mono">Payment received by Stripe — confirming the transfer of funds. Refresh in a moment.</p>
+          )}
           <ActionSlot bookingId={booking.id} state={state} role={role} totalCents={totalCents} rateCents={booking.rateCents} dates={dates} />
         </article>
 
@@ -205,18 +216,15 @@ function Event({
   event,
   label,
   brass = false,
-  demo = false,
 }: {
   bookingId: string;
   event: Parameters<typeof bookingEventAction>[1];
   label: string;
   brass?: boolean;
-  demo?: boolean;
 }) {
   const action = bookingEventAction.bind(null, bookingId, event);
   return (
     <form action={action} className="ledger__action-form">
-      {demo && <span className="ledger__demo-tag mono">DEV · SIMULATED — STRIPE PAYMENTINTENT LANDS HERE</span>}
       <button className={`btn ${brass ? "btn--brass" : "btn--ghost-ink"}`} type="submit">
         {label}
       </button>
@@ -255,7 +263,12 @@ function ActionSlot({
   if (state === "ACCEPTED") {
     if (role === "BOAT") {
       rows.push(
-        <Event key="f" bookingId={bookingId} event="ESCROW_CONFIRMED" label={`Hold funds — ${fmtUsd(totalCents)}`} brass demo />,
+        // Redirects to Stripe Checkout; the webhook — not this page — moves the state to ESCROW_FUNDED.
+        <form action={beginBookingCheckout.bind(null, bookingId)} className="ledger__action-form" key="f">
+          <button className="btn btn--brass" type="submit">
+            Hold funds — {fmtUsd(totalCents)}
+          </button>
+        </form>,
         <Event key="cb" bookingId={bookingId} event="CANCEL_BOAT" label="Cancel booking" />
       );
     } else {

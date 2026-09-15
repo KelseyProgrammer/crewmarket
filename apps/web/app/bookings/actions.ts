@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@crewmarket/db";
+import { createBookingCheckout } from "@crewmarket/payments";
 import {
   computeQuote,
   datesFrom,
@@ -10,6 +11,7 @@ import {
   transition,
   tripTypesFor,
   TRIP_TYPES,
+  TRIP_TYPE_LABELS,
   type BookingEvent,
   type BookingState,
   type TripType,
@@ -78,22 +80,55 @@ export async function createBookingAction(
   redirect(`/bookings/${booking.id}`);
 }
 
+/** Boat's primary action at ACCEPTED: capture into the platform balance via
+    Checkout (separate charges & transfers). State does NOT change here — the
+    webhook is the source of truth for ESCROW_FUNDED. */
+export async function beginBookingCheckout(bookingId: string) {
+  const user = await sessionUser();
+  if (!user) redirect(`/sign-in?from=/bookings/${bookingId}`);
+
+  const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+  if (!booking) return;
+  const role = await partyRoleFor(booking, user.id);
+  if (role !== "BOAT") return;
+  if (booking.state !== "ACCEPTED") {
+    revalidatePath(`/bookings/${bookingId}`);
+    return; // stale tab
+  }
+
+  const base = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+  const url = await createBookingCheckout(
+    {
+      bookingId,
+      tripLabel: `${TRIP_TYPE_LABELS[booking.tripType as TripType]} — crew booking`,
+      rateCents: booking.rateCents,
+      feeCents: booking.feeCents,
+    },
+    {
+      successUrl: `${base}/bookings/${bookingId}?paid=pending`,
+      cancelUrl: `${base}/bookings/${bookingId}`,
+    }
+  );
+  redirect(url);
+}
+
 /** Which side may fire which event. TRIP_START / TRIP_COMPLETE are attestations
     either party may record — never supervision features (M-3). */
-const EVENT_SIDES: Record<Exclude<BookingEvent["type"], "PAYOUT_SCHEDULED" | "DISPUTE_WINDOW_ELAPSED">, PartyRole[]> = {
+const EVENT_SIDES: Record<
+  Exclude<BookingEvent["type"], "PAYOUT_SCHEDULED" | "DISPUTE_WINDOW_ELAPSED" | "ESCROW_CONFIRMED">,
+  PartyRole[]
+> = {
   CREW_ACCEPT: ["CREW"],
   CREW_DECLINE: ["CREW"],
   CANCEL_BOAT: ["BOAT"],
   CANCEL_CREW: ["CREW"],
   CANCEL_WEATHER: ["BOAT", "CREW"],
-  ESCROW_CONFIRMED: ["BOAT"], // simulated until the Stripe phase (SOW 6.i)
   TRIP_START: ["BOAT", "CREW"],
   TRIP_COMPLETE: ["BOAT", "CREW"],
 };
 
 const TIMESTAMPS: Partial<Record<keyof typeof EVENT_SIDES, "acceptedAt" | "fundsHeldAt" | "tripStartedAt">> = {
   CREW_ACCEPT: "acceptedAt",
-  ESCROW_CONFIRMED: "fundsHeldAt",
   TRIP_START: "tripStartedAt",
 };
 
