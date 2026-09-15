@@ -3,7 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@crewmarket/db";
-import { createBookingCheckout } from "@crewmarket/payments";
+import {
+  createBookingCheckout,
+  isCancelState,
+  refundBookingPayment,
+  refundCentsFor,
+} from "@crewmarket/payments";
 import {
   computeQuote,
   datesFrom,
@@ -166,6 +171,20 @@ export async function bookingEventAction(bookingId: string, eventType: keyof typ
 
   if (["CANCELLED_WEATHER", "CANCELLED_BOAT", "CANCELLED_CREW", "PAID_OUT"].includes(next)) {
     data.closedAt = new Date();
+  }
+
+  // Refund first, transition second (spec): a failed refund throws out of the
+  // action, leaving the state unchanged and the cancel retryable. Tiers are
+  // placeholder config, not policy (G-1).
+  if (isCancelState(next) && booking.stripePaymentIntentId && !booking.stripeRefundId) {
+    const refundCents = refundCentsFor(next, booking.rateCents + booking.feeCents);
+    if (refundCents > 0) {
+      data.stripeRefundId = await refundBookingPayment(
+        booking.stripePaymentIntentId,
+        refundCents,
+        `cancel-refund-${booking.id}`
+      );
+    }
   }
 
   await prisma.booking.update({ where: { id: bookingId }, data });
