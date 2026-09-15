@@ -3,6 +3,14 @@
 **Date:** 2026-09-13 · **Status:** approved in session; build blocked on test keys
 (client-owned Stripe account → Developer invite → keys into `.env.local`).
 
+> **Amendment 2026-09-14:** keys landed; the sandbox is a new-generation Stripe account
+> with the v1 Accounts API disabled (dashboard override needs the client's Administrator
+> role). Crew account creation/onboarding/readiness therefore use **Accounts v2**
+> (`v2.core.accounts` recipient configuration + `dashboard: "express"`, GA version
+> `2026-08-26.dahlia` — probed live). Hosted onboarding UX, Checkout, webhook, refunds,
+> and v1 Transfers (interoperable with v2 account ids) are unchanged. Implementation
+> plan: `docs/superpowers/plans/2026-09-14-payments-core.md`.
+
 Scope decided in session: **core only** — crew Express onboarding, boat pays at booking,
 refunds on cancellation, automatic payout after the 48h window. The admin-metrics swap
 (SOW 7.iii — revenue from Stripe reporting) is a follow-up spec once real test charges exist.
