@@ -12,7 +12,9 @@ export async function PayoutsSection({ userId }: { userId: string }) {
 
   const claim = await prisma.crewProfileClaim.findUnique({ where: { profileId } });
   const accountId = claim?.stripeAccountId ?? null;
-  const readiness = accountId ? await payoutReadiness(accountId) : null;
+  // Stripe being unreachable (or a stale sandbox account id) must never take
+  // down /account — degrade to the not-finished branch, which offers a retry.
+  const readiness = accountId ? await payoutReadiness(accountId).catch(() => null) : null;
 
   return (
     <div className="account__panel">
