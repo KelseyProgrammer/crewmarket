@@ -166,6 +166,9 @@ importers:
       eslint-config-next:
         specifier: ^15.5.25
         version: 15.5.25(eslint@9.39.5(jiti@2.7.0))(typescript@6.0.3)
+      stripe:
+        specifier: ^22.6.2
+        version: 22.6.2(@types/node@26.4.0)
       vitest:
         specifier: ^3.2.7
         version: 3.2.7(@types/node@26.4.0)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.51.2)(yaml@2.9.0)
