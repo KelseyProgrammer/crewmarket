@@ -168,7 +168,10 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontFamily: font.displayBold,
     fontSize: 38,
-    lineHeight: 40,
+    // lineHeight must clear the tall Oswald caps — 40 clipped the ascenders on
+    // iOS; 48 gives headroom. includeFontPadding:false keeps Android tight.
+    lineHeight: 48,
+    includeFontPadding: false,
     color: color.whiteCrisp,
     letterSpacing: 0.5,
   },
