@@ -113,6 +113,28 @@
   before real multi-instance traffic; credential server-action guards are unit-tested (spec §7
   matrix, crew + admin — 20 tests); root `pnpm test` runs turbo test across web/ui/mobile;
   node 22.13+ wanted by react-native (`.nvmrc` pinned).
+- **Mobile slice 2 BUILT (9/15/2026) — native auth + claim-a-profile** per spec
+  `docs/superpowers/specs/2026-09-15-mobile-slice2-auth-claim-design.md` + plan
+  `docs/superpowers/plans/2026-09-15-mobile-slice2-auth-claim.md`. Server: Better Auth **Expo
+  plugin** + `trustedOrigins` (crewmarket://, localhost, Vercel) in `apps/web/lib/auth.ts`
+  (cookie web flow unchanged); better-auth aligned to ^1.7.5. Two new auth-gated routes —
+  **`POST /api/claim`** (the FIRST real claim path in app code; CREW-only, 1:1 uniqueness via
+  `profileId @id`/`userId @unique` + P2002→409, and the **V-2 guard** refusing a profile that
+  already has credential docs) and **`GET /api/me`** (`{id, accountType, claimedProfileId}`,
+  own-data only, P-4). Both TDD'd (claim 8 tests, me 3). Mobile (`apps/mobile`): `@better-auth/expo`
+  client with `expo-secure-store` token persistence (`lib/auth-client.ts`); native `sign-in`/
+  `sign-up` (verbatim `<DisclaimerD2/>` + required checkbox → `disclaimerAccepted:true`; CREW/BOAT
+  toggle) / `account` screens + a header account/sign-in entry; a **claim button on the profile
+  screen** (`crew/[id].tsx`) driven by the pure, unit-tested `lib/claim-state.ts` helper
+  (SIGNED_OUT/HIDDEN/CLAIMABLE/OWNED). Scope boundary: booking management stays web this slice
+  (boats still deep-link to the web booking flow). All gates green; deployed to Vercel and
+  live-verified (`/api/me` + `/api/claim` → 401 signed out). **NOTE:** there is now a real claim
+  path, but only for UNCLAIMED profiles with no docs — reassignment is still script-only (V-2).
+  typedRoutes caveat: after adding routes, `.expo/types/router.d.ts` regenerates only on
+  `expo start` (not `expo export`), so a fresh checkout must run the dev server once before `tsc`.
+  **PENDING: device pass (S9)** — physical-iPhone Expo Go run-through of sign-up (both roles, D-2)
+  → sign-in → session persists across restart → claim from a profile → account shows it → sign
+  out; not yet done.
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
