@@ -171,14 +171,22 @@
   supersedes the earlier fabricated-then-retracted subagent claim, 116dc32→da7b90b): Expo Go on a
   physical iPhone against the deployed Vercel API (`EXPO_PUBLIC_API_URL=https://crewmarket-web.vercel.app
   npx expo start`, no local backend needed); Metro logs corroborate an iOS bundle served during the
-  run. User reported the pass good with no blocking issues; no device-only bugs were filed. Watch
-  item from Metro logs: two `WARN` "error during concurrent rendering but React was able to
-  recover" lines (non-fatal, React recovered — likely React 19 concurrent-render recovery; revisit
-  if UI glitches appear on device). The earlier reported "kicked out of Expo Go after payment"
-  finding remains unconfirmed (it originated in the retracted report; user filed no such issue in
-  the real pass) — if it ever reproduces, the fix is an AppState refetch-on-foreground in
-  `apps/mobile/src/app/bookings/[id].tsx` (webhook remains source of truth, so payment is safe
-  regardless). **Slice 3 COMPLETE.**
+  run. User reported the pass good with ONE non-blocking finding (below); everything else clean.
+  Watch item from Metro logs: two `WARN` "error during concurrent rendering but React was able to
+  recover" lines (non-fatal, React recovered — plausibly the same incident as the finding below;
+  revisit if UI glitches appear on device).
+  **CONFIRMED device finding (user, 9/16): booted to sign-in once after paying via Stripe
+  Checkout** — on returning from the in-app browser the first time, the app dropped to the sign-in
+  screen and the user had to log back in; did not recur on later returns. Money was unaffected
+  (webhook is the source of truth; booking showed funds-held after re-login). Hypothesis (code
+  reading, not yet root-caused): Expo Go reloads/boots the JS on resume and the auth/focus guard
+  runs before expo-secure-store rehydrates the session, so the transient signed-out window
+  redirects; the in-memory confirm-poll in `apps/mobile/src/app/bookings/[id].tsx` `payNow` also
+  dies with the reload. Candidate fix: tolerate the session-pending window in the guard +
+  AppState/foreground refetch of the booking so a reloaded app self-heals into the
+  webhook-confirmed state; re-verify on device, and separately in an EAS/standalone build (dev
+  Expo Go reload behavior may not carry over). Logged as a known issue for the e2e QA (G-3) phase;
+  not fixed in slice 3. **Slice 3 COMPLETE** (finding non-blocking).
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
