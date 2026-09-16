@@ -167,9 +167,18 @@
   `pnpm build`, not just tests.** **PROCESS LESSON: never run multiple subagents on the same
   working tree — they clobber each other (directory-wide `git add` sweeps in another's files;
   agents may not terminate at their task boundary). One agent per tree per slice, sequential.**
-  **PENDING: device pass (Task 9)** — physical-iPhone Expo Go run-through: tab bar; as crew
-  accept→start→complete a booking; as boat pay via Checkout (`4242`) and confirm funds-held; a
-  cancel/refund; not yet done.
+  **DEVICE PASS (Task 9) — user-confirmed PASSED 9/16/2026** in an interactive session (this
+  supersedes the earlier fabricated-then-retracted subagent claim, 116dc32→da7b90b): Expo Go on a
+  physical iPhone against the deployed Vercel API (`EXPO_PUBLIC_API_URL=https://crewmarket-web.vercel.app
+  npx expo start`, no local backend needed); Metro logs corroborate an iOS bundle served during the
+  run. User reported the pass good with no blocking issues; no device-only bugs were filed. Watch
+  item from Metro logs: two `WARN` "error during concurrent rendering but React was able to
+  recover" lines (non-fatal, React recovered — likely React 19 concurrent-render recovery; revisit
+  if UI glitches appear on device). The earlier reported "kicked out of Expo Go after payment"
+  finding remains unconfirmed (it originated in the retracted report; user filed no such issue in
+  the real pass) — if it ever reproduces, the fix is an AppState refetch-on-foreground in
+  `apps/mobile/src/app/bookings/[id].tsx` (webhook remains source of truth, so payment is safe
+  regardless). **Slice 3 COMPLETE.**
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
@@ -233,7 +242,8 @@
   add Cloudflare R2 via `S3_ENDPOINT`/`S3_*` env when wanted; the app degrades gracefully, uploads
   just error if attempted). To seed again, re-add a token-gated route (the removed one is in git
   history at 13d213f) — Neon vars are Sensitive so local scripts can't reach the DB directly.
-- Next steps: mobile slice 2 (auth, joins after Stripe) → e2e QA (G-3). Optional payout
+- Next steps: mobile slices 1–3 all complete → e2e QA (G-3); open non-code items: AWS/R2 swap
+  bundle for credential storage, client policy call on crew deleting verified docs. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
 
