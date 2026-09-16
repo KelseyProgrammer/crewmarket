@@ -1,0 +1,23 @@
+fixtures ready: Río Mancuso (00000000-0000-4000-8000-000000000012), rate 27500c fee 3300c
+PASS  guard: crew cannot send CANCEL_BOAT — status 403
+PASS  guard: boat cannot send CREW_ACCEPT — status 403
+PASS  guard: non-party GET is 404 — status 404
+PASS  guard: non-party event rejected — status 403
+PASS  guard: checkout rejected unless ACCEPTED — status 409
+PASS  guard: terminal state is sticky — status 409
+PASS  A: crew accept -> ACCEPTED
+PASS  A: checkout returns url
+PASS  A: webhook flipped to funds-held
+PASS  A: paymentIntent recorded
+PASS  A: charged amount == totalCents — 30800 vs 30800
+PASS  A: trip start -> IN_PROGRESS
+PASS  A: trip complete
+PASS  A: no payout inside 48h window — state DISPUTE_WINDOW
+PASS  A: PAID_OUT after window elapse
+PASS  A: transfer is exactly rateCents (fee retained) — 27500 vs 27500
+PASS  A: second read does not double-pay
+PASS  B: weather cancel accepted
+PASS  B: terminal weather state — CANCELLED_WEATHER
+PASS  B: full refund (tier 1.0) == totalCents — 30800 vs 30800
+PASS  B: refund blocks payout
+==== G-3 e2e drive: 21/21 PASS ====

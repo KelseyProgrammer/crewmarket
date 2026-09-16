@@ -198,6 +198,31 @@ async function flowHappyPath(ctx, clients) {
   check("A: second read does not double-pay", again.stripeTransferId === paid.stripeTransferId);
 }
 
+// ---------- Flow B: refund path ----------
+async function flowRefund(ctx, clients) {
+  const { asBoat, asCrew } = clients;
+  const b = await createBooking(ctx);
+  await asCrew.post(`/api/bookings/${b.id}/event`, { event: "CREW_ACCEPT" });
+  const r = await asBoat.post(`/api/bookings/${b.id}/checkout`, {});
+  const { url } = await r.json();
+  announcePay(url, "4242 4242 4242 4242");
+  await pollBooking(b.id, (x) => x.state === "ESCROW_FUNDED", "webhook funds-held (B)", PAY_TIMEOUT_MS);
+
+  const rc = await asBoat.post(`/api/bookings/${b.id}/event`, { event: "CANCEL_WEATHER" });
+  check("B: weather cancel accepted", rc.status === 200);
+  const cancelled = await pollBooking(b.id, (x) => x.stripeRefundId, "refund recorded");
+  check("B: terminal weather state", cancelled.state === "CANCELLED_WEATHER", cancelled.state);
+  const refund = await stripe.refunds.retrieve(cancelled.stripeRefundId);
+  check("B: full refund (tier 1.0) == totalCents", refund.amount === ctx.total,
+    `${refund.amount} vs ${ctx.total}`);
+
+  // refund permanently blocks payout even after the window would elapse
+  await prisma.booking.update({ where: { id: b.id }, data: { completedAt: new Date(Date.now() - 49 * 3600_000) } });
+  await asBoat.get(`/api/bookings/${b.id}`);
+  const after = await prisma.booking.findUnique({ where: { id: b.id } });
+  check("B: refund blocks payout", after.stripeTransferId === null);
+}
+
 // ---------- Flow C: guards (no payment) ----------
 async function flowGuards(ctx, clients) {
   const { asBoat, asCrew, asStranger } = clients;
@@ -253,8 +278,24 @@ async function main() {
     asCrew: await signIn(CREW),
     asStranger: await signIn(STRANGER),
   };
-  await flowGuards(ctx, clients);
-  await flowHappyPath(ctx, clients);
+
+  // one flow's throw must not abort the others — each gets its own booking(s)
+  for (const [name, fn] of [
+    ["guards", flowGuards],
+    ["happy-path", flowHappyPath],
+    ["refund", flowRefund],
+  ]) {
+    try {
+      await fn(ctx, clients);
+    } catch (err) {
+      check(`${name}: flow completed`, false, String(err?.message ?? err));
+    }
+  }
+
+  const failed = results.filter((r) => !r.ok);
+  console.log(`\n==== G-3 e2e drive: ${results.length - failed.length}/${results.length} PASS ====`);
+  for (const f of failed) console.log(`FAIL  ${f.name}${f.detail ? ` — ${f.detail}` : ""}`);
+  process.exitCode = failed.length ? 1 : 0;
   return ctx;
 }
 
