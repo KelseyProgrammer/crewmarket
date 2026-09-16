@@ -1,9 +1,8 @@
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { Stack } from "expo-router";
 import { useFonts, Oswald_500Medium, Oswald_700Bold } from "@expo-google-fonts/oswald";
 import { Archivo_400Regular } from "@expo-google-fonts/archivo";
 import { MartianMono_400Regular } from "@expo-google-fonts/martian-mono";
-import { useSession } from "../../lib/auth-client";
 import { color, font } from "../../lib/tokens";
 
 // Navy header band matching the weigh-in board world (docs/DESIGN.md). Screen
@@ -33,6 +32,11 @@ export default function RootLayout() {
     );
   }
 
+  // The (tabs) group owns its own navy header + wordmark and the tab bar; the
+  // root stack shows the shared navy header for everything pushed OVER the tabs
+  // (crew profile, sign-in/up auto-register file-based; the voyage ledger detail
+  // pushes with a back button). The old header account entry is gone — the
+  // Account tab replaces it.
   return (
     <Stack
       screenOptions={{
@@ -41,45 +45,9 @@ export default function RootLayout() {
         headerTitleStyle: { fontFamily: font.display },
         headerShadowVisible: false,
         headerBackButtonDisplayMode: "minimal",
-        headerRight: () => <AccountEntry />,
       }}
     >
-      <Stack.Screen name="index" options={{ headerTitle: () => <Wordmark /> }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
-  );
-}
-
-// Header-right entry point (slice 2, Task 6). Signed in → Account; signed out →
-// Sign in. expo-router is file-based, so sign-in/sign-up/account auto-register;
-// their titles are set per-screen via <Stack.Screen options={{ title }} />.
-function AccountEntry() {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const signedIn = !!session;
-  return (
-    <Pressable
-      onPress={() => router.push(signedIn ? "/account" : "/sign-in")}
-      hitSlop={8}
-      accessibilityRole="button"
-      style={{ paddingHorizontal: 4, minHeight: 44, justifyContent: "center" }}
-    >
-      <Text style={{ fontFamily: font.display, fontSize: 14, letterSpacing: 0.6, color: color.brassBright }}>
-        {signedIn ? "Account" : "Sign in"}
-      </Text>
-    </Pressable>
-  );
-}
-
-// The web masthead wordmark: "CREW" in white, "MARKET" in Brass Bright — the
-// Brass Ledger's display-accent slot (brass on navy is Brass Bright, never a
-// background fill).
-function Wordmark() {
-  return (
-    <Text
-      style={{ fontFamily: font.display, fontSize: 17, letterSpacing: 1.2, color: color.whiteCrisp }}
-      accessibilityRole="header"
-    >
-      CREW <Text style={{ color: color.brassBright }}>MARKET</Text>
-    </Text>
   );
 }

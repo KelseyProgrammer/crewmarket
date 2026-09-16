@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { BoardRow } from "../../components/board-row";
-import { Filters } from "../../components/filters";
-import { DisclaimerD2 } from "../../components/disclaimer-d2";
-import { Anchor, CompassRose, LATITUDE_LINE } from "../../components/engravings";
-import { color, font, radius, space } from "../../lib/tokens";
-import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilters, type BoardProfile } from "../../lib/board";
+import { BoardRow } from "../../../components/board-row";
+import { Filters } from "../../../components/filters";
+import { DisclaimerD2 } from "../../../components/disclaimer-d2";
+import { Anchor, CompassRose, LATITUDE_LINE } from "../../../components/engravings";
+import { color, font, radius, space } from "../../../lib/tokens";
+import { EMPTY_FILTERS, boardWindowStart, filterBoard, getBoard, type BoardFilters, type BoardProfile } from "../../../lib/board";
 
 /* The crew board (slice 1, Task 3). Fetches GET /api/board once and filters
    in memory — the four SOW filters {role, port, availability date,

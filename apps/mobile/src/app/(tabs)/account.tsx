@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Stack, useRouter } from "expo-router";
-import { authClient, signOut, useSession } from "../../lib/auth-client";
-import { API_URL } from "../../lib/api";
-import { getBoard } from "../../lib/board";
-import type { Me } from "../../lib/claim-state";
-import { color, font, radius, space } from "../../lib/tokens";
+import { useRouter } from "expo-router";
+import { authClient, signOut, useSession } from "../../../lib/auth-client";
+import { API_URL } from "../../../lib/api";
+import { getBoard } from "../../../lib/board";
+import type { Me } from "../../../lib/claim-state";
+import { color, font, radius, space } from "../../../lib/tokens";
 
 /* Account screen (slice 2, Task 6). Shows who's signed in and — for crew — the
    profile they drive on the board. No booking management here (that stays on the
@@ -89,7 +89,6 @@ export default function AccountScreen() {
   if (isPending || (!session && !signingOut)) {
     return (
       <View style={styles.center}>
-        <Stack.Screen options={{ title: "Account" }} />
         <ActivityIndicator color={color.navyDeep} />
         <Text style={styles.centerText}>Loading your account…</Text>
       </View>
@@ -98,8 +97,6 @@ export default function AccountScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Stack.Screen options={{ title: "Account" }} />
-
       <View style={styles.head}>
         <Text style={styles.eyebrow}>SIGNED IN</Text>
         <Text style={styles.name} accessibilityRole="header">
