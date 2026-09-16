@@ -69,10 +69,13 @@ export async function applyBookingEvent(
 
   if (isCancelState(next) || next === "PAID_OUT") data.closedAt = new Date();
 
-  // Refund first, transition second (G-1 tiers are placeholder config).
+  // Refund first, transition second (G-1 tiers are placeholder config): a failed
+  // refund throws out of here, leaving state unchanged and the cancel retryable.
   if (isCancelState(next) && booking.stripePaymentIntentId && !booking.stripeRefundId) {
     const refundCents = refundCentsFor(next, booking.rateCents + booking.feeCents);
     if (refundCents > 0) {
+      // Idempotency key is amount/target-agnostic: safe while all tiers are 1.0 —
+      // revisit if tiers ever diverge from a full refund.
       data.stripeRefundId = await refundBookingPayment(
         booking.stripePaymentIntentId, refundCents, `cancel-refund-${booking.id}`,
       );
