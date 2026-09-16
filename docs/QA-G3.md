@@ -11,10 +11,10 @@
 
 **Met, to current product scope.** The full booking→payment→payout lifecycle and the
 refund path are covered by a repeatable scripted drive that passed 21/21 against the Stripe
-test-mode sandbox. The one part of G-3 the product cannot exercise yet — a *raised* dispute —
-is documented as an open item below (there is no raise-a-dispute flow; only the 48h window
-that elapses into payout, which IS tested). The supplementary UI checklist is outstanding
-(see Open items).
+test-mode sandbox, and the supplementary UI checklist is complete with no failures. The one
+part of G-3 the product cannot exercise yet — a *raised* dispute — is documented as an open
+item below (there is no raise-a-dispute flow; only the 48h window that elapses into payout,
+which IS tested).
 
 ## What was run
 
@@ -56,9 +56,17 @@ Coverage:
 
 Covers the surfaces the scripted drive can't see: ledger rendering in funds-held /
 IN_PROGRESS / PAID_OUT, wrong-role action-slot, empty list, D-2 disclaimer placement, and
-the "funds held, never escrow" copy sweep — run against the deployed demo
-(crewmarket-web.vercel.app), PAID_OUT verified on the local stack. **Status: outstanding —
-to be walked by the builder; results and any fixes fold back into this report.**
+the "funds held, never escrow" copy sweep. **Status: COMPLETE 2026-09-16, no failures** —
+walked on the local stack (all 7 states seeded via `demo-booking-drive.mjs`; the deployed
+demo only carries three states, and component code + copy are identical between builds).
+D-2 placement and the copy sweep were additionally grep-verified in rendered HTML, so they
+hold on the deployed build too. One item warrants a note: during the walk the boat was seen
+"Record trip start" on a funds-held booking — investigated and confirmed **correct**, not a
+leak: trip start/complete are intentionally either-party attestations
+(`EVENT_SIDES` = [BOAT, CREW], M-3 no-supervision), and the role-*specific* actions
+(`CANCEL_BOAT` vs `CANCEL_CREW`, crew-only `CREW_ACCEPT`) are correctly split. The only
+"escrow" strings in the funds-held HTML are the internal state enum and a derived CSS class,
+never visible prose (badge renders "Funds held"). Results: `docs/qa/2026-09-16-g3-ui-checklist.md`.
 
 ## Prior evidence (referenced, not re-run here)
 
@@ -76,9 +84,7 @@ to be walked by the builder; results and any fixes fold back into this report.**
    who may raise, within what window, what resolution means — which is ToS/booking-agreement
    territory and per CLAUDE.md is escalated to a human, not AI-decided. **Escalated; not
    built.**
-2. **UI checklist not yet walked** (above) — the one remaining manual step to fully close
-   this report.
-3. **EAS/standalone browser-return re-check** — the mobile boot-to-sign-in fix (`6188fcd`)
+2. **EAS/standalone browser-return re-check** — the mobile boot-to-sign-in fix (`6188fcd`)
    is unit-tested but not device-re-verified; re-check on a standalone build (dev Expo Go
    reload behavior may not carry over).
 

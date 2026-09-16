@@ -274,11 +274,16 @@
   Express **ToS submit** (a partial onboarding 500s the payout release with "destination account
   needs … transfers"); (2) the payout poll re-GETs the ledger route each iteration because release
   is lazy-on-read. Script uses NO stdin (harness/CI shells have no tty) — human steps are announced
-  and polled for. **STILL OPEN:** (a) the manual UI checklist `docs/qa/2026-09-16-g3-ui-checklist.md`
-  is written but NOT yet walked by the builder (ledger rendering / D-2 / copy sweep on the deployed
-  demo); (b) **raise-a-dispute flow not built** — the 48h window-elapse is tested but there is no
-  way to RAISE a dispute; dispute policy is ToS/attorney territory, escalated to the client, not
-  AI-decided; (c) EAS/standalone browser-return re-check of the `6188fcd` fix.
+  and polled for. **UI CHECKLIST COMPLETE 9/16** (`docs/qa/2026-09-16-g3-ui-checklist.md`, no
+  failures): all 7 ledger states seeded locally via `demo-booking-drive.mjs`, builder-confirmed
+  rendering; D-2 placement + "funds held not escrow" copy sweep grep-verified in rendered HTML
+  (the only "escrow" strings are the internal `ESCROW_FUNDED` enum + derived CSS class, never
+  visible prose). One walk-time "finding" (boat sees "Record trip start" on funds-held) is CORRECT,
+  not a bug — trip start/complete are intentional either-party attestations (`EVENT_SIDES` =
+  [BOAT, CREW], M-3 no-supervision); role-specific actions stay split. **STILL OPEN:**
+  (a) **raise-a-dispute flow not built** — the 48h window-elapse is tested but there is no way to
+  RAISE a dispute; dispute policy is ToS/attorney territory, escalated to the client, not
+  AI-decided; (b) EAS/standalone browser-return re-check of the `6188fcd` fix.
 - Next non-code items: AWS/R2 swap bundle for credential storage, client policy call on crew
   deleting verified docs. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
