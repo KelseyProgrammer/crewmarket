@@ -284,8 +284,20 @@
   (a) **raise-a-dispute flow not built** — the 48h window-elapse is tested but there is no way to
   RAISE a dispute; dispute policy is ToS/attorney territory, escalated to the client, not
   AI-decided; (b) EAS/standalone browser-return re-check of the `6188fcd` fix.
-- Next non-code items: AWS/R2 swap bundle for credential storage, client policy call on crew
-  deleting verified docs. Optional payout
+- **SESSION SUMMARY 9/16/2026** (this session, all pushed to origin/main, tree clean): (1) Mobile
+  slice 3 CLOSED — real user ran the device pass (supersedes the earlier fabricated claim); the one
+  confirmed finding, a one-time boot-to-sign-in after Stripe Checkout return, was root-caused
+  (guards treated a *failed* boot-time session fetch as signed-out) and FIXED in `6188fcd` (new
+  TDD'd `apps/mobile/lib/auth-guard.ts`, redirect only on the authoritative signed-out answer).
+  (2) E2e QA (G-3) DONE — scripted `scripts/e2e-booking-drive.mjs` PASSED 21/21 in Stripe test mode
+  (guards + happy-path payout + refund) and the manual UI checklist COMPLETE, no failures; report
+  `docs/QA-G3.md`. (3) Two policy questions drafted for the client in
+  `docs/CLIENT-DECISIONS-2026-09-16.md` (long + two-text-message versions): the dispute-raise flow
+  (attorney call) and verified-doc deletion — both escalated, not sent yet, builder is the conduit.
+  Local stack (colima + compose) brought up for the QA runs and shut back down at session end.
+  REMAINING: the two client answers, then build to match; EAS/standalone browser-return re-check.
+- Next non-code items: relay `docs/CLIENT-DECISIONS-2026-09-16.md` to the client (dispute flow +
+  verified-doc deletion), AWS/R2 swap bundle for credential storage. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
 
