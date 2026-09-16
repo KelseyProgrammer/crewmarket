@@ -22,6 +22,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const { id } = await params;
   const r = await applyBookingEvent(user.id, id, event as UserEvent);
-  if (!r.ok) return Response.json({ error: r.error }, { status: r.status });
+  // `in`-narrowing (not `!r.ok`) because this project's tsconfig has strict:false —
+  // TS won't narrow a boolean-discriminated union without strictNullChecks, but the
+  // presence check on the error-only field narrows in both directions.
+  if ("error" in r) return Response.json({ error: r.error }, { status: r.status });
   return Response.json({ ok: true, state: r.state });
 }

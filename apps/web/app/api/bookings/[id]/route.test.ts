@@ -99,6 +99,15 @@ describe("GET /api/bookings/[id]", () => {
     expect(b.availableEvents).toEqual(["CANCEL_BOAT", "CANCEL_WEATHER", "TRIP_START"]);
     expect(seams.withElapsedWindow).toHaveBeenCalledOnce();
     expect(seams.prisma.user.findUnique).not.toHaveBeenCalled();
+    // P-4 leak guard: lock the exact projected key set so a future edit that adds a
+    // raw field (boatUserId, a Stripe id value, etc.) fails this test.
+    expect(Object.keys(b).sort()).toEqual(
+      [
+        "availableEvents", "completedAt", "counterpartyName", "dates", "feeCents",
+        "hasPayout", "hasRefund", "id", "rateCents", "requestedAt", "role", "state",
+        "totalCents", "tripType",
+      ].sort()
+    );
   });
 
   it("CREW detail: boat account name counterparty (resolved via prisma.user)", async () => {
