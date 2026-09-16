@@ -2,6 +2,27 @@
 
 *Draft note for the client · 2026-09-16*
 
+---
+
+## Short text-message version
+
+> Hey — bookings + payments are built and tested, credentials piece is live. Two things
+> I need a call from you on before we wire them up:
+>
+> 1. **Disputes.** Right now a boat's payment auto-releases to the crew 48h after a trip
+> is marked done. There's no "raise a dispute" button to pause that yet. How should it
+> work — who can raise one, how long they get, does the money stay held till it's sorted,
+> and who decides? This one's really a Terms-of-Service / lawyer question, so maybe run it
+> by your attorney.
+>
+> 2. **Verified docs.** Crew can currently delete a license *after* an admin has verified
+> it, which wipes the record that it was ever checked. Want me to (a) leave it, (b) hide it
+> from their profile but keep it on file, or (c) keep a small record of what was verified?
+>
+> No rush — just send answers whenever and I'll build to match.
+
+*(Full version below if you'd rather send that.)*
+
 Hi — the booking and payments work is built and tested end to end in Stripe's test
 mode, and the credential-verification piece is live. Two things are now waiting on a
 decision that's yours to make (and, where noted, one for your attorney). We've built
