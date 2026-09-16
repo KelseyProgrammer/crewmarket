@@ -178,15 +178,22 @@
   **CONFIRMED device finding (user, 9/16): booted to sign-in once after paying via Stripe
   Checkout** — on returning from the in-app browser the first time, the app dropped to the sign-in
   screen and the user had to log back in; did not recur on later returns. Money was unaffected
-  (webhook is the source of truth; booking showed funds-held after re-login). Hypothesis (code
-  reading, not yet root-caused): Expo Go reloads/boots the JS on resume and the auth/focus guard
-  runs before expo-secure-store rehydrates the session, so the transient signed-out window
-  redirects; the in-memory confirm-poll in `apps/mobile/src/app/bookings/[id].tsx` `payNow` also
-  dies with the reload. Candidate fix: tolerate the session-pending window in the guard +
-  AppState/foreground refetch of the booking so a reloaded app self-heals into the
-  webhook-confirmed state; re-verify on device, and separately in an EAS/standalone build (dev
-  Expo Go reload behavior may not carry over). Logged as a known issue for the e2e QA (G-3) phase;
-  not fixed in slice 3. **Slice 3 COMPLETE** (finding non-blocking).
+  (webhook is the source of truth; booking showed funds-held after re-login).
+  **FIXED (`6188fcd`, 9/16)** after root-cause reading of better-auth 1.7.5 `session-atom.mjs` +
+  `@better-auth/expo` client: the guards on bookings list/detail + account treated
+  `!isPending && !session` as signed-out, but that state is ALSO produced when the boot-time
+  `/get-session` fails transiently (SecureStore/keychain or network hiccup during an Expo Go JS
+  reload at browser-return — the failed fetch sets `error` and preserves `data`, still null on a
+  cold boot before cache hydration). Discriminator: a truly signed-out user gets a SUCCESSFUL
+  null get-session with NO error. Fix = TDD'd pure helper `apps/mobile/lib/auth-guard.ts`
+  (CHECKING/SIGNED_IN/SIGNED_OUT/UNKNOWN, 6 tests incl. the regression case); booking screens
+  proceed to their data fetch on UNKNOWN (API 401 is the authority → existing error/Retry UI),
+  account shows a session Retry wired to `refetch`. The dead confirm-poll needed no fix —
+  `useFocusEffect` already refetches the booking on re-entry. NOTE: fix is unit-tested +
+  gates-green but NOT device-re-verified (the trigger is a transient flake, not reproducible on
+  demand) — opportunistic re-check during e2e QA, and re-verify browser-return in an
+  EAS/standalone build (dev Expo Go reload behavior may not carry over).
+  **Slice 3 COMPLETE** (finding fixed post-pass).
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
