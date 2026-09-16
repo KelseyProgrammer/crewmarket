@@ -73,6 +73,49 @@ async function signIn(u) {
   };
 }
 
+// ---------- booking factory (creation is web-only UI, not a Stripe flow) ----------
+function isoDay(offsetDays) {
+  return new Date(Date.now() + offsetDays * 86400_000).toISOString().slice(0, 10);
+}
+
+async function createBooking(ctx, state = "REQUESTED", extra = {}) {
+  return prisma.booking.create({
+    data: {
+      crewProfileId: ctx.profile.id,
+      boatUserId: ctx.boat.id,
+      tripType: "FULL_DAY",
+      dates: [isoDay(7)],
+      rateCents: ctx.rate,
+      feeCents: ctx.fee,
+      state,
+      piAttestedAt: new Date(),
+      ...extra,
+    },
+  });
+}
+
+// ---------- Flow C: guards (no payment) ----------
+async function flowGuards(ctx, clients) {
+  const { asBoat, asCrew, asStranger } = clients;
+  const b = await createBooking(ctx); // REQUESTED
+
+  let r = await asCrew.post(`/api/bookings/${b.id}/event`, { event: "CANCEL_BOAT" });
+  check("guard: crew cannot send CANCEL_BOAT", r.status === 403, `status ${r.status}`);
+  r = await asBoat.post(`/api/bookings/${b.id}/event`, { event: "CREW_ACCEPT" });
+  check("guard: boat cannot send CREW_ACCEPT", r.status === 403, `status ${r.status}`);
+  r = await asStranger.get(`/api/bookings/${b.id}`);
+  check("guard: non-party GET is 404", r.status === 404, `status ${r.status}`);
+  r = await asStranger.post(`/api/bookings/${b.id}/event`, { event: "CANCEL_BOAT" });
+  check("guard: non-party event rejected", r.status === 403 || r.status === 404, `status ${r.status}`);
+  r = await asBoat.post(`/api/bookings/${b.id}/checkout`, {});
+  check("guard: checkout rejected unless ACCEPTED", r.status === 409, `status ${r.status}`);
+
+  // terminal stickiness (CAS): no event moves a cancelled booking
+  const dead = await createBooking(ctx, "CANCELLED_BOAT", { closedAt: new Date() });
+  r = await asCrew.post(`/api/bookings/${dead.id}/event`, { event: "CREW_ACCEPT" });
+  check("guard: terminal state is sticky", r.status >= 400, `status ${r.status}`);
+}
+
 async function main() {
   const boat = await ensureUser(BOAT, "BOAT");
   const crew = await ensureUser(CREW, "CREW");
@@ -101,7 +144,12 @@ async function main() {
   console.log(`fixtures ready: ${profile.displayName} (${profile.id}), rate ${rate}c fee ${fee}c`);
   if (process.argv.includes("--setup-only")) return ctx;
 
-  // flows appended by later tasks
+  const clients = {
+    asBoat: await signIn(BOAT),
+    asCrew: await signIn(CREW),
+    asStranger: await signIn(STRANGER),
+  };
+  await flowGuards(ctx, clients);
   return ctx;
 }
 
