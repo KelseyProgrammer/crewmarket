@@ -147,6 +147,29 @@
   logging (since removed) + curl replaying the signed session cookie. Note: a few `probe-*@example.com`
   CREW test accounts exist in the Neon demo DB from curl-based debugging — harmless (no claims),
   clean up if desired. Slice 2 COMPLETE.
+- **Mobile slice 3 BUILT (9/16/2026) — booking management on the phone** per spec
+  `docs/superpowers/specs/2026-09-15-mobile-slice3-booking-management-design.md` + plan
+  `docs/superpowers/plans/2026-09-15-mobile-slice3-booking-management.md`. Scope: manage EXISTING
+  bookings (creation stays the web hand-off); Board/Bookings/Account tab bar. Server: extracted
+  the money-critical event core into `apps/web/lib/booking-events.ts` `applyBookingEvent(userId,
+  bookingId,event)` (role/EVENT_SIDES gate + transition + refund-first + CAS), shared by the web
+  action AND four new auth-gated JSON routes — `GET /api/bookings`, `GET /api/bookings/[id]`
+  (party-safe projections in `lib/booking-view.ts`; 404 non-party, `withElapsedWindow` on read),
+  `POST /api/bookings/[id]/event`, `POST /api/bookings/[id]/checkout` (boat-only/ACCEPTED-only →
+  Stripe Checkout url as JSON). Mobile: tab bar, bookings list, booking detail ledger with
+  actions (POST /event) + boat pay (POST /checkout → `expo-web-browser` → poll for the
+  webhook-confirmed funds-held). Client type mirror `apps/mobile/lib/booking-types.ts`, label
+  helper `apps/mobile/lib/booking-labels.ts`. All green (lint, web+mobile+payments tests, build,
+  compliance) and deployed — the four booking routes return 401 signed-out on
+  crewmarket-web.vercel.app. **BUILD-FIX LESSON (cost real time): `apps/web/tsconfig.json` has
+  `strict: false`, so TypeScript will NOT narrow a boolean-discriminated union (`{ok:true}|{ok:false}`)
+  — vitest passes but `next build` fails. Narrow via `"error" in r`, not `!r.ok`. Always run
+  `pnpm build`, not just tests.** **PROCESS LESSON: never run multiple subagents on the same
+  working tree — they clobber each other (directory-wide `git add` sweeps in another's files;
+  agents may not terminate at their task boundary). One agent per tree per slice, sequential.**
+  **PENDING: device pass (Task 9)** — physical-iPhone Expo Go run-through: tab bar; as crew
+  accept→start→complete a booking; as boat pay via Checkout (`4242`) and confirm funds-held; a
+  cancel/refund; not yet done.
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
