@@ -13,7 +13,6 @@
  */
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { createInterface } from "node:readline/promises";
 
 const requireDb = createRequire(new URL("../packages/db/package.json", import.meta.url));
 const { PrismaClient } = requireDb("@prisma/client");
@@ -24,7 +23,6 @@ const BASE = process.env.E2E_BASE_URL ?? "http://localhost:3002";
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const seed = JSON.parse(readFileSync(new URL("../apps/web/data/seed-crew.json", import.meta.url)));
-const rl = createInterface({ input: process.stdin, output: process.stdout });
 
 const BOAT = { email: "e2e-boat@example.com", password: "e2e-boat-pass-1", name: "E2E Boat (synthetic)" };
 const CREW = { email: "e2e-crew@example.com", password: "e2e-crew-pass-1", name: "E2E Crew (synthetic)" };
@@ -94,6 +92,112 @@ async function createBooking(ctx, state = "REQUESTED", extra = {}) {
   });
 }
 
+// ---------- pause + poll helpers ----------
+async function pollBooking(id, pred, label, timeoutMs = 120_000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const b = await prisma.booking.findUnique({ where: { id } });
+    if (pred(b)) return b;
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+  throw new Error(`timeout waiting for ${label} — is \`stripe listen\` running with the right whsec_?`);
+}
+
+// No stdin: the harness/CI shells that run this script have no interactive tty,
+// so human steps are announced and then POLLED for (webhook/DB is the signal).
+const PAY_TIMEOUT_MS = 10 * 60_000;
+const ONBOARD_TIMEOUT_MS = 15 * 60_000;
+
+function announcePay(url, card) {
+  console.log(`\n>>> PAY NOW (test card ${card}, any expiry/CVC/ZIP):\n>>> ${url}`);
+  console.log(">>> waiting for the webhook (up to 10 min)…\n");
+}
+
+async function transfersActive(accountId) {
+  const acct = await stripe.v2.core.accounts.retrieve(accountId, {
+    include: ["configuration.recipient"],
+  });
+  return acct.configuration?.recipient?.capabilities?.stripe_balance?.stripe_transfers?.status === "active";
+}
+
+// Waits for a TRANSFER-READY account, not just an account id: the id exists the
+// moment "Set up payouts" is clicked, but transfers stay `restricted` until
+// Express onboarding is finished through the final ToS accept (found the hard
+// way — payout release 500s on a restricted account).
+async function ensureConnectedAccount(ctx) {
+  const claim = await prisma.crewProfileClaim.findUnique({ where: { profileId: ctx.profile.id } });
+  if (claim?.stripeAccountId && (await transfersActive(claim.stripeAccountId))) {
+    return claim.stripeAccountId;
+  }
+  console.log(`\n>>> ONE-TIME SETUP: sign in at ${BASE}/account as ${CREW.email} / ${CREW.password}`);
+  console.log(">>> click 'Set up payouts' and complete Express onboarding to the FINAL");
+  console.log(">>> 'Agree & submit' screen (any name/DOB, SSN 000000000, phone 0000000000,");
+  console.log(">>> Stripe's test bank). Re-clicking the button resumes a partial onboarding.");
+  console.log(">>> waiting for the transfers capability to go active (up to 15 min)…\n");
+  const start = Date.now();
+  while (Date.now() - start < ONBOARD_TIMEOUT_MS) {
+    const after = await prisma.crewProfileClaim.findUnique({ where: { profileId: ctx.profile.id } });
+    if (after?.stripeAccountId && (await transfersActive(after.stripeAccountId))) {
+      return after.stripeAccountId;
+    }
+    await new Promise((r) => setTimeout(r, 3000));
+  }
+  throw new Error("timeout: transfers capability never went active — was onboarding submitted?");
+}
+
+// ---------- Flow A: happy path through payout ----------
+async function flowHappyPath(ctx, clients) {
+  const { asBoat, asCrew } = clients;
+  await ensureConnectedAccount(ctx);
+  const b = await createBooking(ctx);
+
+  let r = await asCrew.post(`/api/bookings/${b.id}/event`, { event: "CREW_ACCEPT" });
+  check("A: crew accept -> ACCEPTED", r.status === 200 && (await r.json()).state === "ACCEPTED");
+
+  r = await asBoat.post(`/api/bookings/${b.id}/checkout`, {});
+  const { url } = await r.json();
+  check("A: checkout returns url", r.status === 200 && !!url);
+  announcePay(url, "4000 0000 0000 0077");
+
+  const funded = await pollBooking(b.id, (x) => x.state === "ESCROW_FUNDED", "webhook funds-held", PAY_TIMEOUT_MS);
+  check("A: webhook flipped to funds-held", funded.state === "ESCROW_FUNDED");
+  check("A: paymentIntent recorded", !!funded.stripePaymentIntentId);
+  const pi = await stripe.paymentIntents.retrieve(funded.stripePaymentIntentId);
+  check("A: charged amount == totalCents", pi.amount === ctx.total, `${pi.amount} vs ${ctx.total}`);
+
+  r = await asCrew.post(`/api/bookings/${b.id}/event`, { event: "TRIP_START" });
+  check("A: trip start -> IN_PROGRESS", r.status === 200 && (await r.json()).state === "IN_PROGRESS");
+  r = await asCrew.post(`/api/bookings/${b.id}/event`, { event: "TRIP_COMPLETE" });
+  check("A: trip complete", r.status === 200);
+
+  // window NOT elapsed: a read must not pay out
+  r = await asBoat.get(`/api/bookings/${b.id}`);
+  const early = await prisma.booking.findUnique({ where: { id: b.id } });
+  check("A: no payout inside 48h window", early.stripeTransferId === null, `state ${early.state}`);
+
+  await prisma.booking.update({ where: { id: b.id }, data: { completedAt: new Date(Date.now() - 49 * 3600_000) } });
+  // Payout release is LAZY-ON-READ (withElapsedWindow) — each poll iteration
+  // must re-GET the ledger route, or nothing ever retries the release.
+  const paid = await (async () => {
+    const start = Date.now();
+    while (Date.now() - start < 120_000) {
+      await asBoat.get(`/api/bookings/${b.id}`); // withElapsedWindow releases here
+      const x = await prisma.booking.findUnique({ where: { id: b.id } });
+      if (x.state === "PAID_OUT" && x.stripeTransferId) return x;
+      await new Promise((res) => setTimeout(res, 3000));
+    }
+    throw new Error("timeout waiting for payout release — transfers capability active?");
+  })();
+  check("A: PAID_OUT after window elapse", paid.state === "PAID_OUT");
+  const transfer = await stripe.transfers.retrieve(paid.stripeTransferId);
+  check("A: transfer is exactly rateCents (fee retained)", transfer.amount === ctx.rate, `${transfer.amount} vs ${ctx.rate}`);
+
+  // idempotency: a second read must not create a second transfer
+  await asBoat.get(`/api/bookings/${b.id}`);
+  const again = await prisma.booking.findUnique({ where: { id: b.id } });
+  check("A: second read does not double-pay", again.stripeTransferId === paid.stripeTransferId);
+}
+
 // ---------- Flow C: guards (no payment) ----------
 async function flowGuards(ctx, clients) {
   const { asBoat, asCrew, asStranger } = clients;
@@ -150,12 +254,12 @@ async function main() {
     asStranger: await signIn(STRANGER),
   };
   await flowGuards(ctx, clients);
+  await flowHappyPath(ctx, clients);
   return ctx;
 }
 
 try {
   await main();
 } finally {
-  rl.close();
   await prisma.$disconnect();
 }
