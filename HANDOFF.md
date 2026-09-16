@@ -167,22 +167,9 @@
   `pnpm build`, not just tests.** **PROCESS LESSON: never run multiple subagents on the same
   working tree — they clobber each other (directory-wide `git add` sweeps in another's files;
   agents may not terminate at their task boundary). One agent per tree per slice, sequential.**
-  **DEVICE PASS PASSED 9/16** (physical iPhone, Expo Go dev client, pointed at the deployed
-  Vercel API via `EXPO_PUBLIC_API_URL=https://crewmarket-web.vercel.app npx expo start`): tab bar
-  (Board/Bookings/Account); crew accept → boat Hold funds → pay `4242` → **funds-held confirmed**
-  → Start → Underway → Trip complete; cancel path all worked end-to-end. **ONE device-only finding
-  (UX, not money): after Stripe Checkout in the in-app browser (`WebBrowser.openBrowserAsync`),
-  returning to the app booted the user to sign-in.** Root cause is the Expo Go **dev client
-  reloading the JS bundle on resume from a long background**, which wipes in-memory session state;
-  the route guard then sees "no session" before the SecureStore token re-hydrates and redirects to
-  /sign-in. The PAYMENT is unaffected — the webhook is the source of truth, so funds-held still
-  landed (verified in-app after re-login). Expected to be largely a dev-client artifact (a
-  standalone build does not reload JS on resume). FOLLOW-UP (not blocking): harden the detail
-  screen's `useFocusEffect` session guard against a transient signed-out state during the
-  browser-return window, and re-verify in a standalone/EAS build. Connect gotcha for next time:
-  `expo start` must run in a real terminal that stays open — launching it from an automated/tool
-  background reaper kills it (exit 144); use plain `npx expo start` in Terminal, phone on the same
-  Wi-Fi, Expo Go signed in as `krixament`. **Slice 3 COMPLETE.**
+  **PENDING: device pass (Task 9)** — physical-iPhone Expo Go run-through: tab bar; as crew
+  accept→start→complete a booking; as boat pay via Checkout (`4242`) and confirm funds-held; a
+  cancel/refund; not yet done.
 - **Payments core BUILT (9/14/2026)** per spec `docs/superpowers/specs/2026-09-13-payments-core-design.md`
   (amended: Accounts v2) + plan `docs/superpowers/plans/2026-09-14-payments-core.md`. Client's
   sandbox keys live in `.env.local` (both). **Crew accounts use Stripe Accounts v2**
