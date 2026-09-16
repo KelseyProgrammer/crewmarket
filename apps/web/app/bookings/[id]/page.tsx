@@ -17,6 +17,7 @@ import {
   type PartyRole,
 } from "../../../lib/bookings";
 import { beginBookingCheckout, bookingEventAction } from "../actions";
+import type { UserEvent } from "../../../lib/booking-events";
 
 /* The Voyage Ledger (docs/BOOKING_BRIEF.md): one canonical booking document,
    identical for both parties. One current state, one brass action per role (R1/R5);
@@ -230,7 +231,7 @@ function Event({
   brass = false,
 }: {
   bookingId: string;
-  event: Parameters<typeof bookingEventAction>[1];
+  event: UserEvent;
   label: string;
   brass?: boolean;
 }) {
