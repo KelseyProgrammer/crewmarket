@@ -4,22 +4,23 @@
 
 ---
 
-## Short text-message version
+## Short text-message version (two texts)
 
-> Hey — bookings + payments are built and tested, credentials piece is live. Two things
-> I need a call from you on before we wire them up:
->
-> 1. **Disputes.** Right now a boat's payment auto-releases to the crew 48h after a trip
-> is marked done. There's no "raise a dispute" button to pause that yet. How should it
-> work — who can raise one, how long they get, does the money stay held till it's sorted,
-> and who decides? This one's really a Terms-of-Service / lawyer question, so maybe run it
-> by your attorney.
->
-> 2. **Verified docs.** Crew can currently delete a license *after* an admin has verified
-> it, which wipes the record that it was ever checked. Want me to (a) leave it, (b) hide it
-> from their profile but keep it on file, or (c) keep a small record of what was verified?
->
-> No rush — just send answers whenever and I'll build to match.
+**Text 1 — disputes:**
+
+> Hey — bookings + payments are built and tested, credentials piece is live. Couple calls
+> I need from you before wiring the last bits up. First: right now a boat's payment
+> auto-releases to the crew 48h after a trip is marked done, and there's no "raise a
+> dispute" button to pause that yet. How should disputes work — who can raise one, how long
+> they get, does the money stay held till it's sorted, and who decides? This one's really a
+> Terms-of-Service / lawyer question, so maybe run it by your attorney.
+
+**Text 2 — verified docs:**
+
+> Second one's smaller: crew can currently delete a license *after* an admin has verified
+> it, which wipes the record it was ever checked. Want me to (a) leave it, (b) hide it from
+> their profile but keep it on file, or (c) keep a small record of what was verified? No
+> rush on either — just send answers whenever and I'll build to match.
 
 *(Full version below if you'd rather send that.)*
 
