@@ -257,8 +257,30 @@
   add Cloudflare R2 via `S3_ENDPOINT`/`S3_*` env when wanted; the app degrades gracefully, uploads
   just error if attempted). To seed again, re-add a token-gated route (the removed one is in git
   history at 13d213f) — Neon vars are Sensitive so local scripts can't reach the DB directly.
-- Next steps: mobile slices 1–3 all complete → e2e QA (G-3); open non-code items: AWS/R2 swap
-  bundle for credential storage, client policy call on crew deleting verified docs. Optional payout
+- **E2e QA (G-3) — scripted drive PASSED 21/21 (9/16/2026)** per spec
+  `docs/superpowers/specs/2026-09-16-e2e-qa-g3-design.md` + plan
+  `docs/superpowers/plans/2026-09-16-e2e-qa-g3.md`. `scripts/e2e-booking-drive.mjs` drives the
+  full Stripe test-mode lifecycle via the real authed JSON routes (Stripe/Prisma read only for
+  assertions), synthetic `e2e-*` accounts: **guards** (role/party/state/CAS rejections),
+  **happy path** (webhook funds-held → amount==totalCents → 48h window HOLDS payout → backdate →
+  PAID_OUT, transfer exactly rateCents, fee retained, no double-pay), **refund path** (full
+  weather refund on Stripe, payout permanently blocked). Report `docs/QA-G3.md`; run output
+  `docs/qa/2026-09-16-g3-drive-output.txt`. **Pause-for-pay**: Stripe has no API to complete a
+  hosted Checkout session and the webhook's paid-status guard is the thing under test, so a human
+  pays each Checkout (`4000…0077` for A so funds settle instantly, `4242` for B) and the script
+  polls the webhook. Two LIVE-RUN LESSONS baked into the script: (1) the connected-account gate
+  polls the v2 `stripe_transfers` capability to **active**, NOT mere account-id presence — the id
+  exists the moment "Set up payouts" is clicked while transfers stay `restricted` until the final
+  Express **ToS submit** (a partial onboarding 500s the payout release with "destination account
+  needs … transfers"); (2) the payout poll re-GETs the ledger route each iteration because release
+  is lazy-on-read. Script uses NO stdin (harness/CI shells have no tty) — human steps are announced
+  and polled for. **STILL OPEN:** (a) the manual UI checklist `docs/qa/2026-09-16-g3-ui-checklist.md`
+  is written but NOT yet walked by the builder (ledger rendering / D-2 / copy sweep on the deployed
+  demo); (b) **raise-a-dispute flow not built** — the 48h window-elapse is tested but there is no
+  way to RAISE a dispute; dispute policy is ToS/attorney territory, escalated to the client, not
+  AI-decided; (c) EAS/standalone browser-return re-check of the `6188fcd` fix.
+- Next non-code items: AWS/R2 swap bundle for credential storage, client policy call on crew
+  deleting verified docs. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
 
