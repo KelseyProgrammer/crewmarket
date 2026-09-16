@@ -5,6 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import { fmtUsd } from "@crewmarket/types";
 import { authClient, useSession } from "../../../lib/auth-client";
 import { API_URL } from "../../../lib/api";
+import { authGuardState } from "../../../lib/auth-guard";
 import { STATE_LABELS, eventLabel, holdFundsLabel } from "../../../lib/booking-labels";
 import { fmtTripDates, type BookingDetail } from "../../../lib/booking-types";
 import { color, font, radius, space } from "../../../lib/tokens";
@@ -33,7 +34,8 @@ type LoadState =
 export default function BookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, error: sessionError } = useSession();
+  const gate = authGuardState({ isPending, session, error: sessionError });
   const [load, setLoad] = useState<LoadState>({ kind: "loading" });
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -47,15 +49,18 @@ export default function BookingDetailScreen() {
     else setLoad({ kind: "ready", booking: data.booking });
   }, [id]);
 
+  // UNKNOWN (session fetch failed — SecureStore may still hold a valid session,
+  // e.g. an Expo Go JS reload right after the Checkout browser) must NOT
+  // redirect: fetch anyway and let the API's 401 land in the error/Retry view.
   useFocusEffect(
     useCallback(() => {
-      if (isPending) return;
-      if (!session) {
+      if (gate === "CHECKING") return;
+      if (gate === "SIGNED_OUT") {
         router.replace("/sign-in");
         return;
       }
       void fetchBooking();
-    }, [isPending, session, router, fetchBooking]),
+    }, [gate, router, fetchBooking]),
   );
 
   const fireEvent = useCallback(
@@ -105,7 +110,7 @@ export default function BookingDetailScreen() {
     setBusy(false);
   }, [busy, id, fetchBooking]);
 
-  if (isPending || !session || load.kind === "loading") {
+  if (gate === "CHECKING" || gate === "SIGNED_OUT" || load.kind === "loading") {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={color.navyDeep} />

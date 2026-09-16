@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { useRouter } from "expo-router";
 import { authClient, signOut, useSession } from "../../../lib/auth-client";
 import { API_URL } from "../../../lib/api";
+import { authGuardState } from "../../../lib/auth-guard";
 import { getBoard } from "../../../lib/board";
 import type { Me } from "../../../lib/claim-state";
 import { color, font, radius, space } from "../../../lib/tokens";
@@ -25,20 +26,22 @@ type ClaimState =
 
 export default function AccountScreen() {
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, error: sessionError, refetch } = useSession();
+  const gate = authGuardState({ isPending, session, error: sessionError });
   const [signingOut, setSigningOut] = useState(false);
   const [claim, setClaim] = useState<ClaimState>({ kind: "idle" });
 
   const user = session?.user as { name?: string; accountType?: string } | undefined;
   const accountType = user?.accountType ?? null;
 
-  // Redirect out once we know there's no session (and we aren't mid-sign-out,
-  // which flips the session to null before we route home ourselves).
+  // Redirect out only on the authoritative no-session answer (and not mid-
+  // sign-out, which flips the session to null before we route home ourselves).
+  // UNKNOWN (session fetch failed) renders a retry instead — see below.
   useEffect(() => {
-    if (!isPending && !session && !signingOut) {
+    if (gate === "SIGNED_OUT" && !signingOut) {
       router.replace("/sign-in");
     }
-  }, [isPending, session, signingOut, router]);
+  }, [gate, signingOut, router]);
 
   // Crew accounts: fetch /api/me through the authed client (sends the session
   // token), then resolve the claimed profile's name from the board cache.
@@ -86,7 +89,20 @@ export default function AccountScreen() {
     router.replace("/");
   }
 
-  if (isPending || (!session && !signingOut)) {
+  // This screen renders from session data, so UNKNOWN can't proceed like the
+  // booking screens do — offer a retry against the session endpoint instead.
+  if (gate === "UNKNOWN" && !signingOut) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.centerText}>Couldn&apos;t check your session.</Text>
+        <Pressable style={styles.retry} onPress={() => void refetch()} accessibilityRole="button">
+          <Text style={styles.retryText}>Retry</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  if (gate === "CHECKING" || !session) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={color.navyDeep} />
@@ -222,4 +238,17 @@ const styles = StyleSheet.create({
   },
   signOutDisabled: { opacity: 0.5 },
   signOutText: { fontFamily: font.body, fontSize: 15, fontWeight: "600", color: color.brassText },
+
+  retry: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: color.brass,
+    borderRadius: radius,
+    paddingVertical: space.s3,
+    paddingHorizontal: space.s5,
+    backgroundColor: color.whiteCrisp,
+  },
+  retryText: { fontFamily: font.body, fontSize: 15, fontWeight: "600", color: color.brassText },
 });

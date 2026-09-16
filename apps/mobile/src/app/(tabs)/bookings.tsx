@@ -4,6 +4,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { fmtUsd } from "@crewmarket/types";
 import { authClient, useSession } from "../../../lib/auth-client";
 import { API_URL } from "../../../lib/api";
+import { authGuardState } from "../../../lib/auth-guard";
 import { Anchor } from "../../../components/engravings";
 import { STATE_LABELS } from "../../../lib/booking-labels";
 import { fmtTripDates, type BookingSummary } from "../../../lib/booking-types";
@@ -22,7 +23,8 @@ type LoadState =
 
 export default function BookingsScreen() {
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, error: sessionError } = useSession();
+  const gate = authGuardState({ isPending, session, error: sessionError });
   const [load, setLoad] = useState<LoadState>({ kind: "loading" });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -37,19 +39,21 @@ export default function BookingsScreen() {
     if (isRefresh) setRefreshing(false);
   }, []);
 
-  // Redirect signed-out visitors; otherwise (re)load on every focus.
+  // Redirect signed-out visitors; otherwise (re)load on every focus. UNKNOWN
+  // (session fetch failed — a valid session may still sit in SecureStore) must
+  // NOT redirect: fetch anyway and let the API's 401 land in the error panel.
   useFocusEffect(
     useCallback(() => {
-      if (isPending) return;
-      if (!session) {
+      if (gate === "CHECKING") return;
+      if (gate === "SIGNED_OUT") {
         router.replace("/sign-in");
         return;
       }
       void fetchBookings();
-    }, [isPending, session, router, fetchBookings]),
+    }, [gate, router, fetchBookings]),
   );
 
-  if (isPending || (!session && !isPending)) {
+  if (gate === "CHECKING" || gate === "SIGNED_OUT") {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={color.navyDeep} />
