@@ -1,64 +1,123 @@
-import { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { useRouter } from "expo-router";
-import { useSession } from "../../../lib/auth-client";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { fmtUsd } from "@crewmarket/types";
+import { authClient, useSession } from "../../../lib/auth-client";
+import { API_URL } from "../../../lib/api";
 import { Anchor } from "../../../components/engravings";
+import { STATE_LABELS } from "../../../lib/booking-labels";
+import { fmtTripDates, type BookingSummary } from "../../../lib/booking-types";
 import { color, font, radius, space } from "../../../lib/tokens";
 
-/* Bookings tab (slice 3). Placeholder shell — the GET /api/bookings list lands
-   in Task 6. Session-gated like the Account tab: signed-out visitors are routed
-   to sign-in (the Board tab stays public). Marketplace vocabulary only (M-1);
-   nothing here assigns or supervises work. */
+/* Bookings tab (slice 3, Task 6). The signed-in user's bookings from
+   GET /api/bookings (party-safe summaries, P-4). Session-gated like Account;
+   the Board tab stays public. Refetches on focus so a state change made on the
+   detail screen (accept / pay / cancel) shows here on return. Marketplace
+   vocabulary only (M-1) — nothing here assigns or supervises work (M-2/M-3). */
+
+type LoadState =
+  | { kind: "loading" }
+  | { kind: "error" }
+  | { kind: "ready"; bookings: BookingSummary[] };
+
 export default function BookingsScreen() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
+  const [load, setLoad] = useState<LoadState>({ kind: "loading" });
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Redirect out once we know there's no session — same guard the Account tab
-  // uses. Kept in an effect (not render) so routing happens post-commit.
-  useEffect(() => {
-    if (!isPending && !session) {
-      router.replace("/sign-in");
-    }
-  }, [isPending, session, router]);
+  const fetchBookings = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoad({ kind: "loading" });
+    const { data, error } = await authClient.$fetch<{ bookings: BookingSummary[] }>(
+      `${API_URL}/api/bookings`,
+    );
+    if (error || !data) setLoad({ kind: "error" });
+    else setLoad({ kind: "ready", bookings: data.bookings });
+    if (isRefresh) setRefreshing(false);
+  }, []);
 
-  if (isPending || !session) {
+  // Redirect signed-out visitors; otherwise (re)load on every focus.
+  useFocusEffect(
+    useCallback(() => {
+      if (isPending) return;
+      if (!session) {
+        router.replace("/sign-in");
+        return;
+      }
+      void fetchBookings();
+    }, [isPending, session, router, fetchBookings]),
+  );
+
+  if (isPending || (!session && !isPending)) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color={color.navyDeep} />
-        <Text style={styles.centerText}>Loading your bookings…</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.head}>
-        <Text style={styles.eyebrow}>YOUR BOOKINGS</Text>
-        <Text style={styles.title} accessibilityRole="header">
-          Bookings
-        </Text>
-      </View>
-      <View style={styles.panel}>
-        <Anchor size={26} opacity={0.5} />
-        <Text style={styles.note}>
-          Your booking log is coming in this update — trips you&apos;ve requested or
-          agreed to will list here.
-        </Text>
-      </View>
-    </View>
+    <FlatList
+      style={styles.list}
+      data={load.kind === "ready" ? load.bookings : []}
+      keyExtractor={(b) => b.id}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={() => fetchBookings(true)} tintColor={color.navyDeep} />
+      }
+      ListHeaderComponent={
+        <View style={styles.head}>
+          <Text style={styles.eyebrow}>YOUR BOOKINGS</Text>
+          <Text style={styles.title} accessibilityRole="header">
+            Bookings
+          </Text>
+        </View>
+      }
+      renderItem={({ item }) => (
+        <Pressable
+          style={styles.row}
+          onPress={() => router.push(`/bookings/${item.id}`)}
+          accessibilityRole="button"
+        >
+          <View style={styles.rowMain}>
+            <Text style={styles.counterparty} numberOfLines={1}>
+              {item.counterpartyName}
+            </Text>
+            <Text style={styles.meta}>
+              {fmtTripDates(item.dates)} · {fmtUsd(item.totalCents)}
+            </Text>
+          </View>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{STATE_LABELS[item.state] ?? item.state}</Text>
+          </View>
+        </Pressable>
+      )}
+      ListEmptyComponent={
+        load.kind === "loading" ? (
+          <View style={styles.center}>
+            <ActivityIndicator color={color.navyDeep} />
+            <Text style={styles.centerText}>Loading your bookings…</Text>
+          </View>
+        ) : load.kind === "error" ? (
+          <View style={styles.panel}>
+            <Text style={styles.note}>Couldn&apos;t load your bookings — pull to refresh.</Text>
+          </View>
+        ) : (
+          <View style={styles.panel}>
+            <Anchor size={26} opacity={0.5} />
+            <Text style={styles.note}>
+              No bookings yet. Trips you&apos;ve requested or agreed to will list here.
+            </Text>
+          </View>
+        )
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: color.boardBg },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: space.s4,
-    padding: space.s5,
-    backgroundColor: color.boardBg,
-  },
+  list: { flex: 1, backgroundColor: color.boardBg },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: space.s3, padding: space.s5 },
   centerText: { fontFamily: font.body, fontSize: 15, color: color.inkSoft, textAlign: "center" },
   head: {
     backgroundColor: color.navyDeep,
@@ -67,20 +126,36 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: color.brassEngrave,
   },
-  eyebrow: {
-    fontFamily: font.mono,
-    fontSize: 11,
-    letterSpacing: 0.6,
-    color: color.navyMuted,
-    textTransform: "uppercase",
-  },
+  eyebrow: { fontFamily: font.mono, fontSize: 11, letterSpacing: 0.6, color: color.navyMuted },
   title: {
     fontFamily: font.displayBold,
     fontSize: 30,
-    lineHeight: 32,
+    lineHeight: 38,
     color: color.whiteCrisp,
     letterSpacing: 0.4,
   },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.s3,
+    paddingVertical: space.s4,
+    paddingHorizontal: space.s5,
+    minHeight: 64,
+    backgroundColor: color.whiteCrisp,
+    borderBottomWidth: 1,
+    borderBottomColor: color.lineStrong,
+  },
+  rowMain: { flex: 1, gap: 2 },
+  counterparty: { fontFamily: font.display, fontSize: 16, color: color.ink },
+  meta: { fontFamily: font.mono, fontSize: 12, letterSpacing: 0.3, color: color.inkSoft },
+  badge: {
+    borderWidth: 1,
+    borderColor: color.brass,
+    borderRadius: radius,
+    paddingVertical: 3,
+    paddingHorizontal: space.s2,
+  },
+  badgeText: { fontFamily: font.mono, fontSize: 10, letterSpacing: 0.4, color: color.brassText },
   panel: {
     backgroundColor: color.whiteCrisp,
     marginTop: space.s3,
