@@ -300,6 +300,13 @@
   verified-doc deletion), AWS/R2 swap bundle for credential storage. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
+- **Mobile slice 4 SHIPPED (9/19/2026):** crew credential upload native — Credentials screen
+  (Account tab → claimed crew), camera/library/file sources, presigned begin→PUT→confirm reused
+  via new `/api/credentials*` routes wrapping the extracted `apps/web/lib/credential-service.ts`
+  (one home for V-1/V-2 guards; web actions now thin wrappers). Confirm retries are 409-safe.
+  Device testing needs `S3_ENDPOINT` at the Mac's LAN IP (presigned URLs embed the signing
+  host — localhost MinIO is unreachable from the phone); Vercel can't host this until the real
+  AWS bucket lands.
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
