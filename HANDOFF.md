@@ -300,7 +300,7 @@
   verified-doc deletion), AWS/R2 swap bundle for credential storage. Optional payout
   micro-optimization (non-blocking): persist the charge id at webhook time so `releaseCrewPayout`
   skips the `paymentIntents.retrieve` on the first payout read.
-- **Mobile slice 4 SHIPPED (9/19/2026):** crew credential upload native — Credentials screen
+- **Mobile slice 4 SHIPPED + DEVICE PASS PASSED (9/19/2026, real user):** crew credential upload native — Credentials screen
   (Account tab → claimed crew), camera/library/file sources, presigned begin→PUT→confirm reused
   via new `/api/credentials*` routes wrapping the extracted `apps/web/lib/credential-service.ts`
   (one home for V-1/V-2 guards; web actions now thin wrappers). Confirm retries are 409-safe.
