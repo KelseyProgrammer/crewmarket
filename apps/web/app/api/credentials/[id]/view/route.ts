@@ -12,5 +12,6 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const r = await viewDocUrl(guard, id);
   if ("error" in r) return Response.json({ error: r.error }, { status: r.status });
-  return Response.json({ url: r.url });
+  // no-store is belt-and-braces on top of POST + force-dynamic: the body carries a signed URL
+  return Response.json({ url: r.url }, { headers: { "Cache-Control": "no-store" } });
 }

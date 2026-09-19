@@ -61,6 +61,17 @@ describe("DELETE /api/credentials/[id]", () => {
     const res = await DELETE(req(), params("d1"));
     expect(res.status).toBe(200);
     expect(seams.deleteObject).toHaveBeenCalledWith(OWN_DOC.s3Key);
+    // Order matters (V-2): a row-first reorder would orphan S3 objects on DB failure.
+    expect(seams.deleteObject.mock.invocationCallOrder[0]).toBeLessThan(
+      seams.prisma.credentialDoc.delete.mock.invocationCallOrder[0]!,
+    );
     expect(seams.prisma.credentialDoc.delete).toHaveBeenCalledWith({ where: { id: "d1" } });
+  });
+
+  it("a failed S3 delete leaves the row for retry (V-2)", async () => {
+    seams.prisma.credentialDoc.findUnique.mockResolvedValue(OWN_DOC);
+    seams.deleteObject.mockRejectedValue(new Error("s3 down"));
+    await expect(DELETE(req(), params("d1"))).rejects.toThrow("s3 down");
+    expect(seams.prisma.credentialDoc.delete).not.toHaveBeenCalled();
   });
 });
