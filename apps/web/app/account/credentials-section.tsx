@@ -1,6 +1,6 @@
-import { prisma } from "@crewmarket/db";
 import { claimedProfileId } from "../../lib/bookings";
 import { CREDENTIAL_KINDS } from "../../lib/credential-rules";
+import { listDocs } from "../../lib/credential-service";
 import { CredentialUploadForm } from "./credential-upload-form";
 import { deleteCredentialDoc, viewOwnCredentialDoc } from "./credential-actions";
 
@@ -22,19 +22,7 @@ export async function CredentialsSection({ userId, notice }: { userId: string; n
   const profileId = await claimedProfileId(userId);
   if (!profileId) return null; // no claim, no upload surface — the account shell copy covers this
 
-  const docs = await prisma.credentialDoc.findMany({
-    where: { profileId },
-    orderBy: { uploadedAt: "desc" },
-    // s3Key not selected — fetched only inside the actions that need it (V-2)
-    select: {
-      id: true,
-      kind: true,
-      licenseClass: true,
-      expiresAt: true,
-      uploadedAt: true,
-      verifiedAt: true,
-    },
-  });
+  const docs = await listDocs(profileId);
 
   return (
     <div className="account__panel">
