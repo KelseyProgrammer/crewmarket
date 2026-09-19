@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -43,6 +43,14 @@ function serverError(error: unknown): string | null {
   return null;
 }
 
+// Pickers normalize to PickedFile. fileSize/mimeType can be missing on some
+// platforms — fall back to getInfoAsync / jpeg, then validate.
+async function resolveSize(uri: string, fromAsset: number | undefined): Promise<number> {
+  if (typeof fromAsset === "number" && fromAsset > 0) return fromAsset;
+  const info = await FileSystem.getInfoAsync(uri);
+  return info.exists && typeof info.size === "number" ? info.size : 0;
+}
+
 type LoadState =
   | { kind: "loading" }
   | { kind: "error" }
@@ -60,6 +68,9 @@ export default function CredentialsScreen() {
   const [kind, setKind] = useState<string | null>(null);
   const [licenseClass, setLicenseClass] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
+  // Native pickers and the in-app browser reject if presented twice — one ref
+  // guards every entry point that presents system UI (double-tap protection).
+  const presenting = useRef(false);
 
   const fetchDocs = useCallback(async () => {
     const { data, error } = await authClient.$fetch<{ docs: CredentialDocSummary[] }>(
@@ -88,17 +99,25 @@ export default function CredentialsScreen() {
   );
 
   const viewDoc = useCallback(async (id: string) => {
-    setListError(null);
-    const { data, error } = await authClient.$fetch<{ url: string }>(
-      `${API_URL}/api/credentials/${id}/view`,
-      { method: "POST", body: {} },
-    );
-    if (error || !data?.url) {
-      setListError(serverError(error) ?? "Couldn't open that document — try again.");
-      return;
+    if (presenting.current) return;
+    presenting.current = true;
+    try {
+      setListError(null);
+      const { data, error } = await authClient.$fetch<{ url: string }>(
+        `${API_URL}/api/credentials/${id}/view`,
+        { method: "POST", body: {} },
+      );
+      if (error || !data?.url) {
+        setListError(serverError(error) ?? "Couldn't open that document — try again.");
+        return;
+      }
+      // The URL expires in 60s — open immediately, never store it.
+      await WebBrowser.openBrowserAsync(data.url);
+    } catch {
+      setListError("Couldn't open that document — try again.");
+    } finally {
+      presenting.current = false;
     }
-    // The URL expires in 60s — open immediately, never store it.
-    await WebBrowser.openBrowserAsync(data.url);
   }, []);
 
   const removeDoc = useCallback(
@@ -195,54 +214,98 @@ export default function CredentialsScreen() {
     [busy, kind, licenseClass, expiresAt, fetchDocs],
   );
 
-  // Pickers normalize to PickedFile. fileSize/mimeType can be missing on some
-  // platforms — fall back to getInfoAsync / jpeg, then validate.
-  async function resolveSize(uri: string, fromAsset: number | undefined): Promise<number> {
-    if (typeof fromAsset === "number" && fromAsset > 0) return fromAsset;
-    const info = await FileSystem.getInfoAsync(uri);
-    return info.exists && typeof info.size === "number" ? info.size : 0;
-  }
+  // Checked before presenting any picker: nothing about these depends on the
+  // picked file, and failing after a camera capture throws the photo away.
+  const preflightError = useCallback((): string | null => {
+    if (!kind) return "Choose a credential type from the list.";
+    if (expiresAt.trim() && !isValidExpiry(expiresAt.trim())) {
+      return "Enter a valid expiry date (YYYY-MM-DD).";
+    }
+    return null;
+  }, [kind, expiresAt]);
 
   const pickCamera = useCallback(async () => {
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
-    if (!perm.granted) {
-      setFormError("Camera access is off — enable it in Settings to photograph a document.");
+    if (presenting.current || busy) return;
+    const pre = preflightError();
+    if (pre) {
+      setFormError(pre);
       return;
     }
-    const res = await ImagePicker.launchCameraAsync({ mediaTypes: ["images"], quality: 0.7 });
-    if (res.canceled || !res.assets[0]) return;
-    const a = res.assets[0];
-    await startUpload({
-      uri: a.uri,
-      contentType: a.mimeType ?? "image/jpeg",
-      sizeBytes: await resolveSize(a.uri, a.fileSize),
-    });
-  }, [startUpload]);
+    presenting.current = true;
+    try {
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (!perm.granted) {
+        setFormError("Camera access is off — enable it in Settings to photograph a document.");
+        return;
+      }
+      const res = await ImagePicker.launchCameraAsync({ mediaTypes: ["images"], quality: 0.7 });
+      if (res.canceled || !res.assets[0]) return;
+      const a = res.assets[0];
+      await startUpload({
+        uri: a.uri,
+        contentType: a.mimeType ?? "image/jpeg",
+        sizeBytes: await resolveSize(a.uri, a.fileSize),
+      });
+    } catch {
+      setFormError("Something went wrong — try again.");
+    } finally {
+      presenting.current = false;
+    }
+  }, [busy, preflightError, startUpload]);
 
   const pickLibrary = useCallback(async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], quality: 0.7 });
-    if (res.canceled || !res.assets[0]) return;
-    const a = res.assets[0];
-    await startUpload({
-      uri: a.uri,
-      contentType: a.mimeType ?? "image/jpeg",
-      sizeBytes: await resolveSize(a.uri, a.fileSize),
-    });
-  }, [startUpload]);
+    if (presenting.current || busy) return;
+    const pre = preflightError();
+    if (pre) {
+      setFormError(pre);
+      return;
+    }
+    presenting.current = true;
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.7,
+      });
+      if (res.canceled || !res.assets[0]) return;
+      const a = res.assets[0];
+      await startUpload({
+        uri: a.uri,
+        contentType: a.mimeType ?? "image/jpeg",
+        sizeBytes: await resolveSize(a.uri, a.fileSize),
+      });
+    } catch {
+      setFormError("Something went wrong — try again.");
+    } finally {
+      presenting.current = false;
+    }
+  }, [busy, preflightError, startUpload]);
 
   const pickFile = useCallback(async () => {
-    const res = await DocumentPicker.getDocumentAsync({
-      type: ["application/pdf", "image/jpeg", "image/png"],
-      copyToCacheDirectory: true,
-    });
-    if (res.canceled || !res.assets[0]) return;
-    const a = res.assets[0];
-    await startUpload({
-      uri: a.uri,
-      contentType: a.mimeType ?? "application/pdf",
-      sizeBytes: await resolveSize(a.uri, a.size),
-    });
-  }, [startUpload]);
+    if (presenting.current || busy) return;
+    const pre = preflightError();
+    if (pre) {
+      setFormError(pre);
+      return;
+    }
+    presenting.current = true;
+    try {
+      const res = await DocumentPicker.getDocumentAsync({
+        type: ["application/pdf", "image/jpeg", "image/png"],
+        copyToCacheDirectory: true,
+      });
+      if (res.canceled || !res.assets[0]) return;
+      const a = res.assets[0];
+      await startUpload({
+        uri: a.uri,
+        contentType: a.mimeType ?? "application/pdf",
+        sizeBytes: await resolveSize(a.uri, a.size),
+      });
+    } catch {
+      setFormError("Something went wrong — try again.");
+    } finally {
+      presenting.current = false;
+    }
+  }, [busy, preflightError, startUpload]);
 
   if (gate === "CHECKING" || gate === "SIGNED_OUT" || load.kind === "loading") {
     return (
@@ -275,10 +338,16 @@ export default function CredentialsScreen() {
   }
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <Stack.Screen options={{ title: "Credentials" }} />
       <View style={styles.head}>
-        <Text style={styles.eyebrow}>DOCUMENTS</Text>
+        <Text style={styles.eyebrow} accessibilityRole="header">
+          DOCUMENTS
+        </Text>
         <Text style={styles.lede}>
           Upload license and certification documents for admin review. Documents stay private;
           your public listing shows only the credential details.
@@ -365,7 +434,7 @@ export default function CredentialsScreen() {
           editable={!busy}
         />
 
-        {formError ? <Text style={styles.error}>{formError}</Text> : null}
+        {formError ? <Text style={styles.errorInForm}>{formError}</Text> : null}
 
         <View style={styles.sources}>
           <Pressable
@@ -504,6 +573,7 @@ const styles = StyleSheet.create({
     color: color.ink,
   },
   error: { fontFamily: font.body, fontSize: 13, color: color.brassText, paddingHorizontal: space.s5, paddingTop: space.s2 },
+  errorInForm: { fontFamily: font.body, fontSize: 13, color: color.brassText, paddingTop: space.s2 },
   sources: { gap: space.s3, marginTop: space.s3 },
   btnBrass: {
     backgroundColor: color.brassText,
