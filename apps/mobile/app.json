@@ -38,7 +38,8 @@
         "expo-image-picker",
         {
           "cameraPermission": "Crew Market uses the camera to photograph your credential documents.",
-          "photosPermission": "Crew Market uses your photo library to upload credential documents."
+          "photosPermission": "Crew Market uses your photo library to upload credential documents.",
+          "microphonePermission": false
         }
       ]
     ],
