@@ -136,6 +136,14 @@ export default function AccountScreen() {
             <>
               <Text style={styles.list}>You drive this profile:</Text>
               <Text style={styles.profileName}>{claim.displayName}</Text>
+              <Pressable
+                style={styles.credRow}
+                onPress={() => router.push("/credentials")}
+                accessibilityRole="button"
+              >
+                <Text style={styles.credRowText}>Credentials</Text>
+                <Text style={styles.credRowChevron}>›</Text>
+              </Pressable>
             </>
           )}
           {claim.kind === "none" && (
@@ -222,6 +230,20 @@ const styles = StyleSheet.create({
     color: color.ink,
     letterSpacing: 0.3,
   },
+
+  credRow: {
+    marginTop: space.s3,
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: color.brass,
+    borderRadius: radius,
+    paddingHorizontal: space.s4,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  credRowText: { fontFamily: font.display, fontSize: 15, letterSpacing: 0.4, color: color.brassText },
+  credRowChevron: { fontFamily: font.body, fontSize: 20, color: color.brassText },
 
   signOut: {
     marginTop: space.s5,
