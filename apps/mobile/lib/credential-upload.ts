@@ -21,6 +21,17 @@ export function validateUpload(
   return null;
 }
 
+/** Null when acceptable; otherwise the server's user-facing error string.
+ *  Empty/whitespace is fine — the field is optional. Mirrors the confirm
+ *  checks in apps/web/lib/credential-service.ts exactly. */
+export function validateLicenseClass(s: string): string | null {
+  const t = s.trim();
+  if (!t) return null;
+  if (t.length > 80) return "License class is capped at 80 characters.";
+  if (!/^[A-Za-z0-9 ./-]+$/.test(t)) return "License class can use letters, numbers, spaces, . / - only.";
+  return null;
+}
+
 /** Strict YYYY-MM-DD, real calendar date — mirrors the server's confirm check. */
 export function isValidExpiry(s: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;

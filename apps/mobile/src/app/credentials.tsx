@@ -20,6 +20,7 @@ import { authGuardState } from "../../lib/auth-guard";
 import { CREDENTIAL_KINDS, kindLabel, stateLabel } from "../../lib/credential-labels";
 import {
   isValidExpiry,
+  validateLicenseClass,
   validateUpload,
   type BeginResponse,
   type CredentialDocSummary,
@@ -41,6 +42,12 @@ function serverError(error: unknown): string | null {
     if (typeof e.message === "string" && e.message) return e.message;
   }
   return null;
+}
+
+/** Wire bodies like "not found" are for machines — swap them for human copy. */
+function listActionError(error: unknown, fallback: string): string {
+  const msg = serverError(error);
+  return msg && msg !== "not found" ? msg : fallback;
 }
 
 // Pickers normalize to PickedFile. fileSize/mimeType can be missing on some
@@ -108,7 +115,7 @@ export default function CredentialsScreen() {
         { method: "POST", body: {} },
       );
       if (error || !data?.url) {
-        setListError(serverError(error) ?? "Couldn't open that document — try again.");
+        setListError(listActionError(error, "That document isn't available — refresh and try again."));
         return;
       }
       // The URL expires in 60s — open immediately, never store it.
@@ -122,6 +129,7 @@ export default function CredentialsScreen() {
 
   const removeDoc = useCallback(
     (id: string) => {
+      if (presenting.current) return;
       Alert.alert("Remove this document?", "This deletes the file and its record.", [
         { text: "Keep it", style: "cancel" },
         {
@@ -129,12 +137,17 @@ export default function CredentialsScreen() {
           style: "destructive",
           onPress: () => {
             void (async () => {
-              setListError(null);
-              const { error } = await authClient.$fetch(`${API_URL}/api/credentials/${id}`, {
-                method: "DELETE",
-              });
-              if (error) setListError(serverError(error) ?? "Couldn't remove that — try again.");
-              await fetchDocs();
+              presenting.current = true;
+              try {
+                setListError(null);
+                const { error } = await authClient.$fetch(`${API_URL}/api/credentials/${id}`, {
+                  method: "DELETE",
+                });
+                if (error) setListError(listActionError(error, "Couldn't remove that — try again."));
+                await fetchDocs();
+              } finally {
+                presenting.current = false;
+              }
             })();
           },
         },
@@ -157,6 +170,11 @@ export default function CredentialsScreen() {
       }
       if (expiresAt.trim() && !isValidExpiry(expiresAt.trim())) {
         setFormError("Enter a valid expiry date (YYYY-MM-DD).");
+        return;
+      }
+      const licenseErr = validateLicenseClass(licenseClass);
+      if (licenseErr) {
+        setFormError(licenseErr);
         return;
       }
       setBusy(true);
@@ -218,11 +236,13 @@ export default function CredentialsScreen() {
   // picked file, and failing after a camera capture throws the photo away.
   const preflightError = useCallback((): string | null => {
     if (!kind) return "Choose a credential type from the list.";
+    const licenseErr = validateLicenseClass(licenseClass);
+    if (licenseErr) return licenseErr;
     if (expiresAt.trim() && !isValidExpiry(expiresAt.trim())) {
       return "Enter a valid expiry date (YYYY-MM-DD).";
     }
     return null;
-  }, [kind, expiresAt]);
+  }, [kind, licenseClass, expiresAt]);
 
   const pickCamera = useCallback(async () => {
     if (presenting.current || busy) return;
