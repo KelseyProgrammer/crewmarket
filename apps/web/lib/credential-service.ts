@@ -59,7 +59,7 @@ export async function beginUpload(
   return { putUrl, docId, s3Key };
 }
 
-export type ConfirmUploadResult = { error?: string };
+export type ConfirmUploadResult = { error?: string; code?: "duplicate" };
 
 export async function confirmUpload(
   ctx: CredentialCtx,
@@ -132,7 +132,8 @@ export async function confirmUpload(
       },
     });
   } catch (err) {
-    if ((err as { code?: string }).code === "P2002") return { error: "That document was already saved." };
+    // duplicate = an identical confirm already landed; callers may treat as already-done
+    if ((err as { code?: string }).code === "P2002") return { error: "That document was already saved.", code: "duplicate" };
     throw err;
   }
   return {};

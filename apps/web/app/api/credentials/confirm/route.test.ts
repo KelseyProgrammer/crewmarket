@@ -76,4 +76,18 @@ describe("POST /api/credentials/confirm", () => {
     expect(data.licenseClass).toBe("Master 100T");
     expect(Object.keys(data)).not.toContain("verifiedAt");
   });
+
+  it("409 (not 400) when the same confirm already landed — retry-safe for mobile", async () => {
+    seams.prisma.credentialDoc.create.mockRejectedValue({ code: "P2002" });
+    const res = await POST(req(GOOD));
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toMatch(/already saved/);
+  });
+
+  it("400 on a malformed (non-JSON) body", async () => {
+    const res = await POST(
+      new Request("http://test/api/credentials/confirm", { method: "POST", body: "not json" }),
+    );
+    expect(res.status).toBe(400);
+  });
 });

@@ -29,6 +29,9 @@ export async function POST(req: Request) {
     licenseClass: typeof body.licenseClass === "string" ? body.licenseClass : undefined,
     expiresAt: typeof body.expiresAt === "string" ? body.expiresAt : undefined,
   });
-  if (r.error) return Response.json({ error: r.error }, { status: 400 });
+  if (r.error) {
+    // 409 lets a retrying client distinguish "already saved" from a real rejection
+    return Response.json({ error: r.error }, { status: r.code === "duplicate" ? 409 : 400 });
+  }
   return Response.json({});
 }
