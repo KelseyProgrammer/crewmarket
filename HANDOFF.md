@@ -308,5 +308,21 @@
   host — localhost MinIO is unreachable from the phone); Vercel can't host this until the real
   AWS bucket lands.
 
+- **SESSION SUMMARY 9/19/2026** (all pushed to origin/main, tree clean): (1) Mobile slice 4
+  built end-to-end in one session — brainstorm → spec (64ee985) → plan (2996aba) → subagent
+  pipeline (one implementer per task, sequential, spec-review + quality-review each, final
+  cross-cutting review) → 13 code/docs commits (72b3e25..f921b51). Review loop caught and fixed:
+  409-safe duplicate confirms, S3-first-delete ordering test, picker/view double-tap guards +
+  uncaught-rejection handling, preflight of kind/expiry/licenseClass BEFORE the camera opens,
+  no-store on the view-URL response. (2) DEVICE PASS PASSED (real user, physical iPhone):
+  photo/library/PDF uploads, View, Remove, verified-badge flip. One incident root-caused: the
+  `S3_ENDPOINT` LAN-IP edit sat UNSAVED in the editor, so presigned URLs pointed at localhost
+  and the phone's PUT hung — lesson: `next dev` hot-reloads `.env.local`, but only from DISK.
+  (3) SOW-AUDIT.md refreshed (payments ✅, admin metrics ✅, mobile 4-of-5, QA row updated).
+  Dev-environment leftovers: `apps/web/.env.local` has `S3_ENDPOINT` at the Mac's LAN IP
+  (fine either way); `demo-stcw-doc` left admin-verified in the dev DB (nice for demos).
+  NEXT SESSION: mobile slice 5 — boat-side booking creation (brainstorm + spec first, like
+  slices 3–4); then the two client policy answers, EAS build, AWS swap.
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
