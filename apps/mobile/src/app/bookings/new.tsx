@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   fmtUsd,
@@ -29,6 +29,7 @@ import {
   clampDays,
   draftPayload,
   draftQuote,
+  effectiveDays,
   localIsoDate,
   type RequestDraft,
 } from "../../../lib/request-form";
@@ -58,6 +59,16 @@ export default function BookingRequestScreen() {
   const [showAndroidPicker, setShowAndroidPicker] = useState(false);
   const [busy, setBusy] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [todayFloor] = useState(() => new Date()); // stable minimumDate for the mount
+
+  // "set" only: Android fires onChange with the fallback value on dismiss too —
+  // a cancelled dialog must never write a date into a funds-hold request.
+  const onPickDate = useCallback((event: DateTimePickerEvent, picked?: Date) => {
+    setShowAndroidPicker(false);
+    if (event.type === "set" && picked) {
+      setDraft((d) => (d ? { ...d, startDate: localIsoDate(picked) } : d));
+    }
+  }, []);
 
   // SIGNED_OUT is the only redirect (auth-guard discipline): on UNKNOWN the
   // form renders and the API's 401/403 is the authority, surfaced inline.
@@ -74,7 +85,9 @@ export default function BookingRequestScreen() {
       setProfile(found);
       if (found) {
         const offered = tripTypesFor(found);
-        setDraft({ tripType: offered[0], days: 1, startDate: "", piAttested: false });
+        // Seed today: the iOS compact picker displays today by default and fires
+        // no event when the user taps the already-shown value.
+        setDraft({ tripType: offered[0], days: 1, startDate: localIsoDate(new Date()), piAttested: false });
       }
       setLoad(found ? "ready" : "not-found");
     }
@@ -118,6 +131,22 @@ export default function BookingRequestScreen() {
     }
   }
 
+  // Mirrors crew/[id].tsx's named retry — same seeded draft as the load effect (change 2).
+  function retry() {
+    setLoad("loading");
+    getBoard()
+      .then((all) => {
+        const found = all.find((p) => p.id === crewId) ?? null;
+        setProfile(found);
+        if (found) {
+          const offered = tripTypesFor(found);
+          setDraft({ tripType: offered[0], days: 1, startDate: localIsoDate(new Date()), piAttested: false });
+        }
+        setLoad(found ? "ready" : "not-found");
+      })
+      .catch(() => setLoad("error"));
+  }
+
   if (gate === "CHECKING" || gate === "SIGNED_OUT" || load === "loading") {
     return (
       <View style={styles.center}>
@@ -132,24 +161,7 @@ export default function BookingRequestScreen() {
       <View style={styles.center}>
         <Stack.Screen options={{ title: "Booking request" }} />
         <Text style={styles.centerText}>Can&apos;t reach the crew board — check your connection.</Text>
-        <Pressable
-          style={styles.retry}
-          accessibilityRole="button"
-          onPress={() => {
-            setLoad("loading");
-            getBoard()
-              .then((all) => {
-                const found = all.find((p) => p.id === crewId) ?? null;
-                setProfile(found);
-                if (found) {
-                  const offered = tripTypesFor(found);
-                  setDraft({ tripType: offered[0], days: 1, startDate: "", piAttested: false });
-                }
-                setLoad(found ? "ready" : "not-found");
-              })
-              .catch(() => setLoad("error"));
-          }}
-        >
+        <Pressable style={styles.retry} accessibilityRole="button" onPress={retry}>
           <Text style={styles.retryText}>Retry</Text>
         </Pressable>
       </View>
@@ -171,17 +183,12 @@ export default function BookingRequestScreen() {
   const quote = draftQuote(profile, draft);
   const ready = canSubmit(profile, draft);
   const boatName = session?.user?.name ?? "your boat account";
-  const pickerValue = draft.startDate ? new Date(draft.startDate + "T00:00:00") : new Date();
-
-  const onPickDate = (_event: unknown, picked?: Date) => {
-    setShowAndroidPicker(false);
-    if (picked) setDraft({ ...draft, startDate: localIsoDate(picked) });
-  };
+  const pickerValue = new Date(draft.startDate + "T00:00:00");
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Stack.Screen options={{ title: "Booking request" }} />
-      <Text style={styles.title}>Request {profile.displayName}</Text>
+      <Text style={styles.title} accessibilityRole="header">Request {profile.displayName}</Text>
 
       {/* Trip type — only crew-listed rates render (M-2). */}
       <Text style={styles.label}>Trip type · only the rates {profile.displayName} lists</Text>
@@ -218,7 +225,7 @@ export default function BookingRequestScreen() {
             value={pickerValue}
             mode="date"
             display="compact"
-            minimumDate={new Date()}
+            minimumDate={todayFloor}
             onChange={onPickDate}
           />
         </View>
@@ -229,15 +236,13 @@ export default function BookingRequestScreen() {
             accessibilityRole="button"
             onPress={() => setShowAndroidPicker(true)}
           >
-            <Text style={styles.dateButtonText}>
-              {draft.startDate ? draft.startDate : "Pick a date"}
-            </Text>
+            <Text style={styles.dateButtonText}>{draft.startDate}</Text>
           </Pressable>
           {showAndroidPicker && (
             <DateTimePicker
               value={pickerValue}
               mode="date"
-              minimumDate={new Date()}
+              minimumDate={todayFloor}
               onChange={onPickDate}
             />
           )}
@@ -326,7 +331,7 @@ export default function BookingRequestScreen() {
       </Text>
 
       {submitError && (
-        <View style={styles.errorBox}>
+        <View style={styles.errorBox} accessibilityRole="alert">
           <Text style={styles.errorLabel}>Not sent</Text>
           <Text style={styles.errorText}>{submitError}</Text>
         </View>
@@ -359,7 +364,7 @@ export default function BookingRequestScreen() {
 
 /** " × 3 days" suffix for the crew line — only when more than one effective day. */
 function effectiveDaysLabel(tripType: TripType, days: number): string {
-  const eff = maxDaysFor(tripType) === 1 ? 1 : days;
+  const eff = effectiveDays(tripType, days);
   return eff > 1 ? ` × ${eff} days` : "";
 }
 
