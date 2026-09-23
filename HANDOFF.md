@@ -324,5 +324,53 @@
   NEXT SESSION: mobile slice 5 — boat-side booking creation (brainstorm + spec first, like
   slices 3–4); then the two client policy answers, EAS build, AWS swap.
 
+- **Mobile slice 5 BUILT + REVIEWED + PUSHED (9/22/2026) — ⏳ DEVICE PASS PENDING (next
+  morning, real user). THIS IS THE RESUME POINT.** Boat-side booking creation went native per
+  spec `docs/superpowers/specs/2026-09-22-mobile-slice5-booking-creation-design.md` + plan
+  `docs/superpowers/plans/2026-09-22-mobile-slice5-booking-creation.md`; 13 code commits
+  `9ee61f6..5e218e6` on origin/main (Vercel auto-deployed — POST /api/bookings is live on
+  crewmarket-web.vercel.app). Subagent pipeline (one implementer per task, sequential,
+  spec-review + quality-review each, final cross-cutting review) — all gates green at push
+  (web 169, mobile 57, ui 12, payments 9 tests; lint/build/compliance clean).
+  WHAT SHIPPED: creation guards extracted to `apps/web/lib/booking-create.ts`
+  (`createBookingRequest`, 14 tests, frozen error copy; web action now a thin wrapper);
+  `POST /api/bookings` (10 route tests, fresh-object shape coercion so client money fields
+  can never reach the core); mobile `lib/request-form.ts` (imports the REAL computeQuote —
+  no mirrored money math) + `lib/server-error.ts` (3 screens deduped); native form
+  `src/app/bookings/new.tsx` (`/bookings/new?crew=<id>`, board-cache data, crew-listed trip
+  types only, @react-native-community/datetimepicker 9.1.0 + app.json config plugin, itemized
+  funds-held quote, P&I checkbox D-4, DisclaimerD2, verbatim web copy); profile BOOKING panel
+  now a native "Request <name>" button (CREW accounts: no button; signed-out → /sign-in;
+  UNKNOWN gate → button shows, API is authority); stale "(Demo build: …simulated)" trimmed
+  from the web crew page. REVIEW-LOOP CATCHES worth knowing: (1) core date guard hardened —
+  regex + UTC round-trip, so Feb 31/month-13 now 400 cleanly (this also CHANGED WEB behavior
+  for impossible dates — improvement, previously roll-over/throw); (2) POST days coercion
+  converged on the web action (`Number()`; garbage → NaN → core 400 — never a silent 1-day
+  booking); (3) **Android date-dialog cancel used to write "today" into the form** — fixed
+  with an `event.type === "set"` guard (device-verifiable only on Android — WATCH ITEM for
+  the EAS build, builder's iPhone can't test it); (4) form seeds startDate to TODAY (iOS
+  compact picker shows today but fires no event for the default — so unlike web, a boat can
+  submit without touching the date; deliberate, confirm UX on device).
+  **DEVICE PASS CHECKLIST (physical iPhone, Expo Go, deployed API:
+  `EXPO_PUBLIC_API_URL=https://crewmarket-web.vercel.app npx expo start` from apps/mobile):**
+  (1) boat@example.com: profile shows "Request <name>" → form opens; (2) trip-type switch
+  updates quote, multi-day stepper math right; (3) date starts seeded TODAY — submit once
+  WITHOUT touching the date (should book today; confirm UX acceptable); (4) pick a date next
+  month — no off-by-one; (5) P&I unchecked blocks Send, checking enables; (6) Send → native
+  ledger REQUESTED; (7) mate@example.com sees the request in bookings list, spot-check
+  Accept; (8) crew account on a profile: no button, copy renders; (9) signed out: Request →
+  sign-in. Watch: iOS picker may visibly adjust on first tap (seeded value is midnight, floor
+  is "now") — note if odd. ALSO ride along: one request from the WEB form on dev or prod
+  (verifies the Task-2 wrapper end-to-end — the only unverified gate).
+  AFTER THE PASS: update this block (PASSED/findings→fix→re-verify), refresh
+  `docs/SOW-AUDIT.md` mobile row → 5 of 5, commit + push (that closes plan Task 7).
+  Non-blocking notes: sign-in still drops the booking intent (lands on /account — same as
+  claim; app-wide `from`-param fix is backlog); pnpm-lock carried an inert better-call zod
+  peer-resolution flip from the install; brass button now hand-rolled 3× (extract when a 4th
+  appears). NEXT AFTER SLICE 5 CLOSES: the two client policy answers
+  (docs/CLIENT-DECISIONS-2026-09-16.md — dispute-raise flow + verified-doc deletion), EAS
+  build (re-verify browser-return 6188fcd + Android picker cancel), AWS/R2 credential-storage
+  swap.
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
