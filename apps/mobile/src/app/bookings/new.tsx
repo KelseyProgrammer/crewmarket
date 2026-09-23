@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   errorBox: { borderWidth: 1, borderColor: color.lineStrong, borderLeftWidth: 3, borderLeftColor: color.brass, backgroundColor: color.whiteCrisp, borderRadius: radius, padding: space.s3 },
   errorLabel: { fontFamily: font.mono, fontSize: 10, color: color.brassText, textTransform: "uppercase", letterSpacing: 0.5 },
   errorText: { fontFamily: font.body, color: color.ink, marginTop: space.s1 },
-  submit: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", marginTop: space.s2 },
+  submit: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: space.s2 },
   submitDisabled: { opacity: 0.45 },
   submitText: { fontFamily: font.display, fontSize: 15, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
 });

@@ -469,8 +469,8 @@ const styles = StyleSheet.create({
   listMuted: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
   dates: { fontFamily: font.mono, fontSize: 14, color: color.ink },
 
-  requestButton: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", marginTop: space.s3 },
-  requestButtonText: { fontFamily: font.display, fontSize: 14, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
+  requestButton: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: space.s3 },
+  requestButtonText: { fontFamily: font.display, fontSize: 15, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
 
   // Claim plate (Task 7). White plate on the board ground like the other panels,
   // but no eyebrow — it carries a single control, not a data section.
@@ -486,7 +486,9 @@ const styles = StyleSheet.create({
   },
   // Signed-out: a subtle brass-text link, not the loud primary slot.
   claimSignInLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
-  // Claimable: the brass primary action (same slot idiom as the booking CTA).
+  // Claimable: brass primary in the older body/600 treatment — the booking CTA
+  // above uses the newer display-caps idiom (unify when the brass button is
+  // extracted to a shared component; third hand-rolled copy as of slice 5).
   claimButton: {
     alignSelf: "stretch",
     alignItems: "center",

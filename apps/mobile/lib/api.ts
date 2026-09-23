@@ -7,8 +7,8 @@ export type _WorkspaceLinkProof = CrewProfile;
 
 export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
 
-/* Browser-facing origin for handoff links (booking CTA). Defaults to the API
-   origin — today one Next.js server serves both — but they are different
-   concerns: split EXPO_PUBLIC_WEB_URL from EXPO_PUBLIC_API_URL the moment the
-   API moves behind its own host. */
+/* Browser-facing origin for handoff links. Consumer-less since slice 5 took
+   the booking CTA native — kept deliberately: it documents the web/API origin
+   split (set EXPO_PUBLIC_WEB_URL the moment the API moves behind its own
+   host), and future web handoffs (ToS, help pages) will want it. */
 export const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL ?? API_URL;
