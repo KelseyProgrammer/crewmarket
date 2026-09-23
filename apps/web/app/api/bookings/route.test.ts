@@ -148,13 +148,46 @@ describe("POST /api/bookings", () => {
     );
   });
 
-  it("days defaults to 1 and piAttested to false when absent/mistyped", async () => {
+  it("numeric-string days coerces like the web action; garbage days becomes NaN for the core to reject; piAttested only on literal true", async () => {
     seams.createBookingRequest.mockResolvedValue({ error: "x", status: 400 });
     await POST(postReq({ crewProfileId: "p1", tripType: "FULL_DAY", startDate: "2026-10-01", days: "3", piAttested: "yes" }));
     expect(seams.createBookingRequest).toHaveBeenCalledWith(expect.anything(), {
       crewProfileId: "p1",
       tripType: "FULL_DAY",
       startDate: "2026-10-01",
+      days: 3,
+      piAttested: false,
+    });
+
+    seams.createBookingRequest.mockClear();
+    await POST(postReq({ crewProfileId: "p1", tripType: "MULTI_DAY", startDate: "2026-10-01", days: "abc", piAttested: true }));
+    expect(seams.createBookingRequest).toHaveBeenCalledWith(expect.anything(), {
+      crewProfileId: "p1",
+      tripType: "MULTI_DAY",
+      startDate: "2026-10-01",
+      days: NaN,
+      piAttested: true,
+    });
+
+    seams.createBookingRequest.mockClear();
+    await POST(postReq({ crewProfileId: "p1", tripType: "FULL_DAY", startDate: "2026-10-01", piAttested: true }));
+    expect(seams.createBookingRequest).toHaveBeenCalledWith(expect.anything(), {
+      crewProfileId: "p1",
+      tripType: "FULL_DAY",
+      startDate: "2026-10-01",
+      days: 1,
+      piAttested: true,
+    });
+  });
+
+  it("non-object JSON body (null) coerces to empty defaults, reaches the core, core decides", async () => {
+    seams.createBookingRequest.mockResolvedValue({ error: "x", status: 400 });
+    const res = await POST(postReq(null));
+    expect(res.status).toBe(400);
+    expect(seams.createBookingRequest).toHaveBeenCalledWith(expect.anything(), {
+      crewProfileId: "",
+      tripType: "",
+      startDate: "",
       days: 1,
       piAttested: false,
     });

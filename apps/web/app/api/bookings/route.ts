@@ -63,7 +63,9 @@ export async function POST(req: Request) {
       crewProfileId: typeof b.crewProfileId === "string" ? b.crewProfileId : "",
       tripType: typeof b.tripType === "string" ? b.tripType : "",
       startDate: typeof b.startDate === "string" ? b.startDate : "",
-      days: typeof b.days === "number" ? b.days : 1,
+      // Number() like the web action: numeric strings coerce, garbage becomes
+      // NaN and fails the core's integer-days guard — never a silent 1-day trip.
+      days: b.days == null ? 1 : Number(b.days),
       piAttested: b.piAttested === true,
     }
   );
