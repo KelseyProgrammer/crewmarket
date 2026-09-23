@@ -41,7 +41,8 @@
           "photosPermission": "Crew Market uses your photo library to upload credential documents.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,
