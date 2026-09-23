@@ -79,6 +79,16 @@ describe("createBookingRequest — guards", () => {
     expect(r).toEqual({ error: "Pick a start date.", status: 400 });
   });
 
+  it("400 impossible month (regex-valid, not a real date)", async () => {
+    const r = await createBookingRequest(boat, input({ startDate: "2026-13-01" }));
+    expect(r).toEqual({ error: "Pick a start date.", status: 400 });
+  });
+
+  it("400 rollover date (Feb 31 must not become Mar 3)", async () => {
+    const r = await createBookingRequest(boat, input({ startDate: "2026-02-31" }));
+    expect(r).toEqual({ error: "Pick a start date.", status: 400 });
+  });
+
   it("400 days out of range for MULTI_DAY (max 10)", async () => {
     const r = await createBookingRequest(boat, input({ tripType: "MULTI_DAY", days: 11 }));
     expect(r).toEqual({ error: "Days must be between 1 and 10.", status: 400 });
@@ -86,6 +96,11 @@ describe("createBookingRequest — guards", () => {
 
   it("400 non-integer days", async () => {
     const r = await createBookingRequest(boat, input({ tripType: "MULTI_DAY", days: 2.5 }));
+    expect(r).toEqual({ error: "Days must be between 1 and 10.", status: 400 });
+  });
+
+  it("400 zero days", async () => {
+    const r = await createBookingRequest(boat, input({ tripType: "MULTI_DAY", days: 0 }));
     expect(r).toEqual({ error: "Days must be between 1 and 10.", status: 400 });
   });
 

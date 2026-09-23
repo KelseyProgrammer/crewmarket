@@ -26,6 +26,8 @@ export type CreateBookingInput = {
   piAttested: boolean;
 };
 
+/** Narrow via `"error" in result` — apps/web is strict:false, so a boolean
+    discriminant would not narrow (see the slice-3 build-fix lesson). */
 export type CreateBookingResult =
   | { booking: Booking }
   | { error: string; status: 400 | 403 };
@@ -46,7 +48,14 @@ export async function createBookingRequest(
     return { error: "Choose a trip type this crew member lists a rate for.", status: 400 };
   }
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.startDate)) {
+  // Regex alone admits impossible dates ("2026-02-31" rolls over, "2026-13-01"
+  // throws inside datesFrom) — the UTC round-trip pins a real calendar date.
+  const startDay = new Date(input.startDate + "T00:00:00Z");
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(input.startDate) ||
+    Number.isNaN(startDay.getTime()) ||
+    startDay.toISOString().slice(0, 10) !== input.startDate
+  ) {
     return { error: "Pick a start date.", status: 400 };
   }
 
