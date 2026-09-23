@@ -9,6 +9,7 @@ import { authClient, useSession } from "../../../lib/auth-client";
 import { claimButtonState, type Me } from "../../../lib/claim-state";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
 import { color, font, space, radius } from "../../../lib/tokens";
+import { serverError } from "../../../lib/server-error";
 
 /* Crew profile — the registry plate (slice 1, Task 4). Mirrors
    apps/web/app/crew/[id]/page.tsx section-for-section; copy that exists on
@@ -35,19 +36,6 @@ const CREDENTIAL_LABELS: Record<string, string> = {
 
 function fmtDate(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-/* Pull the human message off a $fetch error. /api/claim answers a 4xx with a
-   JSON body `{ error }`; better-fetch spreads that body onto the error object
-   (alongside status/statusText), so the server's copy lands on `error.error`.
-   `message` is the transport fallback. */
-function serverError(error: unknown): string | null {
-  if (error && typeof error === "object") {
-    const e = error as { error?: unknown; message?: unknown };
-    if (typeof e.error === "string" && e.error) return e.error;
-    if (typeof e.message === "string" && e.message) return e.message;
-  }
-  return null;
 }
 
 type LoadState = "loading" | "not-found" | "error" | "ready";

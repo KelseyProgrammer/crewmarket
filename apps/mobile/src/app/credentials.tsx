@@ -27,6 +27,7 @@ import {
   type PickedFile,
 } from "../../lib/credential-upload";
 import { color, font, radius, space } from "../../lib/tokens";
+import { serverError } from "../../lib/server-error";
 
 /* Credentials screen (slice 4). Crew-only surface for license/cert documents:
    list (verified state is admin-earned, V-1), upload via the presigned
@@ -34,15 +35,6 @@ import { color, font, radius, space } from "../../lib/tokens";
    passes through our server process, V-2), owner-only short-lived View, and
    Remove. Copy is about documents under review, never competence (V-3, M-1).
    uploadAsync must NOT carry auth headers — the presigned URL IS the auth. */
-
-function serverError(error: unknown): string | null {
-  if (error && typeof error === "object") {
-    const e = error as { error?: unknown; message?: unknown };
-    if (typeof e.error === "string" && e.error) return e.error;
-    if (typeof e.message === "string" && e.message) return e.message;
-  }
-  return null;
-}
 
 /** Wire bodies like "not found" are for machines — swap them for human copy. */
 function listActionError(error: unknown, fallback: string): string {

@@ -9,6 +9,7 @@ import { authGuardState } from "../../../lib/auth-guard";
 import { STATE_LABELS, eventLabel, holdFundsLabel } from "../../../lib/booking-labels";
 import { fmtTripDates, type BookingDetail } from "../../../lib/booking-types";
 import { color, font, radius, space } from "../../../lib/tokens";
+import { serverError } from "../../../lib/server-error";
 
 /* Booking detail — the Voyage Ledger on the phone (slice 3, Task 7). Loads
    GET /api/bookings/[id] (party-safe; 404 if you're not a party). Actions POST
@@ -16,15 +17,6 @@ import { color, font, radius, space } from "../../../lib/tokens";
    (POST /checkout → url) and, on return, polls until the webhook flips the
    booking to funds-held — never trusting the redirect (webhook is source of
    truth). "Funds held", never "escrow" (G-1); no supervision language (M-2/M-3). */
-
-function serverError(error: unknown): string | null {
-  if (error && typeof error === "object") {
-    const e = error as { error?: unknown; message?: unknown };
-    if (typeof e.error === "string" && e.error) return e.error;
-    if (typeof e.message === "string" && e.message) return e.message;
-  }
-  return null;
-}
 
 type LoadState =
   | { kind: "loading" }
