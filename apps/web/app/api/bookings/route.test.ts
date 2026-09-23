@@ -10,6 +10,7 @@ const seams = vi.hoisted(() => ({
   bookingsForUser: vi.fn(),
   crewProfileById: vi.fn(),
   prisma: { user: { findMany: vi.fn() } },
+  createBookingRequest: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -20,8 +21,9 @@ vi.mock("../../../lib/bookings", () => ({
   crewProfileById: seams.crewProfileById,
 }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
+vi.mock("../../../lib/booking-create", () => ({ createBookingRequest: seams.createBookingRequest }));
 
-import { GET } from "./route";
+import { GET, POST } from "./route";
 
 function booking(over: Record<string, unknown> = {}) {
   return {
@@ -89,5 +91,72 @@ describe("GET /api/bookings", () => {
     const res = await GET();
     expect(await res.json()).toEqual({ bookings: [] });
     expect(seams.prisma.user.findMany).not.toHaveBeenCalled();
+  });
+});
+
+function postReq(body: unknown) {
+  return new Request("http://test/api/bookings", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+describe("POST /api/bookings", () => {
+  it("401 when signed out", async () => {
+    seams.getSession.mockResolvedValue(null);
+    expect((await POST(postReq({}))).status).toBe(401);
+    expect(seams.createBookingRequest).not.toHaveBeenCalled();
+  });
+
+  it("400 on a malformed JSON body without touching the core", async () => {
+    const res = await POST(
+      new Request("http://test/api/bookings", { method: "POST", body: "not json" })
+    );
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Malformed request." });
+    expect(seams.createBookingRequest).not.toHaveBeenCalled();
+  });
+
+  it("maps a core error to its status with { error } JSON", async () => {
+    seams.createBookingRequest.mockResolvedValue({
+      error: "Only boat accounts send booking requests.",
+      status: 403,
+    });
+    const res = await POST(postReq({ crewProfileId: "p1" }));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Only boat accounts send booking requests." });
+  });
+
+  it("201 + { id } on success; input is shape-coerced (smuggled money fields dropped)", async () => {
+    seams.createBookingRequest.mockResolvedValue({ booking: { id: "b9" } });
+    const res = await POST(
+      postReq({
+        crewProfileId: "p1",
+        tripType: "FULL_DAY",
+        startDate: "2026-10-01",
+        days: 1,
+        piAttested: true,
+        rateCents: 1, // must never reach the core (R4/P-4)
+      })
+    );
+    expect(res.status).toBe(201);
+    expect(await res.json()).toEqual({ id: "b9" });
+    expect(seams.createBookingRequest).toHaveBeenCalledWith(
+      { id: "boat1", accountType: "BOAT" },
+      { crewProfileId: "p1", tripType: "FULL_DAY", startDate: "2026-10-01", days: 1, piAttested: true }
+    );
+  });
+
+  it("days defaults to 1 and piAttested to false when absent/mistyped", async () => {
+    seams.createBookingRequest.mockResolvedValue({ error: "x", status: 400 });
+    await POST(postReq({ crewProfileId: "p1", tripType: "FULL_DAY", startDate: "2026-10-01", days: "3", piAttested: "yes" }));
+    expect(seams.createBookingRequest).toHaveBeenCalledWith(expect.anything(), {
+      crewProfileId: "p1",
+      tripType: "FULL_DAY",
+      startDate: "2026-10-01",
+      days: 1,
+      piAttested: false,
+    });
   });
 });
