@@ -19,6 +19,11 @@ vi.mock("../../lib/bookings", () => ({ sessionUser: seams.sessionUser }));
 vi.mock("../../lib/booking-events", () => ({ applyBookingEvent: seams.applyBookingEvent }));
 vi.mock("next/cache", () => ({ revalidatePath: seams.revalidatePath }));
 vi.mock("next/navigation", () => ({ redirect: seams.redirect }));
+// actions.ts now also imports lib/booking-create.ts (createBookingAction's
+// thin-wrapper core), which itself imports "server-only" — outside Next's
+// build, that marker package throws unconditionally (see
+// lib/booking-create.test.ts for the same mock).
+vi.mock("server-only", () => ({}));
 
 import { bookingEventAction } from "./actions";
 
