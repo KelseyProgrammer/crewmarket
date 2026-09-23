@@ -26,6 +26,7 @@ describe("clampDays", () => {
     expect(clampDays("MULTI_DAY", 11)).toBe(10);
     expect(clampDays("MULTI_DAY", 2.6)).toBe(3);
     expect(clampDays("FULL_DAY", 7)).toBe(1);
+    expect(clampDays("MULTI_DAY", NaN)).toBe(1);
   });
 });
 
@@ -34,6 +35,7 @@ describe("effectiveDays", () => {
     expect(effectiveDays("FULL_DAY", 5)).toBe(1);
     expect(effectiveDays("HALF_DAY", 5)).toBe(1);
     expect(effectiveDays("MULTI_DAY", 5)).toBe(5);
+    expect(effectiveDays("TOURNAMENT", 5)).toBe(5);
   });
 });
 
@@ -82,5 +84,6 @@ describe("localIsoDate", () => {
     // Date(2026, 9, 1) is local midnight Oct 1 — must stay Oct 1 in any zone.
     expect(localIsoDate(new Date(2026, 9, 1))).toBe("2026-10-01");
     expect(localIsoDate(new Date(2026, 0, 5))).toBe("2026-01-05");
+    expect(localIsoDate(new Date(2026, 9, 1, 23, 59))).toBe("2026-10-01");
   });
 });

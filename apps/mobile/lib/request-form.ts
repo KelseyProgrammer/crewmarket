@@ -18,8 +18,9 @@ export type RequestDraft = {
   piAttested: boolean;
 };
 
-/** Stepper guard: integer days inside 1..maxDaysFor(tripType). */
+/** Stepper guard: integer days inside 1..maxDaysFor(tripType); non-finite input resets to 1. */
 export function clampDays(tripType: TripType, days: number): number {
+  if (!Number.isFinite(days)) return 1;
   return Math.min(Math.max(1, Math.round(days)), maxDaysFor(tripType));
 }
 
