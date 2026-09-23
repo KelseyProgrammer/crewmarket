@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { Anchor, LATITUDE_LINE, SealRing } from "../../../components/engravings";
 import { ROLE_LABELS } from "../../../lib/roles";
-import { API_URL, WEB_URL } from "../../../lib/api";
+import { API_URL } from "../../../lib/api";
 import { authClient, useSession } from "../../../lib/auth-client";
+import { authGuardState } from "../../../lib/auth-guard";
 import { claimButtonState, type Me } from "../../../lib/claim-state";
 import { cachedBoard, getBoard, type BoardCredential, type BoardProfile } from "../../../lib/board";
 import { color, font, space, radius } from "../../../lib/tokens";
@@ -43,11 +44,11 @@ type LoadState = "loading" | "not-found" | "error" | "ready";
 export default function CrewProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending, error: sessionError } = useSession();
+  const gate = authGuardState({ isPending, session, error: sessionError });
 
   const [profile, setProfile] = useState<BoardProfile | null>(null);
   const [state, setState] = useState<LoadState>("loading");
-  const [bookingLinkError, setBookingLinkError] = useState(false);
 
   // Claim button (Task 7, spec §6). `me` is null unless a session is present and
   // /api/me resolves — any error or missing session is treated as signed-out for
@@ -279,28 +280,31 @@ export default function CrewProfileScreen() {
         )}
       </View>
 
-      {/* Dashed hairline = provisional surface (DESIGN.md): the booking flow
-          lives on the web for now, so its plate is drawn provisional. */}
-      <View style={[styles.panel, styles.panelProvisional]}>
+      {/* Booking — native since slice 5. Copy mirrors the web profile's BOOKING
+          panel (apps/web/app/crew/[id]/page.tsx). "Funds held" vocabulary only
+          (G-1); crew's free decline stated (M-3). CREW accounts get the copy
+          without a button (M-2: crew don't request crew). On gate UNKNOWN the
+          button still shows — the request screen + API 401 are the authority. */}
+      <View style={styles.panel}>
         <Text style={styles.panelEyebrow}>BOOKING</Text>
         <Text style={styles.list}>
-          Booking runs on the web for now — the mobile booking flow arrives in a later phase.
-          Requests go through the web booking form, and {firstName} accepts or declines every
-          request there at their sole discretion.
+          Payment is held at booking with the platform fee itemized up front; weather
+          cancellation is handled as its own state; payout releases after the trip plus a
+          48-hour review window. {firstName} accepts or declines every request at their sole
+          discretion.
         </Text>
-        <Pressable
-          style={styles.webButton}
-          onPress={() => {
-            setBookingLinkError(false);
-            Linking.openURL(`${WEB_URL}/bookings/new?crew=${profile.id}`).catch(() => {
-              setBookingLinkError(true);
-            });
-          }}
-        >
-          <Text style={styles.webButtonText}>Open {firstName}&apos;s booking form on the web</Text>
-        </Pressable>
-        {bookingLinkError && (
-          <Text style={styles.bookingLinkError}>Couldn&apos;t open the booking form — try again.</Text>
+        {me?.accountType !== "CREW" && (
+          <Pressable
+            style={styles.requestButton}
+            accessibilityRole="button"
+            onPress={() =>
+              gate === "SIGNED_OUT"
+                ? router.push("/sign-in")
+                : router.push(`/bookings/new?crew=${profile.id}`)
+            }
+          >
+            <Text style={styles.requestButtonText}>Request {firstName}</Text>
+          </Pressable>
         )}
       </View>
 
@@ -428,7 +432,6 @@ const styles = StyleSheet.create({
     borderColor: color.lineOnWhite,
     borderRadius: radius,
   },
-  panelProvisional: { borderStyle: "dashed", borderColor: color.lineStrong },
   // Data furniture, not a brass slot: ink-soft mono keeps the Brass Ledger closed.
   panelEyebrow: {
     fontFamily: font.mono,
@@ -466,21 +469,8 @@ const styles = StyleSheet.create({
   listMuted: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
   dates: { fontFamily: font.mono, fontSize: 14, color: color.ink },
 
-  // The screen's one primary action: Brass Text fill, white text (Brass
-  // Ledger "primary action" slot — web btn--brass).
-  webButton: {
-    alignSelf: "stretch",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 44,
-    backgroundColor: color.brassText,
-    borderRadius: radius,
-    paddingVertical: space.s3,
-    paddingHorizontal: space.s5,
-    marginTop: space.s1,
-  },
-  webButtonText: { fontFamily: font.body, fontSize: 14, fontWeight: "600", color: "#ffffff" },
-  bookingLinkError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft, marginTop: space.s2 },
+  requestButton: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", marginTop: space.s3 },
+  requestButtonText: { fontFamily: font.display, fontSize: 14, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
 
   // Claim plate (Task 7). White plate on the board ground like the other panels,
   // but no eyebrow — it carries a single control, not a data section.

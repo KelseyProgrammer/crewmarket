@@ -159,8 +159,7 @@ export default async function CrewProfile({ params }: { params: Promise<{ id: st
             Payment is held at booking with the platform fee itemized up front; weather
             cancellation is handled as its own state; payout releases after the trip plus a
             48-hour review window. {crew.displayName.split(" ")[0]} accepts or declines every
-            request at their sole discretion. (Demo build: the funds-held step is simulated
-            until payments go live.)
+            request at their sole discretion.
           </p>
           <a className="btn btn--brass" href={`/bookings/new?crew=${crew.id}`}>
             Request {crew.displayName.split(" ")[0]} for a trip
