@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,7 +12,6 @@ import {
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system/legacy";
 import * as WebBrowser from "expo-web-browser";
 import { authClient, useSession } from "../../lib/auth-client";
 import { API_URL } from "../../lib/api";
@@ -26,6 +26,7 @@ import {
   type CredentialDocSummary,
   type PickedFile,
 } from "../../lib/credential-upload";
+import { putFile, resolveSize } from "../../lib/put-file";
 import { color, font, radius, space } from "../../lib/tokens";
 import { serverError } from "../../lib/server-error";
 
@@ -43,12 +44,7 @@ function listActionError(error: unknown, fallback: string): string {
 }
 
 // Pickers normalize to PickedFile. fileSize/mimeType can be missing on some
-// platforms — fall back to getInfoAsync / jpeg, then validate.
-async function resolveSize(uri: string, fromAsset: number | undefined): Promise<number> {
-  if (typeof fromAsset === "number" && fromAsset > 0) return fromAsset;
-  const info = await FileSystem.getInfoAsync(uri);
-  return info.exists && typeof info.size === "number" ? info.size : 0;
-}
+// platforms — fall back to lib/put-file's resolveSize / jpeg, then validate.
 
 type LoadState =
   | { kind: "loading" }
@@ -180,11 +176,8 @@ export default function CredentialsScreen() {
           return;
         }
         // Straight to storage via the presigned URL (V-2) — no auth headers here.
-        const put = await FileSystem.uploadAsync(begin.putUrl, file.uri, {
-          httpMethod: "PUT",
-          headers: { "Content-Type": file.contentType },
-        });
-        if (put.status < 200 || put.status >= 300) {
+        const putStatus = await putFile(begin.putUrl, file);
+        if (putStatus < 200 || putStatus >= 300) {
           setFormError("Upload didn't complete — check your connection and try again.");
           return;
         }
@@ -445,14 +438,20 @@ export default function CredentialsScreen() {
         {formError ? <Text style={styles.errorInForm}>{formError}</Text> : null}
 
         <View style={styles.sources}>
-          <Pressable
-            style={[styles.btnBrass, busy && styles.btnDisabled]}
-            disabled={busy}
-            onPress={() => void pickCamera()}
-            accessibilityRole="button"
-          >
-            <Text style={styles.btnBrassText}>{busy ? "Uploading…" : "Take photo"}</Text>
-          </Pressable>
+          {/* Web: no native camera UX on desktop browsers (launchCameraAsync
+              silently no-ops) — the file/library inputs cover it, and phone
+              browsers still offer capture from the file sheet. The brass
+              (primary) style follows the platform's leading source. */}
+          {Platform.OS !== "web" && (
+            <Pressable
+              style={[styles.btnBrass, busy && styles.btnDisabled]}
+              disabled={busy}
+              onPress={() => void pickCamera()}
+              accessibilityRole="button"
+            >
+              <Text style={styles.btnBrassText}>{busy ? "Uploading…" : "Take photo"}</Text>
+            </Pressable>
+          )}
           <Pressable
             style={[styles.btnGhost, busy && styles.btnDisabled]}
             disabled={busy}
@@ -462,12 +461,17 @@ export default function CredentialsScreen() {
             <Text style={styles.btnGhostText}>Photo library</Text>
           </Pressable>
           <Pressable
-            style={[styles.btnGhost, busy && styles.btnDisabled]}
+            style={[
+              Platform.OS === "web" ? styles.btnBrass : styles.btnGhost,
+              busy && styles.btnDisabled,
+            ]}
             disabled={busy}
             onPress={() => void pickFile()}
             accessibilityRole="button"
           >
-            <Text style={styles.btnGhostText}>Choose file</Text>
+            <Text style={Platform.OS === "web" ? styles.btnBrassText : styles.btnGhostText}>
+              {Platform.OS === "web" && busy ? "Uploading…" : "Choose file"}
+            </Text>
           </Pressable>
         </View>
         <Text style={styles.finePrint}>
