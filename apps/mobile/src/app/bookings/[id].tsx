@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { fmtUsd } from "@crewmarket/types";
 import { authClient, useSession } from "../../../lib/auth-client";
 import { API_URL } from "../../../lib/api";
 import { authGuardState } from "../../../lib/auth-guard";
 import { STATE_LABELS, eventLabel, holdFundsLabel } from "../../../lib/booking-labels";
 import { fmtTripDates, type BookingDetail } from "../../../lib/booking-types";
+import { beginExternalOpen } from "../../../lib/open-external";
 import { color, font, radius, space } from "../../../lib/tokens";
 import { serverError } from "../../../lib/server-error";
 
@@ -75,16 +75,19 @@ export default function BookingDetailScreen() {
     if (busy) return;
     setBusy(true);
     setActionError(null);
+    // Grab the browser/tab synchronously (web popup-blocker) BEFORE the fetch.
+    const opener = beginExternalOpen();
     const { data, error } = await authClient.$fetch<{ url: string }>(
       `${API_URL}/api/bookings/${id}/checkout`,
       { method: "POST", body: {} },
     );
     if (error || !data?.url) {
+      opener.cancel();
       setActionError(serverError(error) ?? "Couldn't start payment — try again.");
       setBusy(false);
       return;
     }
-    await WebBrowser.openBrowserAsync(data.url);
+    await opener.open(data.url);
     // Never trust the redirect — poll the booking until the webhook confirms.
     setConfirming(true);
     for (let i = 0; i < 5; i++) {
@@ -105,6 +108,7 @@ export default function BookingDetailScreen() {
   if (gate === "CHECKING" || gate === "SIGNED_OUT" || load.kind === "loading") {
     return (
       <View style={styles.center}>
+        <Stack.Screen options={{ title: "Booking" }} />
         <ActivityIndicator color={color.navyDeep} />
       </View>
     );
@@ -112,6 +116,7 @@ export default function BookingDetailScreen() {
   if (load.kind === "error") {
     return (
       <View style={styles.center}>
+        <Stack.Screen options={{ title: "Booking" }} />
         <Text style={styles.centerText}>Couldn&apos;t load this booking.</Text>
         <Pressable style={styles.retry} onPress={() => fetchBooking()} accessibilityRole="button">
           <Text style={styles.retryText}>Retry</Text>
@@ -125,6 +130,7 @@ export default function BookingDetailScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+      <Stack.Screen options={{ title: b.counterpartyName }} />
       <View style={styles.head}>
         <Text style={styles.eyebrow}>{b.role === "BOAT" ? "CREW" : "BOAT"}</Text>
         <Text style={styles.counterparty} accessibilityRole="header">

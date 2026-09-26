@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   fmtUsd,
@@ -19,6 +17,7 @@ import {
   TRIP_TYPE_LABELS,
   type TripType,
 } from "@crewmarket/types";
+import { DateField } from "../../../components/date-field";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { API_URL } from "../../../lib/api";
 import { authClient, useSession } from "../../../lib/auth-client";
@@ -56,18 +55,13 @@ export default function BookingRequestScreen() {
   const [profile, setProfile] = useState<BoardProfile | null>(null);
   const [load, setLoad] = useState<LoadState>("loading");
   const [draft, setDraft] = useState<RequestDraft | null>(null);
-  const [showAndroidPicker, setShowAndroidPicker] = useState(false);
   const [busy, setBusy] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [todayFloor] = useState(() => new Date()); // stable minimumDate for the mount
 
-  // "set" only: Android fires onChange with the fallback value on dismiss too —
-  // a cancelled dialog must never write a date into a funds-hold request.
-  const onPickDate = useCallback((event: DateTimePickerEvent, picked?: Date) => {
-    setShowAndroidPicker(false);
-    if (event.type === "set" && picked) {
-      setDraft((d) => (d ? { ...d, startDate: localIsoDate(picked) } : d));
-    }
+  // Cancel-safety (Android "set"-only guard) lives inside DateField.
+  const onPickDate = useCallback((iso: string) => {
+    setDraft((d) => (d ? { ...d, startDate: iso } : d));
   }, []);
 
   // SIGNED_OUT is the only redirect (auth-guard discipline): on UNKNOWN the
@@ -183,7 +177,6 @@ export default function BookingRequestScreen() {
   const quote = draftQuote(profile, draft);
   const ready = canSubmit(profile, draft);
   const boatName = session?.user?.name ?? "your boat account";
-  const pickerValue = new Date(draft.startDate + "T00:00:00");
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -219,35 +212,7 @@ export default function BookingRequestScreen() {
 
       {/* Date (+ days when multi-day). Platform picker; server takes any valid date. */}
       <Text style={styles.label}>{multi ? "First day" : "Trip date"}</Text>
-      {Platform.OS === "ios" ? (
-        <View style={styles.dateRow}>
-          <DateTimePicker
-            value={pickerValue}
-            mode="date"
-            display="compact"
-            minimumDate={todayFloor}
-            onChange={onPickDate}
-          />
-        </View>
-      ) : (
-        <>
-          <Pressable
-            style={styles.dateButton}
-            accessibilityRole="button"
-            onPress={() => setShowAndroidPicker(true)}
-          >
-            <Text style={styles.dateButtonText}>{draft.startDate}</Text>
-          </Pressable>
-          {showAndroidPicker && (
-            <DateTimePicker
-              value={pickerValue}
-              mode="date"
-              minimumDate={todayFloor}
-              onChange={onPickDate}
-            />
-          )}
-        </>
-      )}
+      <DateField value={draft.startDate} todayFloor={todayFloor} onPick={onPickDate} />
 
       {multi && (
         <>
@@ -382,9 +347,6 @@ const styles = StyleSheet.create({
   plateActive: { backgroundColor: color.navyDeep, borderColor: color.navyDeep },
   plateText: { fontFamily: font.body, color: color.ink },
   plateTextActive: { color: color.whiteCrisp },
-  dateRow: { alignSelf: "flex-start" },
-  dateButton: { borderWidth: 1, borderColor: color.lineStrong, borderRadius: radius, paddingVertical: space.s2, paddingHorizontal: space.s3, backgroundColor: color.whiteCrisp, alignSelf: "flex-start" },
-  dateButtonText: { fontFamily: font.mono, color: color.ink },
   stepper: { flexDirection: "row", alignItems: "center", gap: space.s3 },
   stepBtn: { width: 40, height: 40, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: color.lineStrong, borderRadius: radius, backgroundColor: color.whiteCrisp },
   stepBtnText: { fontFamily: font.display, fontSize: 18, color: color.navyDeep },
