@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,6 +16,7 @@ import * as WebBrowser from "expo-web-browser";
 import { authClient, useSession } from "../../lib/auth-client";
 import { API_URL } from "../../lib/api";
 import { authGuardState } from "../../lib/auth-guard";
+import { confirmDestructive } from "../../lib/confirm";
 import { CREDENTIAL_KINDS, kindLabel, stateLabel } from "../../lib/credential-labels";
 import {
   isValidExpiry,
@@ -120,30 +120,26 @@ export default function CredentialsScreen() {
   }, []);
 
   const removeDoc = useCallback(
-    (id: string) => {
+    async (id: string) => {
       if (presenting.current) return;
-      Alert.alert("Remove this document?", "This deletes the file and its record.", [
-        { text: "Keep it", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () => {
-            void (async () => {
-              presenting.current = true;
-              try {
-                setListError(null);
-                const { error } = await authClient.$fetch(`${API_URL}/api/credentials/${id}`, {
-                  method: "DELETE",
-                });
-                if (error) setListError(listActionError(error, "Couldn't remove that — try again."));
-                await fetchDocs();
-              } finally {
-                presenting.current = false;
-              }
-            })();
-          },
-        },
-      ]);
+      presenting.current = true;
+      try {
+        const confirmed = await confirmDestructive({
+          title: "Remove this document?",
+          message: "This deletes the file and its record.",
+          confirmLabel: "Remove",
+          cancelLabel: "Keep it",
+        });
+        if (!confirmed) return;
+        setListError(null);
+        const { error } = await authClient.$fetch(`${API_URL}/api/credentials/${id}`, {
+          method: "DELETE",
+        });
+        if (error) setListError(listActionError(error, "Couldn't remove that — try again."));
+        await fetchDocs();
+      } finally {
+        presenting.current = false;
+      }
     },
     [fetchDocs],
   );
@@ -392,7 +388,7 @@ export default function CredentialsScreen() {
               </Pressable>
               <Pressable
                 style={styles.btnGhostSmall}
-                onPress={() => removeDoc(d.id)}
+                onPress={() => void removeDoc(d.id)}
                 accessibilityRole="button"
               >
                 <Text style={styles.btnGhostText}>Remove</Text>
