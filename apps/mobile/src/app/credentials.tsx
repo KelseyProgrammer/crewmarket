@@ -12,11 +12,11 @@ import {
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
-import * as WebBrowser from "expo-web-browser";
 import { authClient, useSession } from "../../lib/auth-client";
 import { API_URL } from "../../lib/api";
 import { authGuardState } from "../../lib/auth-guard";
 import { confirmDestructive } from "../../lib/confirm";
+import { beginExternalOpen } from "../../lib/open-external";
 import { CREDENTIAL_KINDS, kindLabel, stateLabel } from "../../lib/credential-labels";
 import {
   isValidExpiry,
@@ -96,6 +96,8 @@ export default function CredentialsScreen() {
   const viewDoc = useCallback(async (id: string) => {
     if (presenting.current) return;
     presenting.current = true;
+    // Grab the browser/tab synchronously (web popup-blocker) BEFORE the fetch.
+    const opener = beginExternalOpen();
     try {
       setListError(null);
       const { data, error } = await authClient.$fetch<{ url: string }>(
@@ -103,12 +105,14 @@ export default function CredentialsScreen() {
         { method: "POST", body: {} },
       );
       if (error || !data?.url) {
+        opener.cancel();
         setListError(listActionError(error, "That document isn't available — refresh and try again."));
         return;
       }
       // The URL expires in 60s — open immediately, never store it.
-      await WebBrowser.openBrowserAsync(data.url);
+      await opener.open(data.url);
     } catch {
+      opener.cancel();
       setListError("Couldn't open that document — try again.");
     } finally {
       presenting.current = false;
