@@ -1,5 +1,9 @@
 # Web demo — shipping the Expo build as a shareable link
 
+> **Live:** https://crewmarket-demo.vercel.app (deployed 2026-10-01 via the recipe
+> below; Vercel project `crewmarket-demo`, git auto-deploy deliberately disconnected —
+> redeploys are CLI-only, re-export then `vercel deploy --prod` from `apps/mobile/dist`).
+
 Branch `web-parity`. This is the mobile app running in a browser (react-native-web
 via `expo export --platform web`) so the client can click through Slices 1–5 without
 Expo Go. It is a **demo surface**, not a launch — see limitations at the bottom.
