@@ -25,6 +25,7 @@ export const auth = betterAuth({
     "http://localhost:3000",
     "http://localhost:3002",
     "https://crewmarket-web.vercel.app",
+    "https://crewmarket-demo.vercel.app", // DEV/DEMO ONLY — web-parity demo, remove before launch
   ],
   user: {
     additionalFields: {
