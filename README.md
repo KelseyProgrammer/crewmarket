@@ -2,8 +2,8 @@
 
 A two-sided marketplace for the sportfishing industry. **Crew** — mates, deckhands,
 and licensed captains — list their services, credentials, and availability. **Boats** —
-private owners, charter operations, and tournament programs — post jobs and book crew
-with escrow-protected payment.
+private owners, charter operations, and tournament programs — post jobs and book crew,
+with payment held until the trip is done.
 
 > **Live demo:** [crewmarket-demo.vercel.app](https://crewmarket-demo.vercel.app) —
 > the mobile app running in the browser (test mode, synthetic data). Click through the
@@ -24,9 +24,8 @@ That distinction is not just legal positioning — it is enforced in code and CI
 1. **Crew list services** — day rate, home port, availability, and structured
    credentials (USCG license class and expiry, STCW, CPR/First Aid, TWIC).
 2. **Boats post a job or book directly** from the board.
-3. **Payment is escrowed at booking** through Stripe Connect — funds are held, not
-   released.
-4. **Crew are paid out after the trip** plus a 48-hour dispute window.
+3. **Funds are held at booking** through Stripe Connect.
+4. **Crew are paid out after the trip**, once a 48-hour dispute window closes.
 5. **Both sides review each other** — peer-to-peer marketplace reviews, accrued only
    on-platform.
 
@@ -40,10 +39,10 @@ Turborepo + pnpm monorepo:
 | `apps/mobile` | Expo app — crew side is mobile-first; also exports the web demo |
 | `packages/types` | Zod schemas, the shared data contract |
 | `packages/db` | Prisma schema and client (Postgres, encrypted at rest) |
-| `packages/payments` | Stripe Connect integration (escrow, payouts, fees) |
+| `packages/payments` | Stripe Connect integration (funds held, delayed payouts, fees) |
 | `packages/ui` | Shared UI components |
 
-Supporting choices worth noting:
+Decisions worth noting:
 
 - **Stripe Connect Express** owns identity verification, payout rails, and tax forms.
   Crew onboard directly with Stripe; the platform never stores SSNs or bank numbers.
@@ -76,31 +75,29 @@ All seed data is synthetic.
 ## Compliance by design
 
 The central legal risk in this product is **contractor misclassification** — a
-marketplace drifting into an employment-style relationship with the people who use
-it. Rather than leaving that to a
-launch-day legal review, the rules live in [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md)
-as numbered engineering constraints, cited by ID in commit messages:
+marketplace drifting into an employment-style relationship with the people who use it.
+The rules that prevent that live in [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) as
+numbered engineering constraints, cited by ID in commit messages:
 
 | Prefix | Covers |
 |---|---|
 | `M-*` | Marketplace identity — language discipline, crew autonomy, no supervision features |
 | `V-*` | Credentials and verification honesty |
-| `P-*` | Payments, escrow, and tax boundaries |
+| `P-*` | Payment holds, payouts, and tax boundaries |
 | `D-*` | Data, privacy, and mandatory disclaimers |
 | `G-*` | Launch gates (attorney review, end-to-end Stripe tests) |
 
-Two examples of rules that shape the codebase rather than just the copy: bookings move
-through trip states only — the platform has no timekeeping, task-assignment, or
-performance-management features anywhere (M-3) — and
-`pnpm compliance:check` fails CI if employment-flavored language lands in user-facing
-copy or docs (M-1).
+Two examples that shape the codebase, not just the copy: bookings move through trip
+states only — there are no timekeeping, task-assignment, or performance-management
+features (M-3) — and `pnpm compliance:check` fails CI if employment-flavored language
+lands in copy or docs (M-1).
 
 ## Documentation
 
 | Doc | Contents |
 |---|---|
 | [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) | The rule set above, in full |
-| [`docs/BUSINESS_MODEL.md`](docs/BUSINESS_MODEL.md) | Fee model, escrow flow, and the marketplace-leakage strategy |
+| [`docs/BUSINESS_MODEL.md`](docs/BUSINESS_MODEL.md) | Fee model, payment-hold flow, and the marketplace-leakage strategy |
 | [`docs/DESIGN.md`](docs/DESIGN.md) | Design system — navy/white/brass "registry" aesthetic and its derivation |
 | [`docs/WEB-DEMO.md`](docs/WEB-DEMO.md) | How the Expo app ships as a shareable web demo |
 | [`docs/SOW-AUDIT.md`](docs/SOW-AUDIT.md) | Contracted scope mapped to repo status |
