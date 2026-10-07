@@ -92,11 +92,6 @@ card `4242 4242 4242 4242` (any future expiry / CVC).
 
 ## Known web limitations to mention to the client
 
-- **Credential uploads won't persist on the Vercel demo.** The deployed API has no
-  object store yet (MinIO is local-only); uploads error there. The upload flow is
-  fully working on web — verified locally end-to-end against MinIO — it just needs
-  the real S3/R2 bucket, same as on mobile. Demo credentials from a local run if you
-  want to show upload.
 - **Stripe Checkout opens in a new browser tab** (not an in-app sheet like the
   phone). After paying, the client closes that tab and returns; the booking flips to
   "funds held" within a couple of seconds (webhook-confirmed). This is normal web
@@ -119,3 +114,10 @@ booking request (quote math, multi-day, P&I gate, submit → ledger), accept/dec
 boat pay → real Stripe test Checkout → funds-held, credentials list/view/remove, and
 upload (against local MinIO). Native iOS bundle re-exported clean — mobile behavior
 is unchanged (platform files only diverge on web).
+
+**10/7/2026 update — credential uploads now persist on the hosted demo.** The
+deployed API is on the real Cloudflare R2 bucket per `docs/STORAGE-SWAP.md`
+(bucket + scoped token + CORS all live). Scripted verification against production:
+presign → browser-style PUT (CORS preflight 204 from both demo origins) → confirm →
+self-reported row → presigned View → Remove; object unreachable without the
+presigned signature (V-2). Synthetic docs only, as always.

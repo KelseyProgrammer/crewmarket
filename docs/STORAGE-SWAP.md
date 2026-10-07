@@ -1,5 +1,13 @@
 # Credential-doc storage swap — MinIO (dev) → real bucket (Cloudflare R2)
 
+> **DONE 10/7/2026.** Bucket `credential-docs` (ENAM) live on the client-side
+> Cloudflare account, Object-R/W scoped token, CORS policy set, six `S3_*` vars on
+> crewmarket-web production. Full verify checklist below passed (scripted against
+> production). One code fix came out of it: `ensureBucket` now probes with
+> HeadBucket instead of unconditionally creating (the scoped token has no
+> CreateBucket right — commit `32fe10c`). Kept as the runbook for the eventual
+> AWS-production swap.
+
 The app's storage layer (`apps/web/lib/credential-storage.ts`) is already a pure env
 swap: any S3-compatible store works via `S3_*` vars. Dev uses MinIO (docker compose);
 the deployed API has **no object store**, so credential uploads error on
