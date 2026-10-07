@@ -31,6 +31,9 @@ export async function CredentialsSection({ userId, notice }: { userId: string; n
         Upload license and certification documents for admin review. Verification means an
         admin reviewed the document — the brass seal is earned, never self-set. Documents
         stay private; your public listing shows only the credential details.
+        {docs.some((d) => d.verifiedAt)
+          ? " Removing a verified document deletes the file but keeps a dated record that it existed and was verified."
+          : null}
       </p>
       {notice ? (
         <p className="credform__error" role="alert">

@@ -58,7 +58,8 @@
   account). Follow-ups (updated 2026-09-13): the orphan sweep SHIPPED —
   `node --env-file=.env.local scripts/sweep-orphan-credentials.mjs` (dry-run default, `--delete`
   to remove, 24h age gate so in-flight PUTs are never eligible, dangling DB rows report-only
-  pending the client's verified-doc-deletion policy call; rehearsal-verified against MinIO;
+  (kept report-only even after the 10/6/2026 deletion-policy call — a dangling row is a bug
+  signal, not a user deletion); rehearsal-verified against MinIO;
   still pairs with the `TODO(account-deletion)` note in `schema.prisma`). Still open: the
   AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
   IAM-role creds instead of static keys, bucket security config) for when the client's real bucket
@@ -367,10 +368,24 @@
   Non-blocking notes: sign-in still drops the booking intent (lands on /account — same as
   claim; app-wide `from`-param fix is backlog); pnpm-lock carried an inert better-call zod
   peer-resolution flip from the install; brass button now hand-rolled 3× (extract when a 4th
-  appears). NEXT AFTER SLICE 5 CLOSES: the two client policy answers
-  (docs/CLIENT-DECISIONS-2026-09-16.md — dispute-raise flow + verified-doc deletion), EAS
-  build (re-verify browser-return 6188fcd + Android picker cancel), AWS/R2 credential-storage
-  swap.
+  appears). NEXT AFTER SLICE 5 CLOSES: the remaining client policy answer
+  (docs/CLIENT-DECISIONS-2026-09-16.md — dispute-raise flow; attorney territory, stays
+  escalated), EAS build (re-verify browser-return 6188fcd + Android picker cancel),
+  AWS/R2 credential-storage swap (runbook ready in docs/STORAGE-SWAP.md).
+
+- **Verified-doc deletion policy DECIDED + SHIPPED (10/6/2026):** option (c) from
+  docs/CLIENT-DECISIONS-2026-09-16.md §2, chosen under the client's standing delegation —
+  crew can still remove any document (verified included), but removing a VERIFIED doc now
+  retains a metadata-only `CredentialDocDeletion` row (doc id, profile, uploader, kind,
+  licenseClass, expiry, uploadedAt, verifiedAt/byEmail, deletedAt — never the document,
+  s3Key, or content fields, V-2; no User relation so the record survives account deletion).
+  Audit create + row delete ride one transaction in `deleteDoc`
+  (apps/web/lib/credential-service.ts); migration `20261007023802_credential_doc_deletion_audit`
+  (applies on deploy via vercel-build's `prisma migrate deploy`). Owners are told:
+  mobile/web-demo Remove confirm says the record is kept (`removeConfirmMessage`,
+  apps/mobile/lib/credential-labels.ts), web credentials lede gets a conditional sentence
+  when a verified doc exists. Self-reported docs delete with no trace, unchanged. The
+  dispute-raise flow (§1) remains the one open client decision.
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.

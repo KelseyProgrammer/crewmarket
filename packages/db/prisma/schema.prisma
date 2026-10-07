@@ -122,6 +122,27 @@ model CredentialDoc {
   @@map("credential_doc")
 }
 
+// Verified-doc deletion audit (client policy, decided 2026-10-06): crew may remove
+// any document, verified included; removing a VERIFIED doc retains this minimal
+// record that a verified credential existed and was removed. Metadata only — never
+// the document, its s3Key, or content fields (V-2); nothing medical (D-1). No User
+// relation on purpose: the audit record must survive account deletion.
+model CredentialDocDeletion {
+  id               String    @id // the deleted CredentialDoc's id — retries can't double-log
+  profileId        String
+  uploadedByUserId String
+  kind             String
+  licenseClass     String?
+  expiresAt        DateTime?
+  uploadedAt       DateTime
+  verifiedAt       DateTime
+  verifiedByEmail  String?
+  deletedAt        DateTime  @default(now())
+
+  @@index([profileId])
+  @@map("credential_doc_deletion")
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime

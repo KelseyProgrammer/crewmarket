@@ -84,6 +84,12 @@ control their own data.
 This is a policy and privacy decision for you. Whatever you choose, we implement it — the
 work is small either way.
 
+> **Decided & shipped 2026-10-06** — option **(c)**, chosen under your standing "pick the
+> sensible default" delegation: deletion stays allowed, and removing a verified document
+> keeps a small dated record of what was verified and when (never the document itself).
+> Crew are told this in the removal confirmation. If you'd rather have (a) or (b), say so —
+> it's a small change.
+
 ---
 
 **No rush on either**, but the dispute one in particular is worth starting with your

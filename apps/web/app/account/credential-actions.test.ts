@@ -14,6 +14,10 @@ const seams = vi.hoisted(() => ({
       findUnique: vi.fn(),
       delete: vi.fn(),
     },
+    credentialDocDeletion: {
+      create: vi.fn(),
+    },
+    $transaction: vi.fn(async (ops: unknown[]) => Promise.all(ops)),
   },
   headObject: vi.fn(),
   presignedPut: vi.fn(async () => "https://minio.test/put"),
@@ -192,5 +196,49 @@ describe("deleteCredentialDoc / viewOwnCredentialDoc — uploader-bound (V-2)", 
     await deleteCredentialDoc(form(DOC_ID));
     expect(seams.deleteObject).toHaveBeenCalledWith(GOOD_KEY);
     expect(seams.prisma.credentialDoc.delete).toHaveBeenCalledWith({ where: { id: DOC_ID } });
+  });
+
+  it("removing a self-reported doc writes NO deletion audit record", async () => {
+    signedInCrewWithClaim();
+    seams.prisma.credentialDoc.findUnique.mockResolvedValue(OWN_DOC); // verifiedAt absent
+    seams.prisma.credentialDoc.delete.mockResolvedValue({});
+    await deleteCredentialDoc(form(DOC_ID));
+    expect(seams.prisma.credentialDocDeletion.create).not.toHaveBeenCalled();
+    expect(seams.prisma.credentialDoc.delete).toHaveBeenCalledWith({ where: { id: DOC_ID } });
+  });
+
+  it("removing a VERIFIED doc retains a metadata-only audit record, atomically with the row delete", async () => {
+    signedInCrewWithClaim();
+    const VERIFIED_DOC = {
+      ...OWN_DOC,
+      kind: "TWIC",
+      licenseClass: "100T",
+      expiresAt: new Date("2027-01-01T00:00:00Z"),
+      uploadedAt: new Date("2026-09-01T00:00:00Z"),
+      verifiedAt: new Date("2026-09-10T00:00:00Z"),
+      verifiedByEmail: "admin@example.test",
+    };
+    seams.prisma.credentialDoc.findUnique.mockResolvedValue(VERIFIED_DOC);
+    seams.prisma.credentialDoc.delete.mockResolvedValue({});
+    await deleteCredentialDoc(form(DOC_ID));
+
+    // S3 object still removed — deletion stays allowed for verified docs
+    expect(seams.deleteObject).toHaveBeenCalledWith(GOOD_KEY);
+    // audit create + row delete ride one transaction (retry-safe: both or neither)
+    expect(seams.prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(seams.prisma.credentialDoc.delete).toHaveBeenCalledWith({ where: { id: DOC_ID } });
+
+    expect(seams.prisma.credentialDocDeletion.create).toHaveBeenCalledTimes(1);
+    const data = seams.prisma.credentialDocDeletion.create.mock.calls[0]![0].data;
+    expect(data.id).toBe(DOC_ID);
+    expect(data.profileId).toBe("p1");
+    expect(data.uploadedByUserId).toBe("u1");
+    expect(data.kind).toBe("TWIC");
+    expect(data.verifiedAt).toEqual(VERIFIED_DOC.verifiedAt);
+    expect(data.verifiedByEmail).toBe("admin@example.test");
+    // metadata only — the document itself leaves no trace (V-2)
+    expect(Object.keys(data)).not.toContain("s3Key");
+    expect(Object.keys(data)).not.toContain("contentType");
+    expect(Object.keys(data)).not.toContain("sizeBytes");
   });
 });

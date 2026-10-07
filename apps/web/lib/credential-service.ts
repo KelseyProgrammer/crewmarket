@@ -139,7 +139,10 @@ export async function confirmUpload(
   return {};
 }
 
-/** Uploader-bound removal (V-2). Denial reads as "not found" — existence stays hidden. */
+/** Uploader-bound removal (V-2). Denial reads as "not found" — existence stays hidden.
+    Verified docs stay deletable (client policy, 2026-10-06) but leave a metadata-only
+    CredentialDocDeletion record — proof a verified credential existed and was removed,
+    never the document or its s3Key (V-2). */
 export async function deleteDoc(
   ctx: CredentialCtx,
   docId: string,
@@ -150,7 +153,28 @@ export async function deleteDoc(
     return { error: "not found", status: 404 };
   }
   await deleteObject(doc.s3Key); // S3 first — if this throws, the row survives and Remove can be retried (V-2)
-  await prisma.credentialDoc.delete({ where: { id: doc.id } });
+  if (doc.verifiedAt) {
+    // one transaction: the audit record and the row delete land together or not at
+    // all, so a retried Remove can never double-log or lose the record
+    await prisma.$transaction([
+      prisma.credentialDocDeletion.create({
+        data: {
+          id: doc.id,
+          profileId: doc.profileId,
+          uploadedByUserId: doc.uploadedByUserId,
+          kind: doc.kind,
+          licenseClass: doc.licenseClass,
+          expiresAt: doc.expiresAt,
+          uploadedAt: doc.uploadedAt,
+          verifiedAt: doc.verifiedAt,
+          verifiedByEmail: doc.verifiedByEmail,
+        },
+      }),
+      prisma.credentialDoc.delete({ where: { id: doc.id } }),
+    ]);
+  } else {
+    await prisma.credentialDoc.delete({ where: { id: doc.id } });
+  }
   return {};
 }
 

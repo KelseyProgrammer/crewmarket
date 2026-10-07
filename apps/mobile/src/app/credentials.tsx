@@ -17,7 +17,12 @@ import { API_URL } from "../../lib/api";
 import { authGuardState } from "../../lib/auth-guard";
 import { confirmDestructive } from "../../lib/confirm";
 import { beginExternalOpen } from "../../lib/open-external";
-import { CREDENTIAL_KINDS, kindLabel, stateLabel } from "../../lib/credential-labels";
+import {
+  CREDENTIAL_KINDS,
+  kindLabel,
+  removeConfirmMessage,
+  stateLabel,
+} from "../../lib/credential-labels";
 import {
   isValidExpiry,
   validateLicenseClass,
@@ -120,13 +125,13 @@ export default function CredentialsScreen() {
   }, []);
 
   const removeDoc = useCallback(
-    async (id: string) => {
+    async (id: string, verified: boolean) => {
       if (presenting.current) return;
       presenting.current = true;
       try {
         const confirmed = await confirmDestructive({
           title: "Remove this document?",
-          message: "This deletes the file and its record.",
+          message: removeConfirmMessage(verified),
           confirmLabel: "Remove",
           cancelLabel: "Keep it",
         });
@@ -385,7 +390,7 @@ export default function CredentialsScreen() {
               </Pressable>
               <Pressable
                 style={styles.btnGhostSmall}
-                onPress={() => void removeDoc(d.id)}
+                onPress={() => void removeDoc(d.id, d.verified)}
                 accessibilityRole="button"
               >
                 <Text style={styles.btnGhostText}>Remove</Text>

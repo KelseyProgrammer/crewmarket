@@ -27,3 +27,11 @@ export function kindLabel(kind: string): string {
 export function stateLabel(verified: boolean): string {
   return verified ? "Verified — document reviewed" : "Self-reported — awaiting review";
 }
+
+/** Remove-confirm body. Verified docs leave a metadata-only deletion record
+    (client policy 2026-10-06) — the owner is told so before confirming. */
+export function removeConfirmMessage(verified: boolean): string {
+  return verified
+    ? "This deletes the file. A record that a verified document existed and was removed is kept."
+    : "This deletes the file and its record.";
+}

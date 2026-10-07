@@ -2,8 +2,8 @@ import { credentialGuard, deleteDoc } from "../../../../lib/credential-service";
 
 /* DELETE /api/credentials/[id] — uploader-bound removal via the shared service
    (V-2). Denials are 404, never 403 — existence stays hidden. Verified-doc
-   deletion policy is a pending client decision; any change lands in the
-   service, not here. */
+   deletion policy (decided 2026-10-06: deletable, metadata-only audit record
+   retained) lives in the service, not here. */
 
 export const dynamic = "force-dynamic";
 
