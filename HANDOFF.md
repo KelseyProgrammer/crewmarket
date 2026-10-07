@@ -60,10 +60,14 @@
   to remove, 24h age gate so in-flight PUTs are never eligible, dangling DB rows report-only
   (kept report-only even after the 10/6/2026 deletion-policy call — a dangling row is a bug
   signal, not a user deletion); rehearsal-verified against MinIO;
-  still pairs with the `TODO(account-deletion)` note in `schema.prisma`). Still open: the
-  AWS-swap TODOs left in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
-  IAM-role creds instead of static keys, bucket security config) for when the client's real bucket
-  replaces MinIO. Now unit-tested by the 2026-09-13 hardening bundle: the credential
+  still pairs with the `TODO(account-deletion)` note in `schema.prisma`). UPDATE 10/7/2026:
+  the real-bucket swap LANDED — production runs on Cloudflare R2 per `docs/STORAGE-SWAP.md`
+  (bucket + Object-R/W scoped token + CORS; six `S3_*` vars on crewmarket-web; full V-1/V-2
+  verify pass scripted against production; `ensureBucket` now HeadBucket-probes first, 32fe10c,
+  because the scoped token rightly can't CreateBucket). MinIO remains the local dev store. The
+  `TODO(aws)` notes in `apps/web/lib/credential-storage.ts` (region/`LocationConstraint`,
+  IAM-role creds, infra-as-code bucket policy) are now the *AWS-production* track for real
+  launch, not demo blockers. Now unit-tested by the 2026-09-13 hardening bundle: the credential
   server-action guards (`requireClaimedProfile` in
   `apps/web/app/account/credential-actions.ts`, `requireAdmin` in
   `apps/web/app/admin/credentials/actions.ts`) and the verified-vs-self-reported UI rendering are
