@@ -2,6 +2,7 @@ import "server-only";
 import {
   CreateBucketCommand,
   GetObjectCommand,
+  HeadBucketCommand,
   HeadObjectCommand,
   DeleteObjectCommand,
   PutObjectCommand,
@@ -35,14 +36,28 @@ const client = new S3Client({
 
 let bucketReady: Promise<void> | null = null;
 function ensureBucket(): Promise<void> {
+  // HeadBucket probe first: the deployed R2 token is Object R/W scoped to one
+  // pre-made bucket and has NO CreateBucket right (an unconditional CreateBucket
+  // is AccessDenied → 500 there). CreateBucket only runs when the probe says the
+  // bucket is missing — the dev-MinIO-starts-empty convenience.
   bucketReady ??= client
-    .send(new CreateBucketCommand({ Bucket: BUCKET }))
+    .send(new HeadBucketCommand({ Bucket: BUCKET }))
     .then(() => undefined)
-    .catch((err: { name?: string }) => {
-      if (err.name === "BucketAlreadyOwnedByYou") return;
-      // BucketAlreadyExists means another account owns this bucket name — not benign.
-      bucketReady = null; // retry on next call rather than caching the failure
-      throw err;
+    .catch(async (err: { name?: string; $metadata?: { httpStatusCode?: number } }) => {
+      const missing =
+        err.name === "NotFound" || err.name === "NoSuchBucket" || err.$metadata?.httpStatusCode === 404;
+      if (!missing) {
+        bucketReady = null; // retry on next call rather than caching the failure
+        throw err;
+      }
+      try {
+        await client.send(new CreateBucketCommand({ Bucket: BUCKET }));
+      } catch (createErr) {
+        if ((createErr as { name?: string }).name === "BucketAlreadyOwnedByYou") return;
+        // BucketAlreadyExists means another account owns this bucket name — not benign.
+        bucketReady = null;
+        throw createErr;
+      }
     });
   return bucketReady;
 }
