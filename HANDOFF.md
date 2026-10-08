@@ -416,5 +416,19 @@
   CLAUDE.md design-tooling section; the branded date-field replacement rides in it) —
   then the EAS standalone build LAST, so the client's first binary ships the polished UI.
 
+- **Mobile design-polish pass, batch 1 SHIPPED (10/7/2026, b5ed4e4, user-approved on
+  device):** Impeccable audit scored 14/20 (Good); systemic finding — the web's signature
+  moves were never translated to mobile (grey transcription of the weigh-in board). Batch
+  1 fixed all four client complaints: board-row re-hierarchy (names → Oswald 22, license
+  → mono registry data per Data-Is-Mono, port as trailing mono caps), availability strip
+  cells 7→10pt + next-open date promoted over its label, pressed-row FULL NAVY INVERSION
+  (rate Brass Bright, strip repaints — the web hover move native), engraved tab icons
+  (BoardGlyph/LogbookGlyph/HelmGlyph replace placeholder dots; labels Oswald→mono).
+  BrassButton extracted (5 call sites, one display-caps idiom, brassTextPress token
+  added); app.json locked light. REMAINING AUDIT FINDINGS (open): P3 KeyboardAvoidingView
+  on auth/booking forms; P3 iPad stretch; dark-mode board as a v2 project. Impeccable
+  v4.5.0 update available (installed v4.3.1) — run `npx impeccable update` in a fresh
+  session when wanted.
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
