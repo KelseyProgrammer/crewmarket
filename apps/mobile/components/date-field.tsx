@@ -4,14 +4,15 @@ import DateTimePicker, { type DateTimePickerEvent } from "@react-native-communit
 import { localIsoDate } from "../lib/request-form";
 import { color, font, radius, space } from "../lib/tokens";
 
-/* Trip-date field — NATIVE implementation (iOS compact picker inline; Android
-   button → dialog). Extracted from bookings/new.tsx for the web platform
-   split: date-field.web.tsx renders <input type="date"> instead, because
-   @react-native-community/datetimepicker silently renders nothing on web.
-   Slice-5 device pass (10/7) amendments: the iOS popover is dismissed after a
-   pick (key remount — the compact picker has no imperative close), and the
-   chip carries a "Tap the date to change it" hint because the bare pill read
-   as static text. Mirror any Props change in date-field.web.tsx. */
+/* Trip-date field — NATIVE implementation. Redesigned in design-polish batch 2
+   (10/7): the iOS compact picker's system-grey chip can't be branded (Apple
+   tertiarySystemFill), so the FIELD is now ours — a registry plate with the
+   date as mono-caps data furniture and a brass CHANGE affordance — while the
+   calendar stays Apple's: tapping expands an inline picker (brass accent)
+   that collapses itself on selection. Android keeps the system dialog behind
+   the same branded field. date-field.web.tsx renders <input type="date">
+   instead (the RN picker silently renders nothing on web); mirror any Props
+   change there. */
 
 export type DateFieldProps = {
   /** Selected date, strict YYYY-MM-DD. */
@@ -22,18 +23,32 @@ export type DateFieldProps = {
   onPick: (iso: string) => void;
 };
 
+// Registry-voice date: "TUE, OCT 7, 2026" (mono caps, like the board's
+// NEXT OPEN furniture — Data-Is-Mono).
+function fmtFieldDate(iso: string) {
+  return new Date(iso + "T00:00:00")
+    .toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+    .toUpperCase();
+}
+
 export function DateField({ value, todayFloor, onPick }: DateFieldProps) {
+  const [open, setOpen] = useState(false); // iOS inline calendar expanded
   const [showAndroidPicker, setShowAndroidPicker] = useState(false);
-  // iOS compact popover has no close API — remounting the picker dismisses it.
-  const [pickerSession, setPickerSession] = useState(0);
 
   // "set" only: Android fires onChange with the fallback value on dismiss too —
   // a cancelled dialog must never write a date into a funds-hold request.
+  // iOS: a real selection also collapses the calendar (the old compact popover
+  // stayed open after a pick — the device-pass finding this field replaces).
   const onPickDate = useCallback(
     (event: DateTimePickerEvent, picked?: Date) => {
       setShowAndroidPicker(false);
       if (event.type === "set" && picked) {
-        setPickerSession((s) => s + 1);
+        setOpen(false);
         onPick(localIsoDate(picked));
       }
     },
@@ -41,32 +56,35 @@ export function DateField({ value, todayFloor, onPick }: DateFieldProps) {
   );
 
   const pickerValue = new Date(value + "T00:00:00");
+  const ios = Platform.OS === "ios";
 
-  if (Platform.OS === "ios") {
-    return (
-      <View style={styles.dateRow}>
-        <DateTimePicker
-          key={pickerSession}
-          value={pickerValue}
-          mode="date"
-          display="compact"
-          minimumDate={todayFloor}
-          onChange={onPickDate}
-        />
-        <Text style={styles.dateHint}>Tap the date to change it</Text>
-      </View>
-    );
-  }
   return (
-    <>
+    <View style={styles.wrap}>
       <Pressable
-        style={styles.dateButton}
+        style={[styles.field, open && styles.fieldOpen]}
+        onPress={() => (ios ? setOpen((o) => !o) : setShowAndroidPicker(true))}
         accessibilityRole="button"
-        onPress={() => setShowAndroidPicker(true)}
+        accessibilityState={ios ? { expanded: open } : undefined}
+        accessibilityLabel={`Trip date, ${fmtFieldDate(value)}. Opens a calendar.`}
       >
-        <Text style={styles.dateButtonText}>{value}</Text>
+        <Text style={styles.fieldDate}>{fmtFieldDate(value)}</Text>
+        {/* Link-grade brass on white (DESIGN.md: Brass Text carries links). */}
+        <Text style={styles.fieldAction}>{ios && open ? "DONE" : "CHANGE"}</Text>
       </Pressable>
-      {showAndroidPicker && (
+      {ios && open && (
+        <View style={styles.calendarPlate}>
+          <DateTimePicker
+            value={pickerValue}
+            mode="date"
+            display="inline"
+            minimumDate={todayFloor}
+            accentColor={color.brassText}
+            themeVariant="light"
+            onChange={onPickDate}
+          />
+        </View>
+      )}
+      {!ios && showAndroidPicker && (
         <DateTimePicker
           value={pickerValue}
           mode="date"
@@ -74,13 +92,41 @@ export function DateField({ value, todayFloor, onPick }: DateFieldProps) {
           onChange={onPickDate}
         />
       )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  dateRow: { alignSelf: "flex-start" },
-  dateHint: { fontFamily: font.body, fontSize: 12, color: color.inkSoft, marginTop: space.s1 },
-  dateButton: { borderWidth: 1, borderColor: color.lineStrong, borderRadius: radius, paddingVertical: space.s2, paddingHorizontal: space.s3, backgroundColor: color.whiteCrisp, alignSelf: "flex-start" },
-  dateButtonText: { fontFamily: font.mono, color: color.ink },
+  wrap: { gap: space.s2, alignSelf: "stretch" },
+  field: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: space.s3,
+    minHeight: 48,
+    paddingVertical: space.s3,
+    paddingHorizontal: space.s3,
+    backgroundColor: color.whiteCrisp,
+    borderWidth: 1,
+    borderColor: color.lineStrong,
+    borderRadius: radius,
+  },
+  // Open state warms the edge to brass — the focus idiom, not a new meaning.
+  fieldOpen: { borderColor: color.brass },
+  fieldDate: { fontFamily: font.mono, fontSize: 14, letterSpacing: 0.4, color: color.ink },
+  fieldAction: {
+    fontFamily: font.mono,
+    fontSize: 10,
+    letterSpacing: 0.8,
+    color: color.brassText,
+  },
+  // The expanded calendar sits on its own white plate, hairline-edged like
+  // every other plate on the board ground.
+  calendarPlate: {
+    backgroundColor: color.whiteCrisp,
+    borderWidth: 1,
+    borderColor: color.lineOnWhite,
+    borderRadius: radius,
+    paddingHorizontal: space.s2,
+  },
 });
