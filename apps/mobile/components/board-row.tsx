@@ -9,7 +9,14 @@ import { SealRing } from "./engravings";
 /* Weigh-in board row (mirrors packages/ui/src/components.tsx CrewCard).
    Probe C guard (M-2/P-4): no rank numbers, no ordinals anywhere — order is
    whatever the filters produced, never a score. Five chunks, per DESIGN.md:
-   seal+name · port/roles · license · seasons+rate · availability. */
+   seal+name · port/roles · license · seasons+rate · availability.
+
+   10/7 polish pass (device-pass verdict: row read as undifferentiated grey):
+   names up to the Title Row floor (22), license data moved to mono per the
+   Data-Is-Mono rule (verification status stays words-in-italic, V-1), the
+   next-open DATE promoted over its label, and pressing a row now inverts it
+   to navy — the web board's signature "lights the lane you're on" move —
+   with the rate flipping Brass Bright and the strip repainting. */
 
 function fmtNextOpen(iso: string) {
   return new Date(iso + "T00:00:00Z")
@@ -48,56 +55,88 @@ export function BoardRow({
       accessibilityRole="link"
       accessibilityLabel={a11yLabel}
     >
-      <View style={styles.headline}>
-        <Text style={styles.name} numberOfLines={1}>
-          {profile.displayName}
-        </Text>
-        {verified && (
-          <View style={styles.seal}>
-            <SealRing size={16} />
-            <Text style={styles.sealLabel}>VERIFIED</Text>
+      {({ pressed }) => (
+        <>
+          <View style={styles.headline}>
+            <Text style={[styles.name, pressed && styles.namePressed]} numberOfLines={1}>
+              {profile.displayName}
+            </Text>
+            {verified && (
+              <View style={styles.seal}>
+                <SealRing size={16} stroke={pressed ? color.brassBright : color.brass} />
+                <Text style={[styles.sealLabel, pressed && styles.sealLabelPressed]}>
+                  VERIFIED
+                </Text>
+              </View>
+            )}
           </View>
-        )}
-      </View>
-      <Text style={styles.meta}>
-        {profile.roles.map((r) => ROLE_LABELS[r] ?? r).join(" · ")} · {homePort}
-      </Text>
-      <Text style={styles.license}>
-        {license
-          ? `${license.licenseClass}${license.expiresAt ? ` · exp ${license.expiresAt.slice(0, 7)}` : ""} · `
-          : "No license listed"}
-        {/* V-1: verification status stated in words, in italic — never implied */}
-        {license && (
-          <Text style={styles.licenseStatus}>
-            {license.verified ? "passed admin review" : "self-reported"}
+          <Text style={[styles.meta, pressed && styles.inkOnNavy]}>
+            {profile.roles.map((r) => ROLE_LABELS[r] ?? r).join(" · ")}
+            <Text style={[styles.metaPort, pressed && styles.mutedOnNavy]}>
+              {"   "}
+              {homePort.toUpperCase()}
+            </Text>
           </Text>
-        )}
-      </Text>
-      <View style={styles.footer}>
-        <View style={styles.figures}>
-          {/* Seasons chunk (DESIGN.md-contracted): mirrors web CrewCard's
-                `{years}<small>seasons</small>` pairing, beside the day rate. */}
-          <Text style={styles.years}>
-            {profile.yearsExperience}
-            <Text style={styles.figureSuffix}> seasons</Text>
-          </Text>
-          <Text style={styles.rate}>
-            ${profile.dayRateUsd}
-            <Text style={styles.figureSuffix}> /day · sets own rate</Text>
-          </Text>
-        </View>
-        <View style={styles.stripCol}>
-          <AvailabilityStrip
-            availability={profile.availability}
-            start={windowStart}
-          />
-          {/* Web chunk-⑤ parity: the strip's next-open microlabel (M-2:
-              absence of a date is closed, "booked out" is the honest floor). */}
-          <Text style={styles.nextOpen}>
-            {nextOpen ? `NEXT OPEN ${fmtNextOpen(nextOpen)}` : "BOOKED OUT"}
-          </Text>
-        </View>
-      </View>
+          {/* License is data furniture → Martian Mono (Data-Is-Mono rule);
+              V-1: verification status stated in words, in italic — never implied. */}
+          {license ? (
+            <Text style={[styles.license, pressed && styles.mutedOnNavy]}>
+              {(license.licenseClass ?? "").toUpperCase()}
+              {license.expiresAt ? ` · EXP ${license.expiresAt.slice(0, 7)}` : ""}
+              {"  "}
+              <Text style={styles.licenseStatus}>
+                {license.verified ? "passed admin review" : "self-reported"}
+              </Text>
+            </Text>
+          ) : (
+            <Text style={[styles.noLicense, pressed && styles.mutedOnNavy]}>
+              No license listed
+            </Text>
+          )}
+          <View style={styles.footer}>
+            <View style={styles.figures}>
+              {/* Seasons chunk (DESIGN.md-contracted): mirrors web CrewCard's
+                  `{years}<small>seasons</small>` pairing, beside the day rate. */}
+              <Text style={[styles.years, pressed && styles.inkOnNavy]}>
+                {profile.yearsExperience}
+                <Text style={[styles.figureSuffix, pressed && styles.mutedOnNavy]}>
+                  {" "}
+                  seasons
+                </Text>
+              </Text>
+              <Text style={[styles.rate, pressed && styles.ratePressed]}>
+                ${profile.dayRateUsd}
+                <Text style={[styles.figureSuffix, pressed && styles.mutedOnNavy]}>
+                  {" "}
+                  /day · sets own rate
+                </Text>
+              </Text>
+            </View>
+            <View style={styles.stripCol}>
+              <AvailabilityStrip
+                availability={profile.availability}
+                start={windowStart}
+                inverted={pressed}
+              />
+              {/* Web chunk-⑤ parity: the strip's next-open microlabel (M-2:
+                  absence of a date is closed, "booked out" is the honest floor).
+                  The DATE is the datum — it leads in ink; the label recedes. */}
+              {nextOpen ? (
+                <Text style={[styles.nextOpenLabel, pressed && styles.mutedOnNavy]}>
+                  NEXT OPEN{" "}
+                  <Text style={[styles.nextOpenDate, pressed && styles.inkOnNavy]}>
+                    {fmtNextOpen(nextOpen)}
+                  </Text>
+                </Text>
+              ) : (
+                <Text style={[styles.nextOpenLabel, pressed && styles.mutedOnNavy]}>
+                  BOOKED OUT
+                </Text>
+              )}
+            </View>
+          </View>
+        </>
+      )}
     </Pressable>
   );
 }
@@ -111,16 +150,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.s4,
     gap: space.s1,
   },
-  rowPressed: { backgroundColor: color.boardBg },
+  rowPressed: { backgroundColor: color.navyDeep },
+  // Inverted-field text inks (web hover spec: text to white, meta to mist).
+  inkOnNavy: { color: color.whiteCrisp },
+  mutedOnNavy: { color: color.mist },
   headline: { flexDirection: "row", alignItems: "center", gap: space.s3 },
   name: {
     flexShrink: 1,
     fontFamily: font.display,
-    fontSize: 18,
+    fontSize: 22,
+    lineHeight: 26,
+    includeFontPadding: false,
     color: color.ink,
     textTransform: "uppercase",
-    letterSpacing: 0.3,
+    letterSpacing: 0.4,
   },
+  namePressed: { color: color.whiteCrisp },
   seal: { flexDirection: "row", alignItems: "center", gap: space.s1 },
   sealLabel: {
     fontFamily: font.mono,
@@ -128,9 +173,22 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
     color: color.brassText,
   },
-  meta: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
-  license: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
-  licenseStatus: { fontStyle: "italic" },
+  sealLabelPressed: { color: color.brassBright },
+  meta: { fontFamily: font.body, fontSize: 13, color: color.ink },
+  metaPort: {
+    fontFamily: font.mono,
+    fontSize: 11,
+    letterSpacing: 0.8,
+    color: color.inkSoft,
+  },
+  license: {
+    fontFamily: font.mono,
+    fontSize: 11,
+    letterSpacing: 0.4,
+    color: color.inkSoft,
+  },
+  licenseStatus: { fontFamily: font.body, fontSize: 12, fontStyle: "italic" },
+  noLicense: { fontFamily: font.body, fontSize: 12, fontStyle: "italic", color: color.inkSoft },
   footer: {
     marginTop: space.s2,
     flexDirection: "row",
@@ -154,12 +212,19 @@ const styles = StyleSheet.create({
     color: color.ink,
     flexShrink: 1,
   },
+  ratePressed: { color: color.brassBright },
   figureSuffix: { fontFamily: font.mono, fontSize: 10, color: color.inkSoft },
-  stripCol: { gap: 3, alignItems: "flex-start" },
-  nextOpen: {
+  stripCol: { gap: 4, alignItems: "flex-start" },
+  nextOpenLabel: {
     fontFamily: font.mono,
-    fontSize: 9,
+    fontSize: 10,
     letterSpacing: 0.8,
     color: color.inkSoft,
+  },
+  nextOpenDate: {
+    fontFamily: font.mono,
+    fontSize: 12,
+    letterSpacing: 0.6,
+    color: color.ink,
   },
 });

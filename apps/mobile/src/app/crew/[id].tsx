@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { BrassButton } from "../../../components/brass-button";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { Anchor, LATITUDE_LINE, SealRing } from "../../../components/engravings";
 import { ROLE_LABELS } from "../../../lib/roles";
@@ -294,17 +295,15 @@ export default function CrewProfileScreen() {
           discretion.
         </Text>
         {me?.accountType !== "CREW" && (
-          <Pressable
-            style={styles.requestButton}
-            accessibilityRole="button"
+          <BrassButton
+            label={`Request ${firstName}`}
+            style={{ marginTop: space.s3 }}
             onPress={() =>
               gate === "SIGNED_OUT"
                 ? router.push("/sign-in")
                 : router.push(`/bookings/new?crew=${profile.id}`)
             }
-          >
-            <Text style={styles.requestButtonText}>Request {firstName}</Text>
-          </Pressable>
+          />
         )}
       </View>
 
@@ -319,17 +318,11 @@ export default function CrewProfileScreen() {
           )}
           {claimState === "CLAIMABLE" && (
             <>
-              <Pressable
-                style={[styles.claimButton, claiming && styles.claimButtonDisabled]}
+              <BrassButton
+                label={claiming ? "Claiming…" : "This is my profile — claim it"}
                 onPress={onClaim}
                 disabled={claiming}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: claiming }}
-              >
-                <Text style={styles.claimButtonText}>
-                  {claiming ? "Claiming…" : "This is my profile — claim it"}
-                </Text>
-              </Pressable>
+              />
               {claimError && <Text style={styles.claimError}>{claimError}</Text>}
             </>
           )}
@@ -469,8 +462,7 @@ const styles = StyleSheet.create({
   listMuted: { fontFamily: font.body, fontSize: 13, color: color.inkSoft },
   dates: { fontFamily: font.mono, fontSize: 14, color: color.ink },
 
-  requestButton: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: space.s3 },
-  requestButtonText: { fontFamily: font.display, fontSize: 15, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
+  // Primary actions render through components/brass-button.tsx (one idiom).
 
   // Claim plate (Task 7). White plate on the board ground like the other panels,
   // but no eyebrow — it carries a single control, not a data section.
@@ -486,21 +478,6 @@ const styles = StyleSheet.create({
   },
   // Signed-out: a subtle brass-text link, not the loud primary slot.
   claimSignInLink: { fontFamily: font.body, fontSize: 14, color: color.brassText, fontWeight: "600" },
-  // Claimable: brass primary in the older body/600 treatment — the booking CTA
-  // above uses the newer display-caps idiom (unify when the brass button is
-  // extracted to a shared component; third hand-rolled copy as of slice 5).
-  claimButton: {
-    alignSelf: "stretch",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 44,
-    backgroundColor: color.brassText,
-    borderRadius: radius,
-    paddingVertical: space.s3,
-    paddingHorizontal: space.s5,
-  },
-  claimButtonDisabled: { opacity: 0.5 },
-  claimButtonText: { fontFamily: font.body, fontSize: 14, fontWeight: "600", color: "#ffffff" },
   claimError: { fontFamily: font.body, fontSize: 12, color: color.inkSoft },
   // Owned: a static seal badge, no control.
   ownedBadge: { flexDirection: "row", alignItems: "center", gap: space.s2 },

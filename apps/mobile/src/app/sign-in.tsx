@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Link, Stack, useRouter } from "expo-router";
+import { BrassButton } from "../../components/brass-button";
 import { signIn } from "../../lib/auth-client";
 import { color, font, radius, space } from "../../lib/tokens";
 
@@ -80,15 +81,12 @@ export default function SignInScreen() {
           </View>
         )}
 
-        <Pressable
-          style={[styles.submit, pending && styles.submitDisabled]}
+        <BrassButton
+          label={pending ? "Signing in…" : "Sign in"}
+          style={{ marginHorizontal: space.s1 }}
           onPress={onSubmit}
           disabled={pending}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: pending }}
-        >
-          <Text style={styles.submitText}>{pending ? "Signing in…" : "Sign in"}</Text>
-        </Pressable>
+        />
 
         <View style={styles.altRow}>
           <Text style={styles.altText}>New here? </Text>
@@ -167,18 +165,7 @@ const styles = StyleSheet.create({
   errorLabel: { fontFamily: font.mono, fontSize: 10, letterSpacing: 0.8, color: color.brassText },
   errorText: { fontFamily: font.body, fontSize: 13, lineHeight: 18, color: color.ink },
 
-  submit: {
-    marginHorizontal: space.s1,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 48,
-    backgroundColor: color.brassText,
-    borderRadius: radius,
-    paddingVertical: space.s3,
-    paddingHorizontal: space.s5,
-  },
-  submitDisabled: { opacity: 0.5 },
-  submitText: { fontFamily: font.body, fontSize: 15, fontWeight: "600", color: "#ffffff" },
+  // Primary action renders through components/brass-button.tsx (one idiom).
 
   altRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", flexWrap: "wrap" },
   altText: { fontFamily: font.body, fontSize: 14, color: color.inkSoft },

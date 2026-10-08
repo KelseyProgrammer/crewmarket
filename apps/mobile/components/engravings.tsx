@@ -1,4 +1,5 @@
-import Svg, { Circle, Line, Path, Polyline } from "react-native-svg";
+import type { ColorValue } from "react-native";
+import Svg, { Circle, Line, Path, Polyline, Rect } from "react-native-svg";
 import { color } from "../lib/tokens";
 
 /* Chart-room engravings — line-drawn instrument marks for the weigh-in board
@@ -89,6 +90,57 @@ export function SealRing({ size, stroke = color.brass }: { size: number; stroke?
         fill="none"
         strokeLinecap="square"
       />
+    </Svg>
+  );
+}
+
+/* Tab-bar glyphs (10/7 polish pass, replacing the placeholder 6px dots) —
+   drawn in the same chart-room idiom but with icon-weight strokes (6–7 in
+   viewBox 100, like the Anchor) so they hold at ~23pt. Ornament Ink Rule:
+   the caller passes mist at rest, Brass Bright when the tab is active —
+   active-tab brass is nav state, not decoration. */
+
+/** The weigh-in board itself: a plate of listed rows. */
+export function BoardGlyph({ size, stroke }: { size: number; stroke: ColorValue }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Rect x={14} y={18} width={72} height={64} stroke={stroke} strokeWidth={6} fill="none" />
+      <Line x1={26} y1={38} x2={74} y2={38} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      <Line x1={26} y1={52} x2={74} y2={52} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      <Line x1={26} y1={66} x2={60} y2={66} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+    </Svg>
+  );
+}
+
+/** The ship's log: trips entered as lines in the book. */
+export function LogbookGlyph({ size, stroke }: { size: number; stroke: ColorValue }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Rect x={24} y={14} width={52} height={72} stroke={stroke} strokeWidth={6} fill="none" />
+      <Line x1={36} y1={14} x2={36} y2={86} stroke={stroke} strokeWidth={4} strokeLinecap="square" />
+      <Line x1={46} y1={36} x2={66} y2={36} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+      <Line x1={46} y1={50} x2={66} y2={50} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+      <Line x1={46} y1={64} x2={58} y2={64} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+    </Svg>
+  );
+}
+
+/** The helm: who's at the wheel. */
+export function HelmGlyph({ size, stroke }: { size: number; stroke: ColorValue }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Circle cx={50} cy={50} r={30} stroke={stroke} strokeWidth={6} fill="none" />
+      <Circle cx={50} cy={50} r={8} stroke={stroke} strokeWidth={5} fill="none" />
+      {/* cardinal handles */}
+      <Line x1={50} y1={6} x2={50} y2={20} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      <Line x1={50} y1={80} x2={50} y2={94} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      <Line x1={6} y1={50} x2={20} y2={50} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      <Line x1={80} y1={50} x2={94} y2={50} stroke={stroke} strokeWidth={6} strokeLinecap="square" />
+      {/* intercardinal handles */}
+      <Line x1={21} y1={21} x2={30} y2={30} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+      <Line x1={70} y1={70} x2={79} y2={79} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+      <Line x1={79} y1={21} x2={70} y2={30} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
+      <Line x1={30} y1={70} x2={21} y2={79} stroke={stroke} strokeWidth={5} strokeLinecap="square" />
     </Svg>
   );
 }

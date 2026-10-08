@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Link, Stack, useRouter } from "expo-router";
+import { BrassButton } from "../../components/brass-button";
 import { DisclaimerD2 } from "../../components/disclaimer-d2";
 import { signUp } from "../../lib/auth-client";
 import { color, font, radius, space } from "../../lib/tokens";
@@ -146,21 +147,18 @@ export default function SignUpScreen() {
           </View>
         )}
 
-        <Pressable
-          style={[styles.submit, !canSubmit && styles.submitDisabled]}
-          onPress={onSubmit}
-          disabled={!canSubmit}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !canSubmit }}
-        >
-          <Text style={styles.submitText}>
-            {pending
+        <BrassButton
+          label={
+            pending
               ? "Creating account…"
               : role === "CREW"
                 ? "Create account & offer services"
-                : "Create account & book crew"}
-          </Text>
-        </Pressable>
+                : "Create account & book crew"
+          }
+          style={{ marginHorizontal: space.s1 }}
+          onPress={onSubmit}
+          disabled={!canSubmit}
+        />
 
         <View style={styles.altRow}>
           <Text style={styles.altText}>Already on the registry? </Text>
@@ -292,18 +290,7 @@ const styles = StyleSheet.create({
   errorLabel: { fontFamily: font.mono, fontSize: 10, letterSpacing: 0.8, color: color.brassText },
   errorText: { fontFamily: font.body, fontSize: 13, lineHeight: 18, color: color.ink },
 
-  submit: {
-    marginHorizontal: space.s1,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 48,
-    backgroundColor: color.brassText,
-    borderRadius: radius,
-    paddingVertical: space.s3,
-    paddingHorizontal: space.s5,
-  },
-  submitDisabled: { opacity: 0.5 },
-  submitText: { fontFamily: font.body, fontSize: 15, fontWeight: "600", color: "#ffffff" },
+  // Primary action renders through components/brass-button.tsx (one idiom).
 
   altRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", flexWrap: "wrap" },
   altText: { fontFamily: font.body, fontSize: 14, color: color.inkSoft },

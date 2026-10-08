@@ -14,6 +14,7 @@ export const color = {
   boardBg: "#f6f7f8", // page ground; rows sit white on this
   brass: "#a9822f", // graphic/large-accent brass: seal ring, borders, focus, >=3:1
   brassText: "#8a6a1e", // text-grade brass on white fields: 5.05:1, AA for small text
+  brassTextPress: "#7d5f1b", // primary-button pressed fill (web brass-text-hover)
   brassBright: "#d7b36a",
   mist: "#8fa6ba",
   navyMuted: "#b7c6d4", // long-form text on navy

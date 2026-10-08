@@ -17,6 +17,7 @@ import {
   TRIP_TYPE_LABELS,
   type TripType,
 } from "@crewmarket/types";
+import { BrassButton } from "../../../components/brass-button";
 import { DateField } from "../../../components/date-field";
 import { DisclaimerD2 } from "../../../components/disclaimer-d2";
 import { API_URL } from "../../../lib/api";
@@ -302,20 +303,18 @@ export default function BookingRequestScreen() {
         </View>
       )}
 
-      <Pressable
-        style={[styles.submit, (!ready || busy) && styles.submitDisabled]}
-        accessibilityRole="button"
-        disabled={!ready || busy}
-        onPress={onSubmit}
-      >
-        <Text style={styles.submitText}>
-          {busy
+      <BrassButton
+        label={
+          busy
             ? "Sending request…"
             : ready && quote
               ? `Send request — ${fmtUsd(quote.totalCents)} held at booking`
-              : "Send request"}
-        </Text>
-      </Pressable>
+              : "Send request"
+        }
+        style={{ marginTop: space.s2 }}
+        disabled={!ready || busy}
+        onPress={onSubmit}
+      />
       <Text style={styles.hint}>
         {firstName} can accept or decline freely — declining never costs crew anything on Crew
         Market.
@@ -369,7 +368,5 @@ const styles = StyleSheet.create({
   errorBox: { borderWidth: 1, borderColor: color.lineStrong, borderLeftWidth: 3, borderLeftColor: color.brass, backgroundColor: color.whiteCrisp, borderRadius: radius, padding: space.s3 },
   errorLabel: { fontFamily: font.mono, fontSize: 10, color: color.brassText, textTransform: "uppercase", letterSpacing: 0.5 },
   errorText: { fontFamily: font.body, color: color.ink, marginTop: space.s1 },
-  submit: { backgroundColor: color.brassText, borderRadius: radius, paddingVertical: space.s3, alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: space.s2 },
-  submitDisabled: { opacity: 0.45 },
-  submitText: { fontFamily: font.display, fontSize: 15, color: color.whiteCrisp, textTransform: "uppercase", letterSpacing: 0.5 },
+  // Primary action renders through components/brass-button.tsx (one idiom).
 });
