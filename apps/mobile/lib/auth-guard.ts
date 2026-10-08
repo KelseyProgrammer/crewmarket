@@ -16,3 +16,15 @@ export function authGuardState(args: {
   if (args.error) return "UNKNOWN";
   return "SIGNED_OUT";
 }
+
+/** Pure redirect decision for the Account screen, called under useFocusEffect
+ *  (focus is the hook's job — tab screens stay mounted while unfocused, and an
+ *  unfocused redirect would hijack navigation; 10/7 device finding). Redirect
+ *  only on the authoritative SIGNED_OUT answer, and never mid-sign-out: the
+ *  sign-out handler routes home itself and resets the latch in finally. */
+export function shouldRedirectToSignIn(args: {
+  gate: AuthGuardState;
+  signingOut: boolean;
+}): boolean {
+  return args.gate === "SIGNED_OUT" && !args.signingOut;
+}

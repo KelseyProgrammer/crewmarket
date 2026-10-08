@@ -329,8 +329,9 @@
   NEXT SESSION: mobile slice 5 — boat-side booking creation (brainstorm + spec first, like
   slices 3–4); then the two client policy answers, EAS build, AWS swap.
 
-- **Mobile slice 5 BUILT + REVIEWED + PUSHED (9/22/2026) — ⏳ DEVICE PASS PENDING (next
-  morning, real user). THIS IS THE RESUME POINT.** Boat-side booking creation went native per
+- **Mobile slice 5 BUILT + REVIEWED + PUSHED (9/22/2026) — ✅ DEVICE PASS PASSED
+  (10/7/2026, real user; three findings fixed same-session — see the 10/7 device-pass
+  entry below).** Boat-side booking creation went native per
   spec `docs/superpowers/specs/2026-09-22-mobile-slice5-booking-creation-design.md` + plan
   `docs/superpowers/plans/2026-09-22-mobile-slice5-booking-creation.md`; 13 code commits
   `9ee61f6..5e218e6` on origin/main (Vercel auto-deployed — POST /api/bookings is live on
@@ -367,8 +368,8 @@
   sign-in. Watch: iOS picker may visibly adjust on first tap (seeded value is midnight, floor
   is "now") — note if odd. ALSO ride along: one request from the WEB form on dev or prod
   (verifies the Task-2 wrapper end-to-end — the only unverified gate).
-  AFTER THE PASS: update this block (PASSED/findings→fix→re-verify), refresh
-  `docs/SOW-AUDIT.md` mobile row → 5 of 5, commit + push (that closes plan Task 7).
+  AFTER THE PASS (done 10/7): this block updated, `docs/SOW-AUDIT.md` mobile row → 5 of 5
+  (closes plan Task 7); findings and fixes recorded in the 10/7 device-pass entry below.
   Non-blocking notes: sign-in still drops the booking intent (lands on /account — same as
   claim; app-wide `from`-param fix is backlog); pnpm-lock carried an inert better-call zod
   peer-resolution flip from the install; brass button now hand-rolled 3× (extract when a 4th
@@ -390,6 +391,30 @@
   apps/mobile/lib/credential-labels.ts), web credentials lede gets a conditional sentence
   when a verified doc exists. Self-reported docs delete with no trace, unchanged. The
   dispute-raise flow (§1) remains the one open client decision.
+
+- **Mobile slice 5 DEVICE PASS PASSED (10/7/2026, real user, physical iPhone + Expo Go
+  against production API):** all 9 checklist steps + the web-form ride-along (step 10 —
+  the Task-2 thin-wrapper path verified end-to-end in production, last unverified slice-5
+  gate closed). Step-3 seeded-today submit confirmed acceptable UX. THREE FINDINGS, all
+  fixed and re-verified on device same-session: (1) iOS compact date-picker popover stayed
+  open after a pick — no imperative close exists, so a key remount dismisses it; chip also
+  gained a "Tap the date to change it" hint (components/date-field.tsx). The chip's light
+  grey is SYSTEM-rendered (Apple tertiarySystemFill) — a branded replacement field is
+  deferred to the design-polish pass. (2) Sign-out "freeze" was never a network bug —
+  signOut() resolved success:true, but tab screens stay mounted and the Account screen's
+  `signingOut` latch was never reset, so revisiting the tab spun forever with the
+  redirect suppressed; redirect also fired from the UNFOCUSED mounted tab (navigation
+  hijack — the reason the latch existed). Fix: redirect now runs under `useFocusEffect`
+  via pure `shouldRedirectToSignIn` (lib/auth-guard.ts, +5 tests, mobile suite 66→71),
+  latch resets in `finally`. (3) Sign-in/sign-up are reached via `replace()` — no back
+  stack, tabs hidden — an inescapable wall off the PUBLIC board; both screens gained a
+  "Just browsing? View the board" escape link. All gates green (tsc, 71 mobile tests,
+  expo lint, M-1 compliance).
+  **SEQUENCING DECIDED 10/7 (user):** a dedicated mobile DESIGN-POLISH pass runs NEXT as
+  its own spec'd project (client-side verdict during the pass: mobile UI reads flat /
+  under-differentiated vs the web's weigh-in-board treatment; Impeccable + PFD per
+  CLAUDE.md design-tooling section; the branded date-field replacement rides in it) —
+  then the EAS standalone build LAST, so the client's first binary ships the polished UI.
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.

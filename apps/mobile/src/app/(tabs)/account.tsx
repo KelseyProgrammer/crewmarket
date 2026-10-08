@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { authClient, signOut, useSession } from "../../../lib/auth-client";
 import { API_URL } from "../../../lib/api";
-import { authGuardState } from "../../../lib/auth-guard";
+import { authGuardState, shouldRedirectToSignIn } from "../../../lib/auth-guard";
 import { getBoard } from "../../../lib/board";
 import type { Me } from "../../../lib/claim-state";
 import { color, font, radius, space } from "../../../lib/tokens";
@@ -37,11 +37,15 @@ export default function AccountScreen() {
   // Redirect out only on the authoritative no-session answer (and not mid-
   // sign-out, which flips the session to null before we route home ourselves).
   // UNKNOWN (session fetch failed) renders a retry instead — see below.
-  useEffect(() => {
-    if (gate === "SIGNED_OUT" && !signingOut) {
-      router.replace("/sign-in");
-    }
-  }, [gate, signingOut, router]);
+  // Focus-gated: tab screens stay mounted while unfocused, and this firing
+  // from the background hijacked navigation (10/7 device-pass finding).
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldRedirectToSignIn({ gate, signingOut })) {
+        router.replace("/sign-in");
+      }
+    }, [gate, signingOut, router]),
+  );
 
   // Crew accounts: fetch /api/me through the authed client (sends the session
   // token), then resolve the claimed profile's name from the board cache.
@@ -82,11 +86,19 @@ export default function AccountScreen() {
     };
   }, [isPending, session, accountType]);
 
+  // Latch reset lives in finally: this tab screen stays mounted after we route
+  // home, and a stuck signingOut=true left it spinning forever on revisit
+  // (the 10/7 "sign-out freeze"). On a failed signOut we stay put and the
+  // button re-enables.
   async function onSignOut() {
     if (signingOut) return;
     setSigningOut(true);
-    await signOut();
-    router.replace("/");
+    try {
+      await signOut();
+      router.replace("/");
+    } finally {
+      setSigningOut(false);
+    }
   }
 
   // This screen renders from session data, so UNKNOWN can't proceed like the

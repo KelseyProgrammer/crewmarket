@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authGuardState } from "./auth-guard";
+import { authGuardState, shouldRedirectToSignIn } from "./auth-guard";
 
 const session = { user: { id: "u1" } };
 const error = { status: 0, message: "Network request failed" };
@@ -30,5 +30,32 @@ describe("authGuardState", () => {
 
   it("is CHECKING while pending even if a previous attempt left an error", () => {
     expect(authGuardState({ isPending: true, session: null, error })).toBe("CHECKING");
+  });
+});
+
+// Regression: device pass 10/7 — sign-out "freeze". signOut() succeeded and the
+// screen routed home, but the still-mounted Account tab never reset its
+// signingOut latch, so revisiting the tab spun forever (redirect suppressed,
+// session gone). The redirect decision is now a pure call made under
+// useFocusEffect (focus handled by the hook, not an argument here).
+describe("shouldRedirectToSignIn", () => {
+  it("redirects on the authoritative SIGNED_OUT answer when not signing out", () => {
+    expect(shouldRedirectToSignIn({ gate: "SIGNED_OUT", signingOut: false })).toBe(true);
+  });
+
+  it("never redirects mid-sign-out (the handler routes home itself)", () => {
+    expect(shouldRedirectToSignIn({ gate: "SIGNED_OUT", signingOut: true })).toBe(false);
+  });
+
+  it("never redirects while CHECKING", () => {
+    expect(shouldRedirectToSignIn({ gate: "CHECKING", signingOut: false })).toBe(false);
+  });
+
+  it("never redirects on UNKNOWN (failed fetch is not authoritative)", () => {
+    expect(shouldRedirectToSignIn({ gate: "UNKNOWN", signingOut: false })).toBe(false);
+  });
+
+  it("never redirects when signed in", () => {
+    expect(shouldRedirectToSignIn({ gate: "SIGNED_IN", signingOut: false })).toBe(false);
   });
 });

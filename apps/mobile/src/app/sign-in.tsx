@@ -98,6 +98,16 @@ export default function SignInScreen() {
             </Pressable>
           </Link>
         </View>
+
+        {/* Escape hatch: this screen is often reached via replace() (no back
+            stack, tabs hidden) — without this link a signed-out user can't
+            reach the public board (10/7 device-pass finding). */}
+        <View style={styles.altRow}>
+          <Text style={styles.altText}>Just browsing? </Text>
+          <Pressable hitSlop={8} onPress={() => router.replace("/")}>
+            <Text style={styles.altLink}>View the board</Text>
+          </Pressable>
+        </View>
       </View>
     </ScrollView>
   );

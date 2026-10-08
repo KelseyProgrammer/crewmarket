@@ -170,6 +170,14 @@ export default function SignUpScreen() {
             </Pressable>
           </Link>
         </View>
+
+        {/* Escape hatch — mirrors sign-in.tsx; see comment there. */}
+        <View style={styles.altRow}>
+          <Text style={styles.altText}>Just browsing? </Text>
+          <Pressable hitSlop={8} onPress={() => router.replace("/")}>
+            <Text style={styles.altLink}>View the board</Text>
+          </Pressable>
+        </View>
       </View>
     </ScrollView>
   );
