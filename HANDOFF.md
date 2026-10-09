@@ -430,5 +430,25 @@
   v4.5.0 update available (installed v4.3.1) — run `npx impeccable update` in a fresh
   session when wanted.
 
+- **FINISH-LINE SESSION 10/8/2026 — EAS standalone build DONE (last SOW delivery item);
+  SOW-AUDIT mobile + deployment rows → ✅.** (1) Design-polish batch 2 (branded date
+  field, 4d58e04) device-eyeballed by the real user against production — ALL PASS (plate
+  renders, inline calendar expands/collapses on pick, CHANGE/DONE toggle, min-date floor,
+  quote/Send unaffected). Design-polish track CLOSED. (2) First standalone binary:
+  Android APK via EAS — project `@krixament/crew-market` (id beeead29, user's personal
+  Expo account, client call), `eas.json` preview profile (internal distribution, APK,
+  `EXPO_PUBLIC_API_URL` baked to crewmarket-web.vercel.app), cloud-generated keystore,
+  bundle ids `com.crewmarket.app` (iOS id reserved — iOS build deliberately skipped, no
+  Apple Developer account, client call 10/8), display name "Crew Market". Build
+  `8791e4c5` FINISHED; APK + install QR on the expo.dev build page. Config commit
+  bf2ffd8, gates green. `crewmarket://` was already in production trustedOrigins
+  (auth.ts) — the `exp://` entry remains DEV/DEMO-ONLY, remove before real launch.
+  (3) **OUTSTANDING (~2 min, needs any Android phone — no Android hardware here; user
+  declined the emulator install on this 8GB Intel Mac, sensible):** install the APK from
+  the build-page QR and check the two never-exercised-on-Android watch items: date-picker
+  Cancel must not write "today" (guard is unit-tested) and Stripe browser-return keeps
+  the session (6188fcd, passed on iPhone). Also smoke standalone sign-in (first real
+  exercise of the `crewmarket://` origin). Natural fit: the client's first APK install.
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
