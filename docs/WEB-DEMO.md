@@ -34,6 +34,14 @@ web bundle up as a **second** Vercel project that proxies its own `/api/*` to it
    Use the final demo hostname for `<DEMO_HOST>` (e.g. `crewmarket-demo.vercel.app`).
    All API/auth calls then go to `<DEMO_HOST>/api/*`, which the rewrite forwards.
 
+   > ⚠️ **INCIDENT 10/8/2026 — never bake the audit-proxy URL.** The 10/1 deploy was
+   > exported with `EXPO_PUBLIC_API_URL=http://localhost:9100` (the local audit proxy),
+   > so every visitor's browser called *their own* localhost: board unreachable,
+   > session check and sign-in dead — for everyone except the builder's machine while
+   > the proxy ran, which is why the 10/1 "verified" pass missed it. Verify the bake
+   > before deploying: `grep -ro 'localhost:9100\|localhost:3000' dist/_expo` must
+   > come back empty, and the only host in the bundle must be `<DEMO_HOST>`.
+
 2. **Add `apps/mobile/dist/vercel.json`** so the static host proxies the API and
    serves the SPA:
 
@@ -45,12 +53,30 @@ web bundle up as a **second** Vercel project that proxies its own `/api/*` to it
    }
    ```
 
+   **Also add `apps/mobile/dist/.vercelignore`** containing exactly:
+
+   ```
+   !assets/**
+   ```
+
+   Without it, Vercel CLI silently skips every font (the exported paths contain
+   `node_modules` segments — `assets/__node_modules/.pnpm/...` — which the CLI's
+   default ignore drops), and the deployed app 404s all four families (second half
+   of the 10/8 incident; fonts had been broken on the live demo since 10/1).
+
+   `expo export` **wipes `dist/`** — `vercel.json`, `.vercelignore`, and the
+   `.vercel/` project link must be restored after every re-export, before deploying.
+
 3. **Deploy the static folder** (new Vercel project, root = `apps/mobile/dist`,
    framework preset = "Other", no build step):
 
    ```bash
    cd apps/mobile/dist && vercel deploy --prod
    ```
+
+   After deploying, smoke-test from a clean browser (not just curl — curl ignores
+   CORS and doesn't execute the bundle): the board must render crew rows, and
+   `https://<DEMO_HOST>/assets/.../Oswald_700Bold.<hash>.ttf` must return 200.
 
 4. **Trust the demo origin** — the one required backend change. In
    `apps/web/lib/auth.ts`, add the demo host to `trustedOrigins` and redeploy the

@@ -450,5 +450,21 @@
   the session (6188fcd, passed on iPhone). Also smoke standalone sign-in (first real
   exercise of the `crewmarket://` origin). Natural fit: the client's first APK install.
 
+- **WEB DEMO OUTAGE FOUND + FIXED (10/8/2026, same evening):** the user's R2 upload
+  eyeball failed — crewmarket-demo.vercel.app couldn't load the board or sign in from
+  any browser. Root cause (CDP probe in a clean headless Chrome): the 10/1 bundle was
+  exported with `EXPO_PUBLIC_API_URL=http://localhost:9100` (the audit proxy), so every
+  visitor's browser called its own localhost; the 10/1 "verified" pass only passed
+  because the builder's machine was running that proxy. Second defect same probe: all
+  four font families 404'd since 10/1 (Vercel CLI default-ignores `node_modules` path
+  segments, so `assets/__node_modules/.pnpm/...` fonts were never uploaded). Fix:
+  re-export with `EXPO_PUBLIC_API_URL=https://crewmarket-demo.vercel.app` (bundle now
+  ships the 10/7 design-polish UI too), add `dist/.vercelignore` with `!assets/**`,
+  restore `vercel.json` + `.vercel` (export wipes dist), `vercel deploy --prod`.
+  Verified cold-cache in a pristine headless Chrome: `/api/board` 200, board fully
+  rendered, fonts 200, zero console errors. Server was never down — curl always passed
+  (curl ignores CORS and doesn't run the bundle); recipe + verify steps recorded in
+  docs/WEB-DEMO.md. R2 credential-upload eyeball still pending, now unblocked.
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
