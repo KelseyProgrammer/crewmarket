@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "crew-market",
+    "name": "Crew Market",
     "slug": "crew-market",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,11 @@
     "scheme": "crewmarket",
     "userInterfaceStyle": "light",
     "ios": {
+      "bundleIdentifier": "com.crewmarket.app",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.crewmarket.app",
       "adaptiveIcon": {
         "backgroundColor": "#0a1d30",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -47,6 +49,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "beeead29-9278-42c7-ba64-1d05c110c439"
+      }
+    },
+    "owner": "krixament"
   }
 }
