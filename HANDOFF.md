@@ -472,6 +472,9 @@
   `verified` flag is admin-set only). Last human check on the R2 swap; delivery
   checklist fully clear. Only remaining micro-item: the Android-hardware APK check
   (see the 10/8 finish-line entry — natural fit: client's first install).
+  **UPDATE 10/11: Android check DEPRIORITIZED by the user ("unimportant at this
+  juncture") — risk accepted, do not chase; revisit only on a client-reported
+  Android issue (cancel guard is unit-tested, browser-return passed on iPhone).**
 
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
