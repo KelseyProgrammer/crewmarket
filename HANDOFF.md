@@ -466,5 +466,12 @@
   (curl ignores CORS and doesn't run the bundle); recipe + verify steps recorded in
   docs/WEB-DEMO.md. R2 credential-upload eyeball still pending, now unblocked.
 
+- **R2 CREDENTIAL-UPLOAD EYEBALL PASSED (10/11/2026, real user, real browser):** image
+  uploaded on crewmarket-demo.vercel.app (mate@example.com → Account → Credentials),
+  shown back as "self-reported / awaiting verification" — the correct V-1 state (the
+  `verified` flag is admin-set only). Last human check on the R2 swap; delivery
+  checklist fully clear. Only remaining micro-item: the Android-hardware APK check
+  (see the 10/8 finish-line entry — natural fit: client's first install).
+
 ## Escalate to humans (never AI-decide)
 ToS/booking-agreement wording, classification posture, insurance requirements, Jones Act anything, cancellation tiers, final fee structure.
